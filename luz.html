@@ -1560,7 +1560,33 @@
     });
   });
 
+  // ===== persistência automática do projeto =====
+  const STORAGE_KEY_LUZ = 'calculadora_luz_estado_v1';
+  let saveTimerLuz = null;
+  function coletarEstadoLuz(){
+    const campos = {};
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+      if (el.id === 'descritivoText') return;
+      campos[el.id] = el.type === 'checkbox' ? el.checked : el.value;
+    });
+    return { campos, consoleAtual, infraDmx: JSON.parse(JSON.stringify(infraDmx)), grupos: JSON.parse(JSON.stringify(grupos)), grupoCounter };
+  }
+  function salvarEstadoLuz(){ try { localStorage.setItem(STORAGE_KEY_LUZ, JSON.stringify(coletarEstadoLuz())); } catch(e) {} }
+  function agendarSalvarLuz(){ clearTimeout(saveTimerLuz); saveTimerLuz=setTimeout(salvarEstadoLuz,120); }
+  function restaurarEstadoLuz(){
+    try {
+      const s=JSON.parse(localStorage.getItem(STORAGE_KEY_LUZ)||'null'); if(!s) return false;
+      if(s.consoleAtual) consoleAtual=s.consoleAtual; if(s.infraDmx) infraDmx=s.infraDmx;
+      if(Array.isArray(s.grupos)&&s.grupos.length) grupos=s.grupos; if(Number.isFinite(s.grupoCounter)) grupoCounter=s.grupoCounter;
+      Object.entries(s.campos||{}).forEach(([id,val])=>{const el=$(id);if(!el)return;if(el.type==='checkbox')el.checked=!!val;else el.value=val;});
+      return true;
+    } catch(e){return false;}
+  }
+
   // ===== init =====
+  // Restaura o último projeto antes de reconstruir os blocos dinâmicos.
+  restaurarEstadoLuz();
+
   buildConsoleToggle();
   buildGruposCards();
   bindDmxInfraControls();
@@ -1572,6 +1598,11 @@
   $('cabeamentoKgM').addEventListener('input', calc);
   $('cabeamentoKgM').addEventListener('change', calc);
   calc();
+  salvarEstadoLuz();
+  document.addEventListener('input', agendarSalvarLuz);
+  document.addEventListener('change', agendarSalvarLuz);
+  document.addEventListener('click', agendarSalvarLuz);
+  window.addEventListener('beforeunload', salvarEstadoLuz);
 </script>
 
 </body>

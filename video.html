@@ -754,6 +754,8 @@
     if (s !== '100'){
       $('topoAtivo').checked = false;
       $('fieldTopoAltura').classList.add('hidden');
+    } else {
+      $('fieldTopoAltura').classList.toggle('hidden', !$('topoAtivo').checked);
     }
     calc();
   }
@@ -1378,7 +1380,13 @@
   }
 
   $('btnDescritivo').addEventListener('click', () => {
-    $('descritivoText').value = gerarDescritivo();
+    const descritivo = gerarDescritivo();
+    $('descritivoText').value = descritivo;
+    // Salva o descritivo para aparecer automaticamente no Descritivo Geral.
+    // Mantém o mesmo padrão usado pelas calculadoras de Som e Luz.
+    if (descritivo && !/^Informe as dimensões/i.test(descritivo)) {
+      localStorage.setItem('descritivo_video', descritivo);
+    }
     $('descritivoWrap').classList.add('show');
     $('descritivoWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
@@ -1393,6 +1401,36 @@
     });
   });
 
+  // ===== persistência automática do projeto =====
+  const STORAGE_KEY_VIDEO = 'calculadora_video_estado_v1';
+  let saveTimerVideo = null;
+  function coletarEstadoVideo(){
+    const campos = {};
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+      if (el.id === 'descritivoText') return;
+      campos[el.id] = el.type === 'checkbox' ? el.checked : el.value;
+    });
+    return { campos, panelSize, mode };
+  }
+  function salvarEstadoVideo(){ try { localStorage.setItem(STORAGE_KEY_VIDEO, JSON.stringify(coletarEstadoVideo())); } catch(e) {} }
+  function agendarSalvarVideo(){ clearTimeout(saveTimerVideo); saveTimerVideo=setTimeout(salvarEstadoVideo,120); }
+  function restaurarEstadoVideo(){
+    try {
+      const s=JSON.parse(localStorage.getItem(STORAGE_KEY_VIDEO)||'null'); if(!s) return false;
+      if(s.panelSize) panelSize=s.panelSize; if(s.mode) mode=s.mode;
+      Object.entries(s.campos||{}).forEach(([id,val])=>{const el=$(id);if(!el)return;if(el.type==='checkbox')el.checked=!!val;else el.value=val;});
+      return true;
+    } catch(e){return false;}
+  }
+
+  restaurarEstadoVideo();
+  setMode(mode);
+  setPanelSize(panelSize);
+  salvarEstadoVideo();
+  document.addEventListener('input', agendarSalvarVideo);
+  document.addEventListener('change', agendarSalvarVideo);
+  document.addEventListener('click', agendarSalvarVideo);
+  window.addEventListener('beforeunload', salvarEstadoVideo);
   calc();
 </script>
 

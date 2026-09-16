@@ -1788,7 +1788,35 @@
     });
   });
 
+  // ===== persistência automática do projeto =====
+  const STORAGE_KEY_SOM = 'calculadora_som_estado_v1';
+  let saveTimerSom = null;
+  function coletarEstadoSom(){
+    const campos = {};
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+      if (el.id === 'descritivoText') return;
+      campos[el.id] = el.type === 'checkbox' ? el.checked : el.value;
+    });
+    return { campos, brandAtual, consoleAtual, expansaoState: JSON.parse(JSON.stringify(expansaoState)), processadorState: JSON.parse(JSON.stringify(processadorState)), fontes: JSON.parse(JSON.stringify(fontes)), fonteCounter, grupos: JSON.parse(JSON.stringify(grupos)), grupoCounter };
+  }
+  function salvarEstadoSom(){ try { localStorage.setItem(STORAGE_KEY_SOM, JSON.stringify(coletarEstadoSom())); } catch(e) {} }
+  function agendarSalvarSom(){ clearTimeout(saveTimerSom); saveTimerSom=setTimeout(salvarEstadoSom,120); }
+  function restaurarEstadoSom(){
+    try {
+      const s=JSON.parse(localStorage.getItem(STORAGE_KEY_SOM)||'null'); if(!s) return false;
+      if(s.brandAtual) brandAtual=s.brandAtual; if(s.consoleAtual) consoleAtual=s.consoleAtual;
+      if(s.expansaoState) expansaoState=s.expansaoState; if(s.processadorState) processadorState=s.processadorState;
+      if(Array.isArray(s.fontes)) fontes=s.fontes; if(Number.isFinite(s.fonteCounter)) fonteCounter=s.fonteCounter;
+      if(Array.isArray(s.grupos)&&s.grupos.length) grupos=s.grupos; if(Number.isFinite(s.grupoCounter)) grupoCounter=s.grupoCounter;
+      Object.entries(s.campos||{}).forEach(([id,val])=>{const el=$(id);if(!el)return;if(el.type==='checkbox')el.checked=!!val;else el.value=val;});
+      return true;
+    } catch(e){return false;}
+  }
+
   // ===== init =====
+  // Restaura o último projeto antes de reconstruir os blocos dinâmicos.
+  restaurarEstadoSom();
+
   buildSelFonte();
   buildBrandTabs();
   buildModelSelect();
@@ -1806,6 +1834,11 @@
   $('cabeamentoKgM').addEventListener('input', calc);
   $('cabeamentoKgM').addEventListener('change', calc);
   calc();
+  salvarEstadoSom();
+  document.addEventListener('input', agendarSalvarSom);
+  document.addEventListener('change', agendarSalvarSom);
+  document.addEventListener('click', agendarSalvarSom);
+  window.addEventListener('beforeunload', salvarEstadoSom);
 </script>
 
 </body>
