@@ -136,9 +136,21 @@ function buildSom(d){
 
   const posicoes=(d.gruposResultados||[]).filter(g=>g.caixas>0);
   let html='';
+
+  if (d.consoleLabel){
+    html+=boxHtml(`Mesa de Som (${esc(d.consoleLabel)})`,[
+      `<b>Canais de Entrada Utilizados:</b> ${fmtInt(d.totalCanaisEntrada)} de ${fmtInt(d.maxCh)} mixáveis`,
+      `<b>Buses (Aux + Matriz):</b> ${fmtInt(d.busesNecessarios)} necessários de ${fmtInt(d.busesTotal)} disponíveis`
+    ]);
+  }
+
   if (posicoes.length){
     const rows=posicoes.map(g=>{
-      const eq=(g.equipamentos||[]).map(e=>`${e.qty}x ${esc(e.label)}`).join(', ');
+      let eq=(g.equipamentos||[]).map(e=>`${e.qty}x ${esc(e.label)}`).join(', ');
+      if (g.useDelay){
+        const dist=g.delayDistanciaAcustica!=null?` (dist. acústica ${fmtBR(g.delayDistanciaAcustica,1)} m)`:'';
+        eq+=`<br><span class="kpi-sub" style="font-size:11px;">Delay: ${fmtBR(g.delayFinal,1)} ms${dist}</span>`;
+      }
       const pesoSusp=g.suspenso
         ? fmtInt(g.pesoSuspenso!=null?g.pesoSuspenso:(g.pesoEquipamentos+(g.pesoBumpers||0)))+' kg'+(g.pesoBumpers>0?' (C/ Frame)':'')
         : '—';
