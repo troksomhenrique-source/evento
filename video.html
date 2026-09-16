@@ -1134,10 +1134,23 @@
 
     const procSelect = $('processadoraSelect');
     const prevProc = processadoraSelecionada;
-    procSelect.innerHTML = '<option value="">Selecione após informar o painel</option>' + PROCESSADORAS_NOVASTAR.map(p => `<option value="${p.nome}">${p.nome}</option>`).join('');
+    procSelect.innerHTML = '<option value="">Selecione após informar o painel</option>' + PROCESSADORAS_NOVASTAR.map(p => {
+      const qtdOpt = p.outputPorts ? Math.ceil(rjTotal / p.outputPorts) : 1;
+      const qtdTxt = rjTotal > 0 ? ` — ${qtdOpt}× necessária${qtdOpt === 1 ? '' : 's'}` : '';
+      return `<option value="${p.nome}">${p.nome}${qtdTxt}</option>`;
+    }).join('');
     procSelect.value = PROCESSADORAS_NOVASTAR.some(p => p.nome === prevProc) ? prevProc : '';
     processadoraSelecionada = procSelect.value;
     const procEscolhida = PROCESSADORAS_NOVASTAR.find(p => p.nome === processadoraSelecionada);
+    // quantidade da própria processadora selecionada — mesma conta usada na coluna "sugestão" da tabela
+    const qtdSelecionada = procEscolhida
+      ? (procEscolhida.outputPorts ? Math.ceil(rjTotal / procEscolhida.outputPorts) : 1)
+      : 0;
+    let processadoraOkSaida = null, processadoraOkEntrada = null;
+    if (procEscolhida){
+      processadoraOkSaida = procEscolhida.maxPixels >= capacidadeNecessaria && procEscolhida.outputPorts >= rjPrincipais;
+      processadoraOkEntrada = procEscolhida.maxInputW >= resolucaoTotalX && procEscolhida.maxInputH >= resolucaoTotalY;
+    }
 
     if (totalPaineis === 0){
       $('tblProcessadora').innerHTML = `<tr><td colspan="5">Informe as dimensões do painel.</td></tr>`;
@@ -1169,9 +1182,10 @@
       const semEntrada = candidatas.filter(p => !(p.maxInputW >= resolucaoTotalX && p.maxInputH >= resolucaoTotalY));
       let notas = [];
       if (procEscolhida){
-        const okSaida = procEscolhida.maxPixels >= capacidadeNecessaria && procEscolhida.outputPorts >= rjPrincipais;
-        const okEntrada = procEscolhida.maxInputW >= resolucaoTotalX && procEscolhida.maxInputH >= resolucaoTotalY;
-        notas.push(okSaida && okEntrada ? `✓ <strong>${procEscolhida.nome}</strong> atende à carga, portas e resolução informadas.` : `⚠ <strong>${procEscolhida.nome}</strong> foi selecionada, mas não atende completamente ao painel: ${!okSaida ? 'capacidade/portas de saída insuficientes. ' : ''}${!okEntrada ? 'resolução máxima de entrada insuficiente.' : ''}`);
+        const okSaida = processadoraOkSaida, okEntrada = processadoraOkEntrada;
+        notas.push(okSaida && okEntrada
+          ? `✓ <strong>${qtdSelecionada}× ${procEscolhida.nome}</strong> atende à carga, portas e resolução informadas.`
+          : `⚠ <strong>${qtdSelecionada}× ${procEscolhida.nome}</strong> foi selecionada, mas não atende completamente ao painel: ${!okSaida ? 'capacidade/portas de saída insuficientes. ' : ''}${!okEntrada ? 'resolução máxima de entrada insuficiente.' : ''}`);
       }
       if (semEntrada.length > 0){
         notas.push(`Painel precisa de <strong>${resolucaoTotalX}×${resolucaoTotalY}px</strong> de resolução. ${semEntrada.map(p => p.nome).join(', ')} atende(m) a saída (portas/pixels), mas a entrada de vídeo máxima é menor que isso — a fonte precisaria ser dividida em camadas/mosaico, ou use um modelo com entrada maior.`);
@@ -1209,7 +1223,8 @@
       compFrente: num('compFrente'), compTras: num('compTras'),
       contrapesos, chapas, pesoContrapesoUnit: num('pesoContrapeso') || 0,
       bumpers, talhas, barras2m, barras1m, totalBarras, tamanhoBarra: 2, comprimentoBarras: larguraM, alturaBarra: num('alturaBarra') || 4,
-      casesTotal, processadoraSelecionada, candidatas, rjPrincipais, rjRedundancia, rjTotal, sugestaoProcessadoras, sugestaoProcessadorasQtd, portasPorProcessadora,
+      casesTotal, processadoraSelecionada, qtdSelecionada, processadoraOkSaida, processadoraOkEntrada,
+      candidatas, rjPrincipais, rjRedundancia, rjTotal, sugestaoProcessadoras, sugestaoProcessadorasQtd, portasPorProcessadora,
       // topo com placas 50×50 em cima do painel principal (opcional)
       topoAtivo, topoTotalPaineis, topoLarguraPaineis, topoAlturaPaineis, topoAlturaM, alturaRealTotal,
       pesoPaineisTopo, potenciaTotalWTopo, cabosEnergiaTopo, cabosSinalTopo, paineisPorCaboEnergiaTopo,
@@ -1344,13 +1359,11 @@
       linhasEstrutura.push(`- Talhas: ${fmtNum(d.talhas)} un. · máximo de 500 kg por ponto.`);
     }
 
-    const processadoras = d.candidatas && d.candidatas.length
-      ? d.candidatas.map(p => {
-          const inputOK = p.maxInputW >= (d.topoAtivo && d.topoTotalPaineis > 0 ? (d.larguraM / 0.5) * Math.round((d.alturaM / (d.panelSize === '100' ? 1 : 0.5))) * 0 : 0);
-          const qtd = p.outputPorts ? Math.ceil(d.rjTotal / p.outputPorts) : 1;
-          return `- ${p.nome}: ${qtd} un. · capacidade ${fmtNum(p.maxPixels)} px · ${p.maxInputW}×${p.maxInputH} de entrada.`;
-        })
-      : ['- Nenhuma processadora da lista atende à carga informada.'];
+    const statusSelecionada = d.processadoraSelecionada
+      ? (d.processadoraOkSaida && d.processadoraOkEntrada
+          ? 'atende à carga, portas e resolução informadas.'
+          : `selecionada, mas não atende completamente ao painel${!d.processadoraOkSaida ? ' — capacidade/portas de saída insuficientes.' : ''}${!d.processadoraOkEntrada ? ' — resolução máxima de entrada insuficiente.' : ''}`)
+      : null;
 
     const casosMain = d.panelSize === '100' ? 6 : 8;
     const casesPrincipais = Math.ceil(d.totalPaineis / casosMain);
@@ -1389,7 +1402,10 @@
       `- Capacidade considerada por porta: 655.360 pixels.`,
       '',
       'PROCESSADORAS NOVASTAR',
-      `- Processadora selecionada: ${d.processadoraSelecionada || 'não selecionada'}`,
+      d.processadoraSelecionada
+        ? `- Processadora selecionada: ${fmtNum(d.qtdSelecionada || 1)}x ${d.processadoraSelecionada}.`
+        : '- Nenhuma processadora selecionada.',
+      ...(statusSelecionada ? [`- Status: ${statusSelecionada}`] : []),
       '',
       'JUMPS',
       `- Jump de energia: ${fmtNum(Math.ceil((d.totalPaineisGeral || d.totalPaineis) / 10) + 1)} packs (incluindo 1 backup).`,
