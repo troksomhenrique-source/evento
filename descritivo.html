@@ -12,7 +12,44 @@ header{border-bottom:1px solid var(--line);padding:34px 20px 30px}.header-inner,
 .export-bar{padding:16px 20px 0;display:flex;justify-content:flex-end;gap:10px}.btn{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--accent);color:var(--text);padding:10px 18px;border-radius:3px;font-weight:600;font-size:13px;cursor:pointer}.btn:hover{border-color:var(--accent)}
 main{padding:20px}.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:18px;padding:22px}.section-title{margin:0 0 14px;font-weight:700;font-size:15px}.section-title span{color:var(--accent);margin-right:8px}.empty{color:var(--muted);font-size:13px}.text{white-space:pre-wrap;font-family:'IBM Plex Mono',Consolas,monospace;font-size:13px;line-height:1.7;color:var(--text)}
 .status{color:var(--muted);font-size:12px;margin:0 0 18px}.actions{display:flex;gap:10px}
-@media print{body{background:#fff;color:#111}header{padding:0 0 18px;border-bottom:2px solid #111}.header-inner,main,.export-bar{max-width:none}.back-link,.export-bar,.status,.actions{display:none}.tag{color:#111;margin-top:0}header p:last-child{color:#444}.card{background:#fff;border:0;border-bottom:1px solid #bbb;border-radius:0;padding:18px 0;margin:0;break-inside:avoid}.text{color:#111;font-size:11pt;line-height:1.55}.section-title span{color:#111}main{padding:0}.empty{color:#555}h1{font-size:26pt}}
+@media print{
+  @page{size:A4;margin:13mm 14mm 15mm 14mm}
+  body{background:#fff;color:#172033;font-family:Arial,Helvetica,sans-serif}
+  header,.export-bar,main{display:none!important}
+  #printReport{display:block!important}
+}
+#printReport{display:none}
+.print-page{width:100%;color:#172033;font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;line-height:1.35}
+.print-cover{background:#111a2d;color:#fff;border-radius:6px;padding:18px 20px 17px;margin-bottom:15px}
+.print-cover h1{font-size:22px;line-height:1.15;margin:0 0 5px;font-weight:800;letter-spacing:.01em}
+.print-cover p{margin:0;color:#aeb8ca;font-size:10.5px}
+.print-section{margin:0 0 13px;break-inside:auto}
+.print-section-title{font-size:13.5px;font-weight:800;margin:0 0 7px;padding:0 0 5px;border-bottom:3px solid #172033;text-transform:uppercase;letter-spacing:.02em}
+.print-section-title .num{margin-right:6px}
+.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}
+.print-box{background:#f4f7fa;border:1px solid #d9e0e8;border-left:3px solid #172033;border-radius:3px;padding:8px 10px;break-inside:avoid}
+.print-box.dark{background:#111a2d;color:#fff;border-left-color:#19b9ff}
+.print-box h3{font-size:10.5pt;margin:0 0 5px;font-weight:800}
+.print-box.dark h3{color:#19b9ff}
+.print-line{margin:2px 0}
+.print-line b{font-weight:800}
+.print-muted{color:#536176}
+.print-box.dark .print-muted{color:#c2ccda}
+.print-table{width:100%;border-collapse:collapse;margin:3px 0 9px;font-size:9.8pt;break-inside:auto}
+.print-table th{background:#edf2f7;text-align:left;padding:6px 7px;font-size:9pt;text-transform:uppercase;font-weight:800;border-bottom:1px solid #cfd7e1}
+.print-table td{padding:6px 7px;border-bottom:1px solid #d9e0e8;vertical-align:top}
+.print-table tr{break-inside:avoid}
+.print-table .qty,.print-table .right{text-align:right;white-space:nowrap}
+.print-note{background:#f4f7fa;border:1px dashed #c5cfdb;border-radius:3px;padding:7px 9px;color:#536176;font-size:9pt;break-inside:avoid}
+.print-note b{color:#172033}
+.print-group{background:#f4f7fa;border:1px solid #d9e0e8;border-left:3px solid #172033;border-radius:3px;padding:8px 10px;margin-bottom:7px;break-inside:avoid}
+.print-group h3{font-size:10.5pt;margin:0 0 4px;font-weight:800}
+.print-bullets{margin:0;padding-left:17px}.print-bullets li{margin:2px 0}
+.print-summary{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.print-footer{margin-top:10px;border-top:1px solid #d7dee7;padding-top:5px;color:#68778b;font-size:8.5pt;display:flex;justify-content:space-between}
+.print-page-break{break-before:page}
+@media print{.print-page-break{break-before:page}}
+
 </style>
 </head>
 <body>
@@ -24,9 +61,76 @@ main{padding:20px}.card{background:var(--panel);border:1px solid var(--line);bor
 <section class="card"><p class="section-title"><span>02</span> LUZ</p><div class="text" id="luz"></div></section>
 <section class="card"><p class="section-title"><span>03</span> VÍDEO / PAINEL DE LED</p><div class="text" id="video"></div></section>
 </main>
+<div id="printReport"></div>
+
 <script>
-const labels={som:'Som',luz:'Luz',video:'Vídeo / Painel de LED'};
-function carregar(){let count=0;for(const key of ['som','luz','video']){const el=document.getElementById(key),v=localStorage.getItem('descritivo_'+key);if(v){el.textContent=v;count++}else el.innerHTML='<span class="empty">Nenhum descritivo foi gerado nesta área ainda.</span>'}document.getElementById('status').textContent=count+' de 3 descritivos disponíveis. Gere o descritivo em cada calculadora para atualizar este documento.'}
-document.getElementById('btnAtualizar').onclick=carregar;document.getElementById('btnPDF').onclick=()=>window.print();window.addEventListener('storage',carregar);carregar();
+const keys=['som','luz','video'];
+const titles={som:'SISTEMA DE ÁUDIO',luz:'SISTEMA DE ILUMINAÇÃO',video:'VÍDEO / PAINEL DE LED'};
+
+function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function cleanLine(l){return l.replace(/^\s*[-•]\s*/,'').trim();}
+function qtyMatch(l){return l.match(/^(\d+(?:[.,]\d+)?)x\s+(.+?)\s+—\s+(.+)$/i)}
+function lineHtml(l){
+  let x=cleanLine(l);
+  x=x.replace(/^(Caixas|Equipamentos|Consumo|Cabeamento|Peso caixas|Peso dos equipamentos|Peso das caixas|Peso total do sistema|Peso suspenso considerado|Peso do conjunto|Suspensão|Suspenso|Voado\/suspenso|Rigging|Distribuição|Talhas|Chapas|Contrapesos|Potência|Corrente estimada|Parâmetros|Saídas físicas|Entradas físicas|Buses|Mesa de som|Mesa de luz|Total de circuitos AC|Potência total considerada|Peso total considerado|Sugestão calculada|Cabos de energia|Cabos de sinal RJ45|Total de portas RJ45|Área total|Pixel pitch|Configuração|Modo|Estrutura|JUMPS|CASES)\s*:/i,(m)=>`<b>${esc(m.slice(0,-1))}:</b>`);
+  return x;
+}
+function parseBlocks(text){
+  const lines=text.split(/\r?\n/).map(x=>x.trimEnd());
+  const blocks=[]; let current=null;
+  for(const raw of lines){
+    const l=raw.trim();
+    if(!l) continue;
+    if(/^DESCRITIVO\s*[—-]/i.test(l)) continue;
+    const isHeading=/^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ0-9\s&\/+().–—-]{5,}$/.test(l) && !/^\d+(?:[.,]\d+)?\s*(?:W|KG|M|A|KVA)/i.test(l);
+    if(isHeading){current={title:l.replace(/^\d+\.\s*/,''),lines:[]};blocks.push(current)}
+    else if(current) current.lines.push(l);
+  }
+  return blocks;
+}
+function inventoryTable(lines){
+  const rows=lines.map(cleanLine).map(qtyMatch).filter(Boolean);
+  if(rows.length<2) return '';
+  return `<table class="print-table"><thead><tr><th>MODELO / EQUIPAMENTO</th><th>ESPECIFICAÇÃO</th><th class="qty">QTD</th><th>TRANSPORTE</th></tr></thead><tbody>`+
+    rows.map(m=>`<tr><td>${esc(m[2].split(' — ')[0])}</td><td>${esc(m[3])}</td><td class="qty">${esc(m[1])}x</td><td>${esc(m[3].match(/(?:\d+\s*cases?|\d+\s*case|sem case|\(.*?\/case\))/i)?.[0]||'—')}</td></tr>`).join('')+
+    `</tbody></table>`;
+}
+function renderSection(key,text,index){
+  const blocks=parseBlocks(text); let html=`<section class="print-section ${index>0?'print-page-break':''}"><h2 class="print-section-title"><span class="num">${String(index+1).padStart(2,'0')}</span>${esc(titles[key])}</h2>`;
+  if(!blocks.length){return html+`<div class="print-note">Nenhum descritivo foi gerado nesta área.</div></section>`}
+  for(const b of blocks){
+    const title=b.title.replace(/^\d+\.\s*/, '').trim();
+    const inv=inventoryTable(b.lines);
+    if(inv){html+=`<h3 style="font-size:11px;margin:6px 0 4px;text-transform:uppercase">${esc(title)}</h3>${inv}`;continue}
+    const groupLike=b.lines.some(x=>/^\s*(Caixas|Equipamentos):/i.test(x)) && b.lines.length>=3;
+    if(groupLike){
+      html+=`<div class="print-group"><h3>${esc(title)}</h3><ul class="print-bullets">${b.lines.map(x=>`<li>${lineHtml(x)}</li>`).join('')}</ul></div>`;
+      continue;
+    }
+    const isSummary=/RESUMO|ENERGIA|CIRCUITOS|DELAY|MESA|PROCESSADORAS|SINAL|PIXEL|ESTRUTURA|MONTAGEM|PAINEL|CASES|JUMPS/i.test(title);
+    if(isSummary){
+      html+=`<div class="print-box ${/RESUMO/i.test(title)?'dark':''}"><h3>${esc(title)}</h3>`+
+        b.lines.map(x=>`<div class="print-line">${lineHtml(x)}</div>`).join('')+`</div>`;
+    }else{
+      html+=`<div class="print-box"><h3>${esc(title)}</h3>`+b.lines.map(x=>`<div class="print-line">${lineHtml(x)}</div>`).join('')+`</div>`;
+    }
+  }
+  return html+'</section>';
+}
+function buildPrint(){
+  const report=document.getElementById('printReport');
+  let available=0; let body='';
+  keys.forEach((k,i)=>{const v=localStorage.getItem('descritivo_'+k); if(v){available++;body+=renderSection(k,v,i)}});
+  report.innerHTML=`<div class="print-page"><div class="print-cover"><h1>DESCRITIVO TÉCNICO — EVENTO</h1><p>Especificações de pré-produção, infraestrutura, equipamentos, energia e montagem</p></div>${body||'<div class="print-note">Nenhum descritivo disponível. Gere o descritivo em Som, Luz e Vídeo antes de exportar o PDF.</div>'}<div class="print-footer"><span>Descritivo Técnico · Maurinho Rigging</span><span>${available} de 3 áreas</span></div></div>`;
+}
+function carregar(){
+  let count=0;
+  for(const key of keys){const el=document.getElementById(key),v=localStorage.getItem('descritivo_'+key);if(v){el.textContent=v;count++}else el.innerHTML='<span class="empty">Nenhum descritivo foi gerado nesta área ainda.</span>'}
+  document.getElementById('status').textContent=count+' de 3 descritivos disponíveis. Gere o descritivo em cada calculadora para atualizar este documento.';
+  buildPrint();
+}
+document.getElementById('btnAtualizar').onclick=carregar;
+document.getElementById('btnPDF').onclick=()=>{buildPrint();window.print()};
+window.addEventListener('storage',carregar);carregar();
 </script>
 </body></html>

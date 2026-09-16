@@ -1270,47 +1270,111 @@
       return 'Informe as dimensões do painel antes de gerar o descritivo.';
     }
 
-    const fmtNum = n => n.toLocaleString('pt-BR', {maximumFractionDigits: 1});
+    const fmtNum = n => Number(n || 0).toLocaleString('pt-BR', {maximumFractionDigits: 1});
     const tamanhoLabel = d.panelSize === '100' ? '50x100cm' : '50x50cm';
+    const alturaFinal = d.topoAtivo && d.topoTotalPaineis > 0 ? d.alturaRealTotal : d.alturaM;
 
-    let estrutura;
+    let estrutura = '';
     if (d.mode === 'ground' || d.mode === 'groundSuspenso'){
       estrutura = `instalado com ${d.mfFrente} mão${d.mfFrente === 1 ? '' : 's'} francesa${d.mfFrente === 1 ? '' : 's'} de ${fmtNum(d.compFrente)} metros`;
-      if (d.temTraseira){
-        estrutura += ` + ${d.mfTras} ${d.mfTras === 1 ? 'extensão' : 'extensões'} de ${fmtNum(d.compTras)} metros`;
-      }
+      if (d.temTraseira) estrutura += ` + ${d.mfTras} ${d.mfTras === 1 ? 'extensão' : 'extensões'} de ${fmtNum(d.compTras)} metros`;
       estrutura += ` + ${d.contrapesos} contrapeso${d.contrapesos === 1 ? '' : 's'} de ${fmtNum(d.pesoContrapesoUnit)} kg cada e ${d.chapas} chapa${d.chapas === 1 ? '' : 's'}`;
       if (d.mode === 'groundSuspenso'){
-        const partesBarras = [];
-        if (d.barras2m > 0) partesBarras.push(`${d.barras2m} barra${d.barras2m === 1 ? '' : 's'} de elevação de 2m`);
-        if (d.barras1m > 0) partesBarras.push(`${d.barras1m} barra${d.barras1m === 1 ? '' : 's'} de elevação de 1m`);
-        estrutura += `, elevado do chão por ${partesBarras.join(' + ')}`;
+        const barras = [];
+        if (d.barras2m > 0) barras.push(`${d.barras2m} barra${d.barras2m === 1 ? '' : 's'} de elevação de 2m`);
+        if (d.barras1m > 0) barras.push(`${d.barras1m} barra${d.barras1m === 1 ? '' : 's'} de elevação de 1m`);
+        if (barras.length) estrutura += `, elevado do chão por ${barras.join(' + ')}`;
       }
       estrutura += '.';
     } else if (d.mode === 'suspenso'){
       estrutura = `suspenso por talha com ${d.bumpers} bumper${d.bumpers === 1 ? '' : 's'} e ${d.talhas} talha${d.talhas === 1 ? '' : 's'} (máx. 500kg por ponto).`;
     }
 
-    const alturaFinal = d.topoAtivo && d.topoTotalPaineis > 0 ? d.alturaRealTotal : d.alturaM;
     const placasTexto = d.topoAtivo && d.topoTotalPaineis > 0
       ? `${d.totalPaineis} placas 50x100 e ${d.topoTotalPaineis} placas 50x50`
       : `${d.totalPaineis} placas ${tamanhoLabel}`;
 
-    const linha1 = `1 painel de LED de ${fmtNum(d.larguraM)}x${fmtNum(alturaFinal)}m (${placasTexto}, ${d.pixelPitchLabel}), potência considerada de ${fmtNum(d.potenciaTotalKVA)} kVA, ${fmtNum(d.pesoTotal)} kg no total, ${estrutura}`;
+    const linhasEstrutura = [];
+    if (d.mode === 'ground' || d.mode === 'groundSuspenso'){
+      linhasEstrutura.push(`- Mão francesa frente: ${fmtNum(d.mfFrente)} un. de ${fmtNum(d.compFrente)} m.`);
+      if (d.temTraseira) linhasEstrutura.push(`- Mão francesa trás: ${fmtNum(d.mfTras)} un. de ${fmtNum(d.compTras)} m.`);
+      linhasEstrutura.push(`- Chapas: ${fmtNum(d.chapas)} un.`);
+      linhasEstrutura.push(`- Contrapesos: ${fmtNum(d.contrapesos)} un. de ${fmtNum(d.pesoContrapesoUnit)} kg.`);
+      if (d.mode === 'groundSuspenso'){
+        if (d.barras2m > 0) linhasEstrutura.push(`- Barras de elevação de 2 m: ${fmtNum(d.barras2m)} un.`);
+        if (d.barras1m > 0) linhasEstrutura.push(`- Barras de elevação de 1 m: ${fmtNum(d.barras1m)} un.`);
+      }
+    } else {
+      linhasEstrutura.push(`- Bumpers: ${fmtNum(d.bumpers)} un. de 3 kg.`);
+      linhasEstrutura.push(`- Talhas: ${fmtNum(d.talhas)} un. · máximo de 500 kg por ponto.`);
+    }
 
-    const processadorasNomes = d.candidatas.length ? d.candidatas.map(p => p.nome).join(' ou ') : 'consultar processadoras com capacidade suficiente';
-    const melhorProc = d.candidatas.length ? d.candidatas[0] : null;
-    const qtdMelhorProc = melhorProc && melhorProc.outputPorts ? Math.ceil(d.rjTotal / melhorProc.outputPorts) : 1;
-    const sugestaoProc = d.cabosSinal > 0
-      ? `Sugestão de processadoras: ${qtdMelhorProc} × ${melhorProc ? melhorProc.nome : 'modelo com capacidade suficiente'}${qtdMelhorProc > 1 ? ' — distribuição para PRINCIPAL + REDUNDÂNCIA.' : '.'}`
-      : '';
-    const cabosEnergiaTexto = d.topoAtivo && d.topoTotalPaineis > 0
-      ? `${d.cabosEnergia} cabo${d.cabosEnergia === 1 ? '' : 's'} no total (painel principal até ${d.paineisPorCaboEnergia} placas/cabo + topo 50x50 até ${d.paineisPorCaboEnergiaTopo} placas/cabo)`
-      : `${d.cabosEnergia} cabo${d.cabosEnergia === 1 ? '' : 's'} com conector de 9 A / 220 V, considerando até ${d.paineisPorCaboEnergia} placa${d.paineisPorCaboEnergia === 1 ? '' : 's'} por cabo`;
-    const linha2 = `Cabeamento de energia: ${cabosEnergiaTexto}. Potência aparente total: ${fmtNum(d.potenciaTotalKVA)} kVA. Sinal: ${d.cabosSinal} cabo${d.cabosSinal === 1 ? '' : 's'} RJ45 principal${d.cabosSinal === 1 ? '' : 'is'} + ${d.cabosSinal} de redundância (${d.rjTotal} portas no total). ${sugestaoProc} Cases de transporte: ${d.casesTotal} (com backup).`;
+    const processadoras = d.candidatas && d.candidatas.length
+      ? d.candidatas.map(p => {
+          const inputOK = p.maxInputW >= (d.topoAtivo && d.topoTotalPaineis > 0 ? (d.larguraM / 0.5) * Math.round((d.alturaM / (d.panelSize === '100' ? 1 : 0.5))) * 0 : 0);
+          const qtd = p.outputPorts ? Math.ceil(d.rjTotal / p.outputPorts) : 1;
+          return `- ${p.nome}: ${qtd} un. · capacidade ${fmtNum(p.maxPixels)} px · ${p.maxInputW}×${p.maxInputH} de entrada.`;
+        })
+      : ['- Nenhuma processadora da lista atende à carga informada.'];
 
+    const casosMain = d.panelSize === '100' ? 6 : 8;
+    const casesPrincipais = Math.ceil(d.totalPaineis / casosMain);
+    const casesTopo = d.topoTotalPaineis > 0 ? Math.ceil(d.topoTotalPaineis / 8) : 0;
 
-    return linha1 + '\n\n' + linha2;
+    return [
+      'DESCRITIVO — VÍDEO / PAINEL DE LED',
+      '',
+      'PAINEL DE LED',
+      `- Dimensão informada: ${fmtNum(d.larguraM)} × ${fmtNum(alturaFinal)} m.`,
+      `- Configuração: ${placasTexto}.`,
+      `- Pixel pitch: ${d.pixelPitchLabel}.`,
+      `- Painéis principais: ${fmtNum(d.totalPaineis)} un. · tamanho ${tamanhoLabel}.`,
+      ...(d.topoAtivo && d.topoTotalPaineis > 0 ? [`- Topo adicional: ${fmtNum(d.topoTotalPaineis)} placas 50x50cm · ${fmtNum(d.topoAlturaM)} m de altura.`] : []),
+      `- Área total: ${fmtNum((d.totalPaineisGeral || d.totalPaineis) * (d.panelSize === '100' ? 0.5 : 0.25))} m².`,
+      `- Peso total do sistema: ${fmtNum(d.pesoTotal)} kg.`,
+      '',
+      'ESTRUTURA / MONTAGEM',
+      `- Modo: ${d.mode === 'ground' ? 'estaqueado' : d.mode === 'groundSuspenso' ? 'barra de elevação' : 'suspenso por talha'}.`,
+      `- Estrutura: ${estrutura}`,
+      ...linhasEstrutura,
+      '',
+      'ENERGIA',
+      `- Perfil elétrico: ${d.perfilEletricoLabel}.`,
+      `- Potência máxima de referência: ${fmtNum(d.potenciaMaxWm2)} W/m².`,
+      `- Potência considerada por placa 50x100: ${fmtNum(d.potenciaPainelUnit)} W.`,
+      ...(d.topoAtivo && d.topoTotalPaineis > 0 ? [`- Potência considerada por placa 50x50 (topo): ${fmtNum(d.potenciaTotalWTopo / d.topoTotalPaineis)} W.`] : []),
+      `- Potência total considerada: ${fmtNum(d.potenciaTotalKVA)} kVA (${fmtNum(d.potenciaTotalW)} W).`,
+      `- Cabos de energia: ${fmtNum(d.cabosEnergia)} un. · até ${fmtNum(d.paineisPorCaboEnergia)} placas por cabo.`,
+      `- Corrente estimada total em 220 V: ${fmtNum((d.potenciaTotalKVA * 1000) / 220)} A.`,
+      '',
+      'SINAL / PIXEL',
+      `- Resolução/pixagem calculada do painel: ${fmtNum(d.totalPaineisGeral)} placas no conjunto.`,
+      `- Cabos de sinal RJ45: ${fmtNum(d.cabosSinal)} principais + ${fmtNum(d.cabosSinal)} de redundância.`,
+      `- Total de portas RJ45: ${fmtNum(d.rjTotal)}.`,
+      `- Capacidade considerada por porta: 655.360 pixels.`,
+      '',
+      'PROCESSADORAS NOVASTAR',
+      `- Sugestão calculada: ${d.sugestaoProcessadoras || 'calcular conforme carga do painel'}`,
+      ...processadoras,
+      '',
+      'JUMPS',
+      `- Jump de energia: ${fmtNum(Math.ceil((d.totalPaineisGeral || d.totalPaineis) / 10) + 1)} packs (incluindo 1 backup).`,
+      `- Jump de sinal RJ45: ${fmtNum(Math.ceil((d.totalPaineisGeral || d.totalPaineis) / 10) + 1)} packs (incluindo 1 backup).`,
+      '',
+      'CASES',
+      `- Cases do painel principal: ${fmtNum(casesPrincipais)} (${casosMain} placas/case).`,
+      ...(casesTopo > 0 ? [`- Cases do topo 50x50: ${fmtNum(casesTopo)} (8 placas/case).`] : []),
+      `- Total de cases com backup: ${fmtNum(d.casesTotal)}.`,
+      '',
+      'RESUMO GERAL',
+      `- ${placasTexto} no total.`,
+      `- Potência considerada: ${fmtNum(d.potenciaTotalKVA)} kVA.`,
+      `- Peso total: ${fmtNum(d.pesoTotal)} kg.`,
+      `- Cabos de sinal: ${fmtNum(d.cabosSinal)} principais + ${fmtNum(d.cabosSinal)} redundância.`,
+      `- Cases: ${fmtNum(d.casesTotal)} com backup.`,
+      '',
+      'Observação: os pesos, potências, pixagem, cabos, cases e capacidades de processadoras são calculados com os parâmetros cadastrados na calculadora e servem como referência de pré-produção.'
+    ].join('\n');
   }
 
   $('btnDescritivo').addEventListener('click', () => {
