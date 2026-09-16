@@ -17,10 +17,6 @@
     --line: #29292d;
     --text: #f3f1ec;
     --muted: #8c8c91;
-    --power: #3b82c9;
-    --signal: #7fa8c9;
-    --weight: #b3564a;
-    --ok: #7cae83;
     
     --som: #d6473c;
     --luz: #d1a24a;
@@ -64,6 +60,7 @@
     font-size:13px;
     font-weight:500;
     margin-bottom:18px;
+    transition: color 0.2s;
   }
   .back-link:hover{ color:var(--accent); }
   
@@ -145,7 +142,7 @@
   }
   .status::before {
     content: ""; display: inline-block; width: 8px; height: 8px;
-    background: var(--ok); border-radius: 50%;
+    background: var(--accent); border-radius: 50%;
   }
 
   .card{
@@ -156,7 +153,6 @@
     margin-bottom:24px;
   }
   
-  /* Cores dinâmicas para cada área */
   .card.som { border-top: 2px solid var(--som); }
   .card.luz { border-top: 2px solid var(--luz); }
   .card.video { border-top: 2px solid var(--video); }
@@ -167,7 +163,6 @@
     font-weight:600;
     letter-spacing:0.06em;
     text-transform:uppercase;
-    color:var(--text);
     margin:0 0 16px;
     padding-bottom:12px;
     border-bottom:1px solid var(--line);
@@ -205,7 +200,7 @@
   }
 
   /* ==========================================================================
-     ESTILO DE IMPRESSÃO / PDF (CLEAN & PROFESSIONAL)
+     ESTILO DE IMPRESSÃO / PDF (CLARO / LIMPO)
      ========================================================================== */
   #printReport { display: none; }
 
@@ -223,7 +218,6 @@
     
     .print-page { width: 100%; font-size: 9.5pt; line-height: 1.4; }
 
-    /* Capa super clean */
     .print-cover {
       border-bottom: 2px solid #0f172a;
       padding: 0 0 16px;
@@ -251,7 +245,6 @@
       font-size: 10pt; margin-right: 10px; font-family:'IBM Plex Mono', monospace;
     }
 
-    /* Caixas de conteúdo e grupos */
     .print-box {
       background: #fff; border: 1px solid #e2e8f0; border-left: 3px solid #cbd5e1;
       border-radius: 6px; padding: 12px 14px; margin-bottom: 12px; break-inside: avoid;
@@ -262,9 +255,8 @@
       font-weight: 700; text-transform: uppercase; color: #334155; letter-spacing: 0.03em;
     }
 
-    /* Painel Escuro para Resumos Especiais */
     .print-box.dark {
-      background: #0f172a; color: #f8fafc; border: none; border-left: 3px solid #3b82f6;
+      background: #0f172a; color: #f8fafc; border: none; border-left: 3px solid #64748b;
     }
     .print-box.dark h3 { color: #94a3b8; }
     .print-box.dark .print-line b { color: #fff; }
@@ -281,7 +273,6 @@
     .print-bullets li { margin: 4px 0; padding-left: 4px; }
     .print-bullets li::marker { color: #94a3b8; }
 
-    /* Tabelas Clean */
     .print-table {
       width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 9pt; break-inside: auto;
     }
@@ -317,7 +308,7 @@
     <a class="back-link" href="index.html">← Voltar para áreas</a>
     <p class="tag">Pré Produção</p>
     <h1>Descritivo Geral</h1>
-    <p class="sub">Reúne as especificações de pré-produção de som, luz e vídeo geradas nas calculadoras para conferência rápida e exportação em documento PDF.</p>
+    <p class="sub">Reúne as especificações geradas nas calculadoras (Som, Luz e Vídeo). <br><b>Atenção:</b> Você precisa clicar em "Gerar Descritivo" em cada calculadora para que os dados apareçam aqui.</p>
   </div>
 </header>
 
@@ -345,11 +336,6 @@
   </section>
 </main>
 
-<footer>
-  Descritivo Geral gerado a partir dos dados do navegador local (localStorage). 
-</footer>
-
-<!-- A parte do PDF gerada dinamicamente via JS fica escondida até ser impressa -->
 <div id="printReport"></div>
 
 <script>
@@ -372,14 +358,12 @@ function qtyMatch(l) {
   return l.match(/^(\d+(?:[.,]\d+)?)x\s+(.+?)\s+—\s+(.+)$/i);
 }
 
-// Aplica negrito aos rótulos para impressão em PDF
 function lineHtml(l) {
   let x = cleanLine(l);
   x = x.replace(/^(Caixas|Equipamentos|Consumo|Cabeamento|Peso caixas|Peso dos equipamentos|Peso das caixas|Peso total do sistema|Peso suspenso considerado|Peso do conjunto|Suspensão|Suspenso|Voado\/suspenso|Rigging|Distribuição|Talhas|Chapas|Contrapesos|Potência|Corrente estimada|Parâmetros|Saídas físicas|Entradas físicas|Buses|Mesa de som|Mesa de luz|Total de circuitos AC|Potência total considerada|Peso total considerado|Sugestão calculada|Cabos de energia|Cabos de sinal RJ45|Total de portas RJ45|Área total|Pixel pitch|Configuração|Modo|Estrutura|JUMPS|CASES|Dimensão informada)\s*:/i, (m) => `<b>${esc(m.slice(0, -1))}:</b>`);
   return x;
 }
 
-// Lógica para quebrar os textos gerados pelas outras páginas em blocos no PDF
 function parseBlocks(text) {
   const lines = text.split(/\r?\n/).map(x => x.trimEnd());
   const blocks = [];
@@ -390,7 +374,6 @@ function parseBlocks(text) {
     if (!l) continue;
     if (/^DESCRITIVO\s*[—-]/i.test(l)) continue;
     
-    // Identifica títulos das seções pelas letras maiúsculas
     const isHeading = /^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ0-9\s&\/+().–—-]{5,}$/.test(l) && !/^\d+(?:[.,]\d+)?\s*(?:W|KG|M|A|KVA|px)/i.test(l);
     
     if (isHeading) {
@@ -403,7 +386,6 @@ function parseBlocks(text) {
   return blocks;
 }
 
-// Constrói a tabela de itens
 function inventoryTable(lines) {
   const rows = lines.map(cleanLine).map(qtyMatch).filter(Boolean);
   if (rows.length < 2) return '';
@@ -427,7 +409,6 @@ function inventoryTable(lines) {
     `</tbody></table>`;
 }
 
-// Renderiza a seção inteira para PDF
 function renderSection(key, text, index) {
   const blocks = parseBlocks(text); 
   let html = `<section class="print-section ${index > 0 ? 'print-page-break' : ''}">
@@ -436,7 +417,7 @@ function renderSection(key, text, index) {
                 </h2>`;
                 
   if (!blocks.length) {
-    return html + `<div class="print-note">Nenhum descritivo estruturado retornado, revise os dados na calculadora.</div></section>`;
+    return html + `<div class="print-note">Nenhum descritivo preenchido nesta área.</div></section>`;
   }
   
   for (const b of blocks) {
@@ -478,7 +459,6 @@ function renderSection(key, text, index) {
   return html + '</section>';
 }
 
-// Monta o DOM de impressão
 function buildPrint() {
   const report = document.getElementById('printReport');
   let available = 0; 
@@ -499,7 +479,7 @@ function buildPrint() {
         <h1>Descritivo Técnico</h1>
         <p>Especificações consolidadas de infraestrutura, equipamentos, energia e montagem.</p>
       </div>
-      ${body || '<div class="print-note">Nenhum descritivo disponível. Acesse as abas de Som, Luz ou Vídeo, adicione seus equipamentos e clique em "Gerar Descritivo" lá para povoar este documento.</div>'}
+      ${body || '<div class="print-note">Nenhum descritivo disponível. Acesse as calculadoras, preencha as informações e clique em "Gerar Descritivo" para consolidar o relatório.</div>'}
       <div class="print-footer">
         <span>Documento gerado pelo sistema integrado Maurin Mauricio</span>
         <span>Áreas preenchidas: ${available}/3</span>
@@ -507,27 +487,27 @@ function buildPrint() {
     </div>`;
 }
 
-// Carrega os dados na tela principal
 function carregar() {
   let count = 0;
   for (const key of keys) {
     const el = document.getElementById(key);
+    // Tenta resgatar os dados salvos pelos outros arquivos
     const v = localStorage.getItem('descritivo_' + key);
-    if (v) {
+    
+    if (v && v.trim() !== '') {
       el.textContent = v;
       count++;
     } else {
-      el.innerHTML = '<span class="empty">Nenhum descritivo gerado. Acesse a calculadora correspondente e gere os dados.</span>';
+      el.innerHTML = '<span class="empty">Nenhum descritivo encontrado para esta área. Vá até a respectiva calculadora e clique no botão "Gerar descritivo".</span>';
     }
   }
-  document.getElementById('status').innerHTML = `<b>${count} de 3</b> áreas possuem descritivos prontos para visualização e exportação.`;
+  document.getElementById('status').innerHTML = `<b>${count} de 3</b> descritivos integrados com sucesso.`;
   buildPrint();
 }
 
-// Event Listeners
 document.getElementById('btnAtualizar').onclick = carregar;
 document.getElementById('btnPDF').onclick = () => {
-  buildPrint(); // Garante a versão mais recente
+  buildPrint();
   window.print();
 };
 
