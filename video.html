@@ -1219,7 +1219,7 @@
       mfFrente, mfTras, temTraseira: (mode === 'ground' || mode === 'groundSuspenso') ? $('temTraseira').checked : false,
       compFrente: num('compFrente'), compTras: num('compTras'),
       contrapesos, chapas, pesoContrapesoUnit: num('pesoContrapeso') || 0,
-      bumpers, talhas, barras2m, barras1m, tamanhoBarra: num('tamanhoBarra') || 1, comprimentoBarras: larguraM, alturaBarra: num('alturaBarra') || 4,
+      bumpers, talhas, barras2m, barras1m, totalBarras, tamanhoBarra: num('tamanhoBarra') || 1, comprimentoBarras: larguraM, alturaBarra: num('alturaBarra') || 4,
       casesTotal, processadoraSelecionada, candidatas, rjPrincipais, rjRedundancia, rjTotal, sugestaoProcessadoras, sugestaoProcessadorasQtd, portasPorProcessadora,
       // topo com placas 50×50 em cima do painel principal (opcional)
       topoAtivo, topoTotalPaineis, topoLarguraPaineis, topoAlturaPaineis, topoAlturaM, alturaRealTotal,
@@ -1318,10 +1318,12 @@
       if (d.temTraseira) estrutura += ` + ${d.mfTras} ${d.mfTras === 1 ? 'extensão' : 'extensões'} de ${fmtNum(d.compTras)} metros`;
       estrutura += ` + ${d.contrapesos} contrapeso${d.contrapesos === 1 ? '' : 's'} de ${fmtNum(d.pesoContrapesoUnit)} kg cada e ${d.chapas} chapa${d.chapas === 1 ? '' : 's'}`;
       if (d.mode === 'groundSuspenso'){
-        const barras = [];
-        if (d.barras2m > 0) barras.push(`${d.barras2m} barra${d.barras2m === 1 ? '' : 's'} de elevação de 2m`);
-        if (d.barras1m > 0) barras.push(`${d.barras1m} barra${d.barras1m === 1 ? '' : 's'} de elevação de 1m`);
-        if (barras.length) estrutura += `, elevado do chão a ${fmtNum(d.alturaBarra)} m por ${barras.join(' + ')}`;
+        const tamanhoBarra = Number(d.tamanhoBarra || 1);
+        const quantidadeBarras = Number(d.totalBarras || d.barras2m || d.barras1m || 0);
+        const comprimentoBarras = Number(d.comprimentoBarras || 0);
+        if (quantidadeBarras > 0){
+          estrutura += `, elevado do chão a ${fmtNum(d.alturaBarra)} m por ${quantidadeBarras} barra${quantidadeBarras === 1 ? '' : 's'} de elevação de ${fmtNum(tamanhoBarra)} m (comprimento total de ${fmtNum(comprimentoBarras)} m)`;
+        }
       }
       estrutura += '.';
     } else if (d.mode === 'suspenso'){
@@ -1339,8 +1341,7 @@
       linhasEstrutura.push(`- Chapas: ${fmtNum(d.chapas)} un.`);
       linhasEstrutura.push(`- Contrapesos: ${fmtNum(d.contrapesos)} un. de ${fmtNum(d.pesoContrapesoUnit)} kg.`);
       if (d.mode === 'groundSuspenso'){
-        if (d.barras2m > 0) linhasEstrutura.push(`- Barras de elevação de 2 m: ${fmtNum(d.barras2m)} un.`);
-        if (d.barras1m > 0) linhasEstrutura.push(`- Barras de elevação de 1 m: ${fmtNum(d.barras1m)} un.`);
+        if (d.totalBarras > 0) linhasEstrutura.push(`- Barras de elevação: ${fmtNum(d.totalBarras)} un. de ${fmtNum(d.tamanhoBarra)} m (comprimento total: ${fmtNum(d.comprimentoBarras)} m).`);
         linhasEstrutura.push(`- Altura da elevação: ${fmtNum(d.alturaBarra)} m.`);
       }
     } else {
