@@ -468,18 +468,21 @@
         <div class="field">
           <label for="tamanhoBarra">Tamanho da barra</label>
           <select id="tamanhoBarra">
-            <option value="1">1 metro</option>
-            <option value="2" selected>2 metros</option>
-            <option value="3">3 metros</option>
-            <option value="4">4 metros</option>
+            <option value="1" selected>1 metro</option>
+            <option value="2">2 metros</option>
           </select>
         </div>
         <div class="field">
-          <label for="comprimentoBarras">Comprimento total (m)</label>
-          <input type="number" id="comprimentoBarras" min="0" step="0.1" value="9">
+          <label for="alturaBarra">Altura da elevação (m)</label>
+          <select id="alturaBarra">
+            <option value="0.5">0,5 metro</option>
+            <option value="3">3 metros</option>
+            <option value="4" selected>4 metros</option>
+            <option value="5">5 metros</option>
+          </select>
         </div>
       </div>
-      <p class="note tight">Selecione o comprimento de cada barra e o comprimento total que deverá ser coberto. A quantidade será calculada automaticamente.</p>
+      <p class="note tight">A largura da barra pode ser de 1 m ou 2 m. Informe também a altura em que o painel será elevado. O comprimento total é calculado pela largura do painel.</p>
     </div>
 
   </div>
@@ -746,7 +749,8 @@
   let processadoraSelecionada = '';
   $('processadoraSelect').addEventListener('change', e => { processadoraSelecionada = e.target.value; calc(); });
   $('tamanhoBarra').addEventListener('change', calc);
-  $('comprimentoBarras').addEventListener('input', calc);
+  $('comprimentoBarras')?.addEventListener('input', calc);
+  $('alturaBarra').addEventListener('change', calc);
 
   $('btnGround').addEventListener('click', () => setMode('ground'));
   $('btnGroundSuspenso').addEventListener('click', () => setMode('groundSuspenso'));
@@ -962,10 +966,11 @@
       } else {
         // groundSuspenso — quantidade baseada no tamanho selecionado e no comprimento total informado
         const tamanhoBarra = Math.max(0.1, num('tamanhoBarra') || 2);
-        const comprimentoBarras = Math.max(0, num('comprimentoBarras') || larguraM);
+        const comprimentoBarras = larguraM;
         totalBarras = comprimentoBarras > 0 ? Math.ceil(comprimentoBarras / tamanhoBarra) : 0;
         barras2m = tamanhoBarra === 2 ? totalBarras : 0;
         barras1m = tamanhoBarra === 1 ? totalBarras : 0;
+        const alturaBarra = Math.max(0.1, num('alturaBarra') || 4);
         const pesoBarrasTotal = totalBarras * tamanhoBarra * PESO_BARRA_POR_METRO;
         const pesoBarras2mTotal = barras2m * PESO_BARRA_2M;
         const pesoBarras1mTotal = barras1m * PESO_BARRA_1M;
@@ -1214,7 +1219,7 @@
       mfFrente, mfTras, temTraseira: (mode === 'ground' || mode === 'groundSuspenso') ? $('temTraseira').checked : false,
       compFrente: num('compFrente'), compTras: num('compTras'),
       contrapesos, chapas, pesoContrapesoUnit: num('pesoContrapeso') || 0,
-      bumpers, talhas, barras2m, barras1m, tamanhoBarra: num('tamanhoBarra') || 2, comprimentoBarras: num('comprimentoBarras') || larguraM,
+      bumpers, talhas, barras2m, barras1m, tamanhoBarra: num('tamanhoBarra') || 1, comprimentoBarras: larguraM, alturaBarra: num('alturaBarra') || 4,
       casesTotal, processadoraSelecionada, candidatas, rjPrincipais, rjRedundancia, rjTotal, sugestaoProcessadoras, sugestaoProcessadorasQtd, portasPorProcessadora,
       // topo com placas 50×50 em cima do painel principal (opcional)
       topoAtivo, topoTotalPaineis, topoLarguraPaineis, topoAlturaPaineis, topoAlturaM, alturaRealTotal,
@@ -1316,7 +1321,7 @@
         const barras = [];
         if (d.barras2m > 0) barras.push(`${d.barras2m} barra${d.barras2m === 1 ? '' : 's'} de elevação de 2m`);
         if (d.barras1m > 0) barras.push(`${d.barras1m} barra${d.barras1m === 1 ? '' : 's'} de elevação de 1m`);
-        if (barras.length) estrutura += `, elevado do chão por ${barras.join(' + ')}`;
+        if (barras.length) estrutura += `, elevado do chão a ${fmtNum(d.alturaBarra)} m por ${barras.join(' + ')}`;
       }
       estrutura += '.';
     } else if (d.mode === 'suspenso'){
@@ -1336,6 +1341,7 @@
       if (d.mode === 'groundSuspenso'){
         if (d.barras2m > 0) linhasEstrutura.push(`- Barras de elevação de 2 m: ${fmtNum(d.barras2m)} un.`);
         if (d.barras1m > 0) linhasEstrutura.push(`- Barras de elevação de 1 m: ${fmtNum(d.barras1m)} un.`);
+        linhasEstrutura.push(`- Altura da elevação: ${fmtNum(d.alturaBarra)} m.`);
       }
     } else {
       linhasEstrutura.push(`- Bumpers: ${fmtNum(d.bumpers)} un. de 3 kg.`);
