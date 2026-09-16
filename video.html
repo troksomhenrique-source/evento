@@ -1314,9 +1314,7 @@
   }
 
   $('btnDescritivo').addEventListener('click', () => {
-    const descritivo = gerarDescritivo();
-    $('descritivoText').value = descritivo;
-    localStorage.setItem('descritivo_video', descritivo);
+    $('descritivoText').value = gerarDescritivo();
     $('descritivoWrap').classList.add('show');
     $('descritivoWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
