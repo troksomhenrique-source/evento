@@ -418,53 +418,24 @@
   }
   .hero-stat .cell.weight .num{color:var(--weight);}
 
-  .delay-grid{
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap:12px;
-  }
-  .delay-box{
+
+  .delay-result{
+    margin:0 0 14px;
+    padding:10px 12px;
     background:var(--panel-2);
     border:1px solid var(--line);
-    border-top:2px solid var(--power);
     border-radius:3px;
-    padding:14px;
-  }
-  .delay-box .field{ margin-bottom:10px; }
-  .delay-name-input{
-    width:100%;
-    background:transparent;
-    border:none;
-    border-bottom:1px solid var(--line);
-    color:var(--text);
-    font-family:'Space Grotesk', sans-serif;
-    font-weight:600;
-    font-size:14px;
-    padding:2px 0 8px;
-    margin-bottom:10px;
-  }
-  .delay-name-input:focus{ outline:none; border-color:var(--power); }
-  .delay-box-result{
-    margin-top:12px;
-    padding-top:12px;
-    border-top:1px solid var(--line);
     display:flex;
-    flex-direction:column;
-    gap:6px;
-  }
-  .delay-box-result-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
+    flex-wrap:wrap;
+    gap:8px 18px;
     font-size:12.5px;
     color:var(--muted);
   }
-  .delay-box-result-row strong{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:15px;
+  .delay-result strong{
     color:var(--power);
+    font-family:'IBM Plex Mono', monospace;
   }
-  .delay-box-result-row.final strong{ color:var(--accent); }
+  .delay-result .final{color:var(--accent);}
 
   .note{
     font-size:12.5px;
@@ -666,37 +637,6 @@
     <p class="note tight" id="notaSaidas"></p>
   </div>
 
-  <div class="card">
-    <p class="section-title">Delay / torres de delay <span class="sub">tempo calculado pela distância, velocidade do som e temperatura</span></p>
-    <div class="row3">
-      <div class="field">
-        <label>Quantidade de sistemas de delay</label>
-        <input type="number" id="qtdDelays" min="0" step="1" value="0">
-      </div>
-      <div class="field">
-        <label>Temperatura ambiente (°C)</label>
-        <input type="number" id="tempAmbiente" step="0.5" value="25">
-      </div>
-      <div class="field">
-        <label>Margem de segurança extra (ms)</label>
-        <input type="number" id="margemDelay" min="0" step="1" value="0">
-      </div>
-    </div>
-    <p class="note tight" id="notaVelocidadeSom"></p>
-
-    <table id="tblDelays" style="margin-top:14px;">
-      <thead>
-        <tr>
-          <th>Posição</th>
-          <th class="num">Distância (m)</th>
-          <th class="num">Delay calculado</th>
-          <th class="num">Delay + margem</th>
-        </tr>
-      </thead>
-      <tbody id="tblDelaysBody"></tbody>
-    </table>
-    <p class="note tight" id="notaDelays" style="display:none;">Delay = distância ÷ velocidade do som (calculada a partir da temperatura ambiente). A margem de segurança soma alguns ms extras ao valor calculado — prática comum para evitar que a torre de delay "adiante" o som em relação ao PA principal.</p>
-  </div>
 
   <div class="card">
     <p class="section-title">Capacidade da mesa e expansão <span class="sub" id="statusMesaWrap"></span></p>
@@ -1012,7 +952,6 @@
   let fontes = []; // { id, type, qty }
   let fonteCounter = 0;
 
-  let delays = []; // { nome, distancia }
 
   const PESO_BUMPER_SOM = 2;       // kg — peso de referência do frame/olhal de voo por caixa
   const PESO_TALHA_CORPO = 8;      // kg — peso do corpo da talha manual de corrente (sem a corrente)
@@ -1032,7 +971,7 @@
   // Começa com 1 grupo só — use o botão de copiar (⧉) em cada card pra duplicar e renomear
   // (PA Principal L, PA Principal R, Sub, Monitor 1...), do mesmo jeito que a calculadora de luz.
   let grupos = [
-    { id:'g1', nome:'Posição 1', items:[], comprimento:0, suspenso:true, usaAncoragem:true, qtdPontos:1, capacidadePonto:500, usaTalha:false, qtdTalhas:0, comprimentoTalha:3, isBoxtruss:false, trussTipo:'q30', comprimentoTruss:0 }
+    { id:'g1', nome:'Posição 1', items:[], comprimento:0, suspenso:true, usaAncoragem:true, qtdPontos:1, capacidadePonto:500, usaTalha:false, qtdTalhas:0, comprimentoTalha:3, isBoxtruss:false, trussTipo:'q30', comprimentoTruss:0, useDelay:false, delayDistancia:0, delayAltura:0, delayTemperatura:25, delayMargem:0 }
   ];
   let grupoCounter = 1;
   let ultimoCalculo = {};
@@ -1061,88 +1000,21 @@
     calc();
   }
 
-  // ===== delay / torres de delay =====
-  // Velocidade do som no ar em função da temperatura ambiente (aproximação linear
-  // padrão de áudio: v = 331.3 + 0.606 * T, T em °C). Delay (ms) = distância (m) / v (m/s) * 1000.
+  // ===== cálculo de delay por grupo =====
+  // Velocidade do som no ar em função da temperatura ambiente.
   function velocidadeSom(tempC){
     return 331.3 + 0.606 * tempC;
   }
 
-  function ajustarQtdDelays(qtd){
-    qtd = Math.max(0, parseInt(qtd, 10) || 0);
-    if (qtd > delays.length){
-      for (let i = delays.length; i < qtd; i++){
-        delays.push({ nome: 'Delay ' + (i + 1), distancia: 0 });
-      }
-    } else {
-      delays = delays.slice(0, qtd);
-    }
-    renderDelays();
-  }
-
-  function calcDelayRow(idx){
-    const temp = parseFloat($('tempAmbiente').value);
-    const margem = Math.max(0, parseFloat($('margemDelay').value) || 0);
-    const v = velocidadeSom(isFinite(temp) ? temp : 25);
-    const d = delays[idx];
-    if (!d) return { delayMs:0, delayFinal:0 };
-    const delayMs = v > 0 ? (d.distancia / v) * 1000 : 0;
-    return { delayMs, delayFinal: delayMs + margem };
-  }
-
-  // Atualiza só os valores calculados da linha (sem redesenhar os inputs), pra não
-  // perder o foco/cursor enquanto o usuário digita a distância.
-  function updateDelayRowOutputs(idx){
-    const { delayMs, delayFinal } = calcDelayRow(idx);
-    const cellCalc = document.querySelector(`.delayCalcCell[data-didx="${idx}"]`);
-    const cellFinal = document.querySelector(`.delayFinalCell[data-didx="${idx}"]`);
-    if (cellCalc) cellCalc.textContent = fmt(delayMs) + ' ms';
-    if (cellFinal) cellFinal.textContent = fmt(delayFinal) + ' ms';
-  }
-
-  function renderDelays(){
-    const temp = parseFloat($('tempAmbiente').value);
-    const v = velocidadeSom(isFinite(temp) ? temp : 25);
-
-    $('notaVelocidadeSom').innerHTML = `Velocidade do som a <strong>${fmt(temp)}°C</strong>: <strong>${fmt(v)} m/s</strong> (${fmt(v * 3.6)} km/h).`;
-
-    $('tblDelaysBody').innerHTML = delays.length === 0
-      ? `<tr class="empty-row"><td colspan="4">Informe a quantidade de sistemas de delay acima para calcular o tempo de cada torre.</td></tr>`
-      : delays.map((d, i) => {
-          const { delayMs, delayFinal } = calcDelayRow(i);
-          return `
-        <tr>
-          <td><input type="text" class="qty-input" style="width:100%; text-align:left;" value="${d.nome}" data-didx="${i}" data-dfield="nome"></td>
-          <td class="num"><input type="number" class="qty-input" min="0" step="0.1" value="${d.distancia}" data-didx="${i}" data-dfield="distancia"></td>
-          <td class="num mono delayCalcCell" data-didx="${i}">${fmt(delayMs)} ms</td>
-          <td class="num mono delayFinalCell" data-didx="${i}" style="color:var(--accent); font-weight:600;">${fmt(delayFinal)} ms</td>
-        </tr>`;
-        }).join('');
-
-    document.querySelectorAll('#tblDelaysBody input[data-didx]').forEach(inp => {
-      inp.addEventListener('input', () => {
-        const idx = parseInt(inp.dataset.didx, 10);
-        const field = inp.dataset.dfield;
-        if (!delays[idx]) return;
-        if (field === 'distancia'){
-          delays[idx].distancia = Math.max(0, parseFloat(inp.value) || 0);
-          updateDelayRowOutputs(idx);
-        } else {
-          delays[idx].nome = inp.value;
-        }
-      });
-    });
-
-    $('notaDelays').style.display = delays.length ? 'block' : 'none';
-  }
-
-  function refreshDelayOutputs(){
-    // temperatura/margem mudaram: atualiza a nota de velocidade e todos os valores calculados,
-    // sem recriar os inputs (evita perder o foco).
-    const temp = parseFloat($('tempAmbiente').value);
-    const v = velocidadeSom(isFinite(temp) ? temp : 25);
-    $('notaVelocidadeSom').innerHTML = `Velocidade do som a <strong>${fmt(temp)}°C</strong>: <strong>${fmt(v)} m/s</strong> (${fmt(v * 3.6)} km/h).`;
-    delays.forEach((d, i) => updateDelayRowOutputs(i));
+  function calcDelayGrupo(g){
+    const distancia = Math.max(0, Number(g.delayDistancia) || 0);
+    const altura = Math.max(0, Number(g.delayAltura) || 0);
+    const temp = Number.isFinite(Number(g.delayTemperatura)) ? Number(g.delayTemperatura) : 25;
+    const margem = Math.max(0, Number(g.delayMargem) || 0);
+    const v = velocidadeSom(temp);
+    const distanciaReal = Math.sqrt((distancia ** 2) + (altura ** 2));
+    const delayMs = v > 0 ? (distanciaReal / v) * 1000 : 0;
+    return { distancia, altura, temp, margem, v, distanciaReal, delayMs, delayFinal: delayMs + margem };
   }
 
   // ===== mesa: abas de marca + lista de modelos =====
@@ -1305,6 +1177,33 @@
           </div>
         </div>` : ''}
 
+        <div class="toggle-strip" style="padding-top:10px; border-top:1px solid var(--line);">
+          <label class="toggle-chip" title="Calcula o delay acústico considerando distância horizontal e diferença de altura entre o PA principal e esta posição.">
+            <input type="checkbox" id="delay-grupo-${g.id}" ${g.useDelay ? 'checked' : ''}> Use delay
+          </label>
+        </div>
+        ${g.useDelay ? `
+        <div class="subfields cols3">
+          <div class="field">
+            <label title="Distância horizontal entre o PA principal e a posição do delay">Distância horizontal (m)</label>
+            <input type="number" id="delaydist-grupo-${g.id}" min="0" step="0.1" value="${g.delayDistancia || 0}">
+          </div>
+          <div class="field">
+            <label title="Diferença vertical entre o PA principal e o delay">Diferença de altura (m)</label>
+            <input type="number" id="delayalt-grupo-${g.id}" min="0" step="0.1" value="${g.delayAltura || 0}">
+          </div>
+          <div class="field">
+            <label>Temperatura (°C)</label>
+            <input type="number" id="delaytemp-grupo-${g.id}" step="0.5" value="${g.delayTemperatura ?? 25}">
+          </div>
+          <div class="field">
+            <label>Margem extra (ms)</label>
+            <input type="number" id="delaymargem-grupo-${g.id}" min="0" step="1" value="${g.delayMargem || 0}">
+          </div>
+        </div>
+        <div class="delay-result" id="delayresult-grupo-${g.id}"></div>
+        ` : ''}
+
         <div class="add-row" style="margin-top:14px; padding-top:14px; border-top:1px solid var(--line);">
           <div class="field">
             <label>Caixa</label>
@@ -1407,6 +1306,15 @@
         calc();
       });
     });
+    wrap.querySelectorAll('[id^="delay-grupo-"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const id = cb.id.replace('delay-grupo-','');
+        const g = grupos.find(g => g.id === id);
+        if (g) g.useDelay = cb.checked;
+        buildGruposCards();
+        calc();
+      });
+    });
     // campos numéricos de ancoragem/talha/comprimento
     wrap.querySelectorAll('[id^="pontos-grupo-"]').forEach(inp => inp.addEventListener('input', () => { const g = grupos.find(g=>g.id===inp.id.replace('pontos-grupo-','')); if(g) g.qtdPontos = Math.max(1, parseInt(inp.value,10)||1); calc(); }));
     wrap.querySelectorAll('[id^="capponto-grupo-"]').forEach(inp => inp.addEventListener('input', () => { const g = grupos.find(g=>g.id===inp.id.replace('capponto-grupo-','')); if(g) g.capacidadePonto = Math.max(0, parseFloat(inp.value)||0); calc(); }));
@@ -1414,6 +1322,10 @@
     wrap.querySelectorAll('[id^="comptalha-grupo-"]').forEach(inp => inp.addEventListener('input', () => { const g = grupos.find(g=>g.id===inp.id.replace('comptalha-grupo-','')); if(g) g.comprimentoTalha = Math.max(0, parseFloat(inp.value)||0); calc(); }));
     wrap.querySelectorAll('[id^="truss-grupo-"]').forEach(sel => sel.addEventListener('change', () => { const g = grupos.find(g=>g.id===sel.id.replace('truss-grupo-','')); if(g) g.trussTipo = sel.value; calc(); }));
     wrap.querySelectorAll('[id^="comptruss-grupo-"]').forEach(inp => inp.addEventListener('input', () => { const g = grupos.find(g=>g.id===inp.id.replace('comptruss-grupo-','')); if(g) g.comprimentoTruss = Math.max(0, parseFloat(inp.value)||0); calc(); }));
+    wrap.querySelectorAll('[id^="delaydist-grupo-"]').forEach(inp => inp.addEventListener('input', () => { const g = grupos.find(g=>g.id===inp.id.replace('delaydist-grupo-','')); if(g) g.delayDistancia = Math.max(0, parseFloat(inp.value)||0); calc(); }));
+    wrap.querySelectorAll('[id^="delayalt-grupo-"]').forEach(inp => inp.addEventListener('input', () => { const g = grupos.find(g=>g.id===inp.id.replace('delayalt-grupo-','')); if(g) g.delayAltura = Math.max(0, parseFloat(inp.value)||0); calc(); }));
+    wrap.querySelectorAll('[id^="delaytemp-grupo-"]').forEach(inp => inp.addEventListener('input', () => { const g = grupos.find(g=>g.id===inp.id.replace('delaytemp-grupo-','')); if(g) g.delayTemperatura = parseFloat(inp.value) || 25; calc(); }));
+    wrap.querySelectorAll('[id^="delaymargem-grupo-"]').forEach(inp => inp.addEventListener('input', () => { const g = grupos.find(g=>g.id===inp.id.replace('delaymargem-grupo-','')); if(g) g.delayMargem = Math.max(0, parseFloat(inp.value)||0); calc(); }));
     wrap.querySelectorAll('[id^="comp-grupo-"]').forEach(inp => inp.addEventListener('input', () => { const g = grupos.find(g=>g.id===inp.id.replace('comp-grupo-','')); if(g) g.comprimento = Math.max(0, parseFloat(inp.value)||0); calc(); }));
 
     // adicionar caixa ao grupo
@@ -1432,7 +1344,7 @@
 
   function addGrupo(){
     grupoCounter++;
-    grupos.push({ id:'g'+grupoCounter, nome:'Posição '+grupoCounter, items:[], comprimento:0, suspenso:false, usaAncoragem:false, qtdPontos:1, capacidadePonto:500, usaTalha:false, qtdTalhas:0, comprimentoTalha:3, isBoxtruss:false, trussTipo:'q30', comprimentoTruss:0 });
+    grupos.push({ id:'g'+grupoCounter, nome:'Posição '+grupoCounter, items:[], comprimento:0, suspenso:false, usaAncoragem:false, qtdPontos:1, capacidadePonto:500, usaTalha:false, qtdTalhas:0, comprimentoTalha:3, isBoxtruss:false, trussTipo:'q30', comprimentoTruss:0, useDelay:false, delayDistancia:0, delayAltura:0, delayTemperatura:25, delayMargem:0 });
     buildGruposCards();
     calc();
   }
@@ -1611,6 +1523,20 @@
       let usaAncoragemFinal=false, qtdPontosFinal=0, capacidadePontoFinal=0, pesoSuspensoFinal=null, pesoPorPontoFinal=null, pesoDisponivelFinal=null, sobrecarregadoFinal=false;
 
       const notaPartes = [];
+      if (g.useDelay){
+        const dr = calcDelayGrupo(g);
+        const delayEl = $('delayresult-grupo-' + g.id);
+        if (delayEl){
+          delayEl.innerHTML = `
+            <span>Distância horizontal: <strong>${fmt(dr.distancia)} m</strong></span>
+            <span>Diferença de altura: <strong>${fmt(dr.altura)} m</strong></span>
+            <span>Distância acústica: <strong>${fmt(dr.distanciaReal)} m</strong></span>
+            <span>Velocidade do som: <strong>${fmt(dr.v)} m/s</strong></span>
+            <span>Delay: <strong>${fmt(dr.delayMs)} ms</strong></span>
+            ${dr.margem > 0 ? `<span>Delay final: <strong class="final">${fmt(dr.delayFinal)} ms</strong></span>` : ''}`;
+        }
+        notaPartes.push(`Delay: <strong>${fmt(dr.delayFinal)} ms</strong> (${fmt(dr.distanciaReal)} m de distância acústica)`);
+      }
       if (compGrupo > 0) notaPartes.push(`Cabeamento: <strong>${fmt(pesoCabeamento)}kg</strong>`);
       if (g.isBoxtruss && comprimentoTruss > 0) notaPartes.push(`Treliça ${trussLabel} (${fmt(comprimentoTruss)}m): <strong>${fmt(pesoTruss)}kg</strong>`);
 
@@ -1660,7 +1586,10 @@
         pesoBumpers, usaTalha:usaTalhaFinal, qtdTalhas:qtdTalhasFinal, comprimentoTalha:comprimentoTalhaFinal,
         pesoTalhas:pesoTalhasFinal, pesoSuspenso:pesoSuspensoFinal, usaAncoragem:usaAncoragemFinal,
         qtdPontos:qtdPontosFinal, capacidadePonto:capacidadePontoFinal, pesoPorPonto:pesoPorPontoFinal,
-        pesoDisponivel:pesoDisponivelFinal, sobrecarregado:sobrecarregadoFinal
+        pesoDisponivel:pesoDisponivelFinal, sobrecarregado:sobrecarregadoFinal,
+        useDelay:!!g.useDelay, delayDistancia:Number(g.delayDistancia)||0, delayAltura:Number(g.delayAltura)||0,
+        delayTemperatura:Number.isFinite(Number(g.delayTemperatura)) ? Number(g.delayTemperatura) : 25, delayMargem:Number(g.delayMargem)||0,
+        delayDistanciaAcustica:g.useDelay ? calcDelayGrupo(g).distanciaReal : 0, delayMs:g.useDelay ? calcDelayGrupo(g).delayMs : 0, delayFinal:g.useDelay ? calcDelayGrupo(g).delayFinal : 0
       });
 
       if (g.suspenso){
@@ -1782,6 +1711,11 @@
       const linhas = [];
       linhas.push(`${g.nome}:`);
       if (g.equipamentos.length) linhas.push(`  Caixas: ${g.equipamentos.map(e=>`${e.qty}x ${e.label}`).join(', ')}.`);
+      if (g.useDelay){
+        linhas.push(`  Use delay: sim · distância horizontal: ${fmtNum(g.delayDistancia)} m · diferença de altura: ${fmtNum(g.delayAltura)} m.`);
+        linhas.push(`  Distância acústica calculada: ${fmtNum(g.delayDistanciaAcustica)} m · velocidade do som: ${fmtNum(g.delayTemperatura)}°C / ${fmtNum(velocidadeSom(g.delayTemperatura))} m/s.`);
+        linhas.push(`  Delay calculado: ${fmtNum(g.delayMs)} ms${g.delayMargem > 0 ? ` · com margem: ${fmtNum(g.delayFinal)} ms` : ''}.`);
+      }
       linhas.push(`  Consumo: ${fmtNum(g.watts)} W.`);
       if (g.comprimentoCabos > 0) linhas.push(`  Cabeamento: ${fmtNum(g.comprimentoCabos)} m · peso calculado: ${fmtNum(g.pesoCabeamento)} kg.`);
       if (g.isBoxtruss && g.comprimentoTruss > 0) linhas.push(`  Treliça: ${g.trussLabel} · ${fmtNum(g.comprimentoTruss)} m · peso calculado: ${fmtNum(g.pesoTruss)} kg.`);
@@ -1806,14 +1740,6 @@
 
     const linhasAC = (d.circuitosPorGrupo||[]).filter(r => r.watts > 0).map(r => `- ${r.nome}: ${fmtNum(r.watts)} W · ${fmtNum(r.amps)} A · ${r.circuitos} circuito${r.circuitos===1?'':'s'} AC`);
 
-    const tempAmb = parseFloat($('tempAmbiente').value);
-    const margemAtual = Math.max(0, parseFloat($('margemDelay').value) || 0);
-    const vSomAtual = velocidadeSom(isFinite(tempAmb) ? tempAmb : 25);
-    const linhasDelay = delays.map((dl, i) => {
-      const { delayMs, delayFinal } = calcDelayRow(i);
-      return `- ${dl.nome}: ${fmtNum(dl.distancia)} m · delay calculado: ${fmtNum(delayMs)} ms${margemAtual > 0 ? ` · com margem: ${fmtNum(delayFinal)} ms` : ''}`;
-    });
-
     return [
       'DESCRITIVO — ÁUDIO',
       '',
@@ -1823,11 +1749,6 @@
       `Buses (aux+matriz) disponíveis: ${fmtNum(d.busesTotal)} · necessários: ${fmtNum(d.busesNecessarios)} (${fmtNum(d.auxNecessarios)} retornos + ${fmtNum(d.matrizNecessarios)} matrizes/zonas).`,
       `Entradas físicas disponíveis: ${fmtNum(d.entradasFisicasTotais)}${d.usaExp ? ` (com ${fmtNum(d.qtdExp)}x ${d.expLabel})` : ''}.`,
       `Saídas físicas disponíveis: ${fmtNum(d.saidasFisicasTotais)} · necessárias: ${fmtNum(d.saidasFisicasNecessarias)}${d.usaProc ? ` (inclui processador${d.nomeProcessador ? ' ' + d.nomeProcessador : ''} com ${fmtNum(d.saidasProcessador)} saídas)` : ''}.`,
-      ...(linhasDelay.length ? [
-        '',
-        `DELAY (torres/sistemas de delay) — velocidade do som a ${fmtNum(tempAmb)}°C: ${fmtNum(vSomAtual)} m/s.`,
-        ...linhasDelay
-      ] : []),
       '',
       `${d.totalCaixas} caixas de PA no total:`,
       ...linhasCaixas.map(l => `- ${l}`),
@@ -1878,10 +1799,6 @@
   $('btnAddGrupo').addEventListener('click', addGrupo);
   $('auxNecessarios').addEventListener('input', calc);
   $('matrizNecessarios').addEventListener('input', calc);
-  renderDelays();
-  $('qtdDelays').addEventListener('input', e => ajustarQtdDelays(e.target.value));
-  $('tempAmbiente').addEventListener('input', refreshDelayOutputs);
-  $('margemDelay').addEventListener('input', refreshDelayOutputs);
   $('tensaoRede').addEventListener('input', calc);
   $('tensaoRede').addEventListener('change', calc);
   $('ampsCircuito').addEventListener('input', calc);
