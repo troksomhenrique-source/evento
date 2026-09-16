@@ -464,6 +464,22 @@
 
     <div class="card hidden" id="cardBarraElevacao">
       <p class="section-title">Barra de elevação</p>
+      <div class="row2">
+        <div class="field">
+          <label for="tamanhoBarra">Tamanho da barra</label>
+          <select id="tamanhoBarra">
+            <option value="1">1 metro</option>
+            <option value="2" selected>2 metros</option>
+            <option value="3">3 metros</option>
+            <option value="4">4 metros</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="comprimentoBarras">Comprimento total (m)</label>
+          <input type="number" id="comprimentoBarras" min="0" step="0.1" value="9">
+        </div>
+      </div>
+      <p class="note tight">Selecione o comprimento de cada barra e o comprimento total que deverá ser coberto. A quantidade será calculada automaticamente.</p>
     </div>
 
   </div>
@@ -551,7 +567,8 @@
     </div>
 
     <div class="card">
-      <p class="section-title">Processadora recomendada <span class="mono" style="font-size:12px;">NovaStar</span></p>
+      <p class="section-title">Processadora NovaStar <span class="mono" style="font-size:12px;">seleção manual + verificação</span></p>
+      <div class="field"><label for="processadoraSelect">Processadora escolhida</label><select id="processadoraSelect"><option value="">Selecione após informar o painel</option></select></div>
       <table>
         <tbody id="tblPortasResumo"></tbody>
       </table>
@@ -700,6 +717,7 @@
   const PESO_TALHA = 10;
   const PESO_BARRA_2M = 7;
   const PESO_BARRA_1M = 5;
+  const PESO_BARRA_POR_METRO = 3.5;
 
   // Processadoras Nova Star — capacidade de carga (pixels) e resolução máxima de
   // entrada de vídeo, baseado em datasheets oficiais/revendedores. Séries H usam
@@ -725,6 +743,10 @@
   ];
 
   const $ = id => document.getElementById(id);
+  let processadoraSelecionada = '';
+  $('processadoraSelect').addEventListener('change', e => { processadoraSelecionada = e.target.value; calc(); });
+  $('tamanhoBarra').addEventListener('change', calc);
+  $('comprimentoBarras').addEventListener('input', calc);
 
   $('btnGround').addEventListener('click', () => setMode('ground'));
   $('btnGroundSuspenso').addEventListener('click', () => setMode('groundSuspenso'));
@@ -938,27 +960,24 @@
         $('tituloEstrutura').textContent = 'Estrutura (Ground Stacked)';
         $('outSuporteLabel').textContent = 'mãos francesas';
       } else {
-        // groundSuspenso — mão francesa (igual ao ground) + elevado por barras (2m e 1m)
-        // cobrindo a largura total do painel
-        barras2m = larguraM > 0 ? Math.floor(larguraM / 2) : 0;
-        const restanteM = larguraM - barras2m * 2;
-        barras1m = restanteM > 0.001 ? 1 : 0;
-        totalBarras = barras2m + barras1m;
-
+        // groundSuspenso — quantidade baseada no tamanho selecionado e no comprimento total informado
+        const tamanhoBarra = Math.max(0.1, num('tamanhoBarra') || 2);
+        const comprimentoBarras = Math.max(0, num('comprimentoBarras') || larguraM);
+        totalBarras = comprimentoBarras > 0 ? Math.ceil(comprimentoBarras / tamanhoBarra) : 0;
+        barras2m = tamanhoBarra === 2 ? totalBarras : 0;
+        barras1m = tamanhoBarra === 1 ? totalBarras : 0;
+        const pesoBarrasTotal = totalBarras * tamanhoBarra * PESO_BARRA_POR_METRO;
         const pesoBarras2mTotal = barras2m * PESO_BARRA_2M;
         const pesoBarras1mTotal = barras1m * PESO_BARRA_1M;
-        const pesoBarrasTotal = pesoBarras2mTotal + pesoBarras1mTotal;
 
         pesoEstruturaTotal = pesoEstruturaMF + pesoBarrasTotal;
         totalSuporte = totalMF;
 
         estruturaRowsHTML = estruturaRowsMF
-          + rowEstrutura('Barra de elevação (2m)', barras2m, PESO_BARRA_2M)
-          + (barras1m > 0 ? rowEstrutura('Barra de elevação (1m)', barras1m, PESO_BARRA_1M) : '');
+           + rowEstrutura(`Barra de elevação (${fmt(tamanhoBarra)}m)`, totalBarras, tamanhoBarra * PESO_BARRA_POR_METRO);
 
         pesoRowsEstruturaHTML = pesoRowsMF
-          + rowPeso('Barras de elevação 2m', barras2m, pesoBarras2mTotal)
-          + (barras1m > 0 ? rowPeso('Barras de elevação 1m', barras1m, pesoBarras1mTotal) : '');
+           + rowPeso(`Barras de elevação (${fmt(tamanhoBarra)}m)`, totalBarras, pesoBarrasTotal);
 
         $('tituloEstrutura').textContent = 'Estrutura (Ground Suspenso)';
         $('outSuporteLabel').textContent = 'mãos francesas';
@@ -1119,6 +1138,13 @@
       <tr><td style="font-weight:600;">Total de portas RJ45 (principal + redundância)</td><td class="num" style="font-weight:600;">${rjTotal} <span class="mono" style="color:var(--muted); font-size:12px;">(${fmt(capacidadeNecessaria)} px)</span></td></tr>
     `;
 
+    const procSelect = $('processadoraSelect');
+    const prevProc = processadoraSelecionada;
+    procSelect.innerHTML = '<option value="">Selecione após informar o painel</option>' + PROCESSADORAS_NOVASTAR.map(p => `<option value="${p.nome}">${p.nome}</option>`).join('');
+    procSelect.value = PROCESSADORAS_NOVASTAR.some(p => p.nome === prevProc) ? prevProc : '';
+    processadoraSelecionada = procSelect.value;
+    const procEscolhida = PROCESSADORAS_NOVASTAR.find(p => p.nome === processadoraSelecionada);
+
     if (totalPaineis === 0){
       $('tblProcessadora').innerHTML = `<tr><td colspan="5">Informe as dimensões do painel.</td></tr>`;
       $('notaProcessadora').innerHTML = '';
@@ -1148,6 +1174,11 @@
 
       const semEntrada = candidatas.filter(p => !(p.maxInputW >= resolucaoTotalX && p.maxInputH >= resolucaoTotalY));
       let notas = [];
+      if (procEscolhida){
+        const okSaida = procEscolhida.maxPixels >= capacidadeNecessaria && procEscolhida.outputPorts >= rjPrincipais;
+        const okEntrada = procEscolhida.maxInputW >= resolucaoTotalX && procEscolhida.maxInputH >= resolucaoTotalY;
+        notas.push(okSaida && okEntrada ? `✓ <strong>${procEscolhida.nome}</strong> atende à carga, portas e resolução informadas.` : `⚠ <strong>${procEscolhida.nome}</strong> foi selecionada, mas não atende completamente ao painel: ${!okSaida ? 'capacidade/portas de saída insuficientes. ' : ''}${!okEntrada ? 'resolução máxima de entrada insuficiente.' : ''}`);
+      }
       if (semEntrada.length > 0){
         notas.push(`Painel precisa de <strong>${resolucaoTotalX}×${resolucaoTotalY}px</strong> de resolução. ${semEntrada.map(p => p.nome).join(', ')} atende(m) a saída (portas/pixels), mas a entrada de vídeo máxima é menor que isso — a fonte precisaria ser dividida em camadas/mosaico, ou use um modelo com entrada maior.`);
       }
@@ -1183,8 +1214,8 @@
       mfFrente, mfTras, temTraseira: (mode === 'ground' || mode === 'groundSuspenso') ? $('temTraseira').checked : false,
       compFrente: num('compFrente'), compTras: num('compTras'),
       contrapesos, chapas, pesoContrapesoUnit: num('pesoContrapeso') || 0,
-      bumpers, talhas, barras2m, barras1m,
-      casesTotal, candidatas, rjPrincipais, rjRedundancia, rjTotal, sugestaoProcessadoras, sugestaoProcessadorasQtd, portasPorProcessadora,
+      bumpers, talhas, barras2m, barras1m, tamanhoBarra: num('tamanhoBarra') || 2, comprimentoBarras: num('comprimentoBarras') || larguraM,
+      casesTotal, processadoraSelecionada, candidatas, rjPrincipais, rjRedundancia, rjTotal, sugestaoProcessadoras, sugestaoProcessadorasQtd, portasPorProcessadora,
       // topo com placas 50×50 em cima do painel principal (opcional)
       topoAtivo, topoTotalPaineis, topoLarguraPaineis, topoAlturaPaineis, topoAlturaM, alturaRealTotal,
       pesoPaineisTopo, potenciaTotalWTopo, cabosEnergiaTopo, cabosSinalTopo, paineisPorCaboEnergiaTopo,
@@ -1356,6 +1387,7 @@
       `- Capacidade considerada por porta: 655.360 pixels.`,
       '',
       'PROCESSADORAS NOVASTAR',
+      `- Processadora selecionada: ${d.processadoraSelecionada || 'não selecionada'}`,
       `- Sugestão calculada: ${d.sugestaoProcessadoras || 'calcular conforme carga do painel'}`,
       ...processadoras,
       '',
