@@ -10,8 +10,59 @@
 header{border-bottom:1px solid var(--line);padding:34px 20px 30px}.header-inner,main,.export-bar{max-width:1100px;margin:0 auto}.back-link{color:var(--muted);text-decoration:none;font-size:13px}.back-link:hover{color:var(--accent)}
 .tag{margin:22px 0 8px;color:var(--accent);font-size:12px;text-transform:uppercase;letter-spacing:.12em}h1{margin:0;font-size:32px;letter-spacing:-.03em}header p:last-child{max-width:780px;color:var(--muted);line-height:1.6;margin:10px 0 0}
 .export-bar{padding:16px 20px 0;display:flex;justify-content:flex-end;gap:10px}.btn{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--accent);color:var(--text);padding:10px 18px;border-radius:3px;font-weight:600;font-size:13px;cursor:pointer}.btn:hover{border-color:var(--accent)}
-main{padding:20px}.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:18px;padding:22px}.section-title{margin:0 0 14px;font-weight:700;font-size:15px}.section-title span{color:var(--accent);margin-right:8px}.empty{color:var(--muted);font-size:13px}.text{white-space:pre-wrap;font-family:'IBM Plex Mono',Consolas,monospace;font-size:13px;line-height:1.7;color:var(--text)}
+main{padding:20px}.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:18px;padding:22px}.section-title{margin:0 0 14px;font-weight:700;font-size:15px}.section-title span{color:var(--accent);margin-right:8px}.empty{color:var(--muted);font-size:13px}
 .status{color:var(--muted);font-size:12px;margin:0 0 18px}.actions{display:flex;gap:10px}
+.legacy-hint{color:var(--muted);font-size:12px;margin:0 0 12px;padding:8px 10px;border:1px dashed var(--line);border-radius:3px}
+
+/* ===== relatório estruturado (usado na tela com tema escuro e na impressão com tema claro) ===== */
+.rpt-screen, .rpt-print{width:100%}
+h3.blk-title{font-size:12.5px;margin:14px 0 8px;text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi-big{font-weight:800;font-size:19px;line-height:1.15}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;line-height:1.4}
+.kpi-sub{text-transform:none;letter-spacing:0;opacity:.8}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.ibox{border-radius:3px;padding:10px 12px;margin-bottom:10px}
+.ibox h3{font-size:12px;margin:0 0 6px;font-weight:800;text-transform:none}
+.iline{margin:3px 0;font-size:12px;line-height:1.5}
+.iline b{font-weight:700}
+.itable{width:100%;border-collapse:collapse;margin:6px 0 12px;font-size:11.5px}
+.itable th{text-align:left;padding:7px 8px;font-size:10px;text-transform:uppercase;font-weight:800}
+.itable td{padding:7px 8px;vertical-align:top;font-size:12px}
+.itable .right,.itable td.right{text-align:right;white-space:nowrap}
+.inote{border-radius:3px;padding:8px 10px;font-size:11px;margin-top:6px}
+.warn{font-weight:700}
+
+/* tema escuro (tela) */
+.rpt-screen .kpi-box{background:var(--panel-2);border:1px solid var(--line);border-top:2px solid var(--accent);border-radius:3px;padding:12px}
+.rpt-screen .kpi-big{color:var(--text)}
+.rpt-screen .kpi-label{color:var(--muted)}
+.rpt-screen h3.blk-title{color:var(--text)}
+.rpt-screen .ibox{background:var(--panel-2);border:1px solid var(--line);border-left:3px solid var(--accent)}
+.rpt-screen .ibox h3{color:var(--accent)}
+.rpt-screen .iline{color:var(--text)}
+.rpt-screen .iline b{color:var(--muted);font-weight:600}
+.rpt-screen .itable th{background:var(--panel-2);color:var(--muted);border-bottom:1px solid var(--line)}
+.rpt-screen .itable td{border-bottom:1px solid var(--line);color:var(--text)}
+.rpt-screen .inote{background:var(--panel-2);border:1px dashed var(--line);color:var(--muted)}
+.rpt-screen .warn{color:#ff8a80}
+
+/* tema claro (impressão) */
+.rpt-print{color:#172033;font-family:Arial,Helvetica,sans-serif}
+.rpt-print .kpi-box{background:#111a2d;border-radius:3px;padding:10px 11px}
+.rpt-print .kpi-big{color:#19b9ff}
+.rpt-print .kpi-label{color:#c2ccda}
+.rpt-print h3.blk-title{color:#172033;border-bottom:2px solid #172033;padding-bottom:4px}
+.rpt-print .ibox{background:#f4f7fa;border:1px solid #d9e0e8;border-left:3px solid #172033}
+.rpt-print .ibox h3{color:#172033}
+.rpt-print .iline{color:#172033}
+.rpt-print .iline b{font-weight:800}
+.rpt-print .itable th{background:#edf2f7;border-bottom:1px solid #cfd7e1}
+.rpt-print .itable td{border-bottom:1px solid #d9e0e8}
+.rpt-print .inote{background:#f4f7fa;border:1px dashed #c5cfdb;color:#536176}
+.rpt-print .inote b{color:#172033}
+.rpt-print .warn{color:#a83f34}
+
 @media print{
   @page{size:A4;margin:13mm 14mm 15mm 14mm}
   body{background:#fff;color:#172033;font-family:Arial,Helvetica,sans-serif}
@@ -20,36 +71,18 @@ main{padding:20px}.card{background:var(--panel);border:1px solid var(--line);bor
 }
 #printReport{display:none}
 .print-page{width:100%;color:#172033;font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;line-height:1.35}
-.print-cover{background:#111a2d;color:#fff;border-radius:6px;padding:18px 20px 17px;margin-bottom:15px}
-.print-cover h1{font-size:22px;line-height:1.15;margin:0 0 5px;font-weight:800;letter-spacing:.01em}
+.print-cover{background:#111a2d;color:#fff;border-radius:6px;padding:20px 22px 18px;margin-bottom:16px}
+.print-cover .kicker{color:#19b9ff;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px}
+.print-cover h1{font-size:23px;line-height:1.18;margin:0 0 6px;font-weight:800;letter-spacing:.01em}
 .print-cover p{margin:0;color:#aeb8ca;font-size:10.5px}
 .print-section{margin:0 0 13px;break-inside:auto}
-.print-section-title{font-size:13.5px;font-weight:800;margin:0 0 7px;padding:0 0 5px;border-bottom:3px solid #172033;text-transform:uppercase;letter-spacing:.02em}
+.print-section-title{font-size:13.5px;font-weight:800;margin:0 0 10px;padding:0 0 5px;border-bottom:3px solid #172033;text-transform:uppercase;letter-spacing:.02em}
 .print-section-title .num{margin-right:6px}
-.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}
-.print-box{background:#f4f7fa;border:1px solid #d9e0e8;border-left:3px solid #172033;border-radius:3px;padding:8px 10px;break-inside:avoid}
-.print-box.dark{background:#111a2d;color:#fff;border-left-color:#19b9ff}
-.print-box h3{font-size:10.5pt;margin:0 0 5px;font-weight:800}
-.print-box.dark h3{color:#19b9ff}
-.print-line{margin:2px 0}
-.print-line b{font-weight:800}
-.print-muted{color:#536176}
-.print-box.dark .print-muted{color:#c2ccda}
-.print-table{width:100%;border-collapse:collapse;margin:3px 0 9px;font-size:9.8pt;break-inside:auto}
-.print-table th{background:#edf2f7;text-align:left;padding:6px 7px;font-size:9pt;text-transform:uppercase;font-weight:800;border-bottom:1px solid #cfd7e1}
-.print-table td{padding:6px 7px;border-bottom:1px solid #d9e0e8;vertical-align:top}
-.print-table tr{break-inside:avoid}
-.print-table .qty,.print-table .right{text-align:right;white-space:nowrap}
+.print-footer-page{margin-top:12px;border-top:1px solid #d7dee7;padding-top:5px;color:#68778b;font-size:8.5pt;display:flex;justify-content:space-between}
 .print-note{background:#f4f7fa;border:1px dashed #c5cfdb;border-radius:3px;padding:7px 9px;color:#536176;font-size:9pt;break-inside:avoid}
 .print-note b{color:#172033}
-.print-group{background:#f4f7fa;border:1px solid #d9e0e8;border-left:3px solid #172033;border-radius:3px;padding:8px 10px;margin-bottom:7px;break-inside:avoid}
-.print-group h3{font-size:10.5pt;margin:0 0 4px;font-weight:800}
-.print-bullets{margin:0;padding-left:17px}.print-bullets li{margin:2px 0}
-.print-summary{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.print-footer{margin-top:10px;border-top:1px solid #d7dee7;padding-top:5px;color:#68778b;font-size:8.5pt;display:flex;justify-content:space-between}
 .print-page-break{break-before:page}
 @media print{.print-page-break{break-before:page}}
-
 </style>
 </head>
 <body>
@@ -57,9 +90,9 @@ main{padding:20px}.card{background:var(--panel);border:1px solid var(--line);bor
 <div class="export-bar"><button class="btn" id="btnAtualizar">Atualizar descritivos</button><button class="btn" id="btnPDF">Exportar PDF</button></div>
 <main>
 <p class="status" id="status"></p>
-<section class="card"><p class="section-title"><span>01</span> SOM</p><div class="text" id="som"></div></section>
-<section class="card"><p class="section-title"><span>02</span> LUZ</p><div class="text" id="luz"></div></section>
-<section class="card"><p class="section-title"><span>03</span> VÍDEO / PAINEL DE LED</p><div class="text" id="video"></div></section>
+<section class="card"><p class="section-title"><span>01</span> SOM</p><div id="som"></div></section>
+<section class="card"><p class="section-title"><span>02</span> LUZ</p><div id="luz"></div></section>
+<section class="card"><p class="section-title"><span>03</span> VÍDEO / PAINEL DE LED</p><div id="video"></div></section>
 </main>
 <div id="printReport"></div>
 
@@ -68,64 +101,311 @@ const keys=['som','luz','video'];
 const titles={som:'SISTEMA DE ÁUDIO',luz:'SISTEMA DE ILUMINAÇÃO',video:'VÍDEO / PAINEL DE LED'};
 
 function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtBR(n,maxDec){ if(maxDec===undefined) maxDec=1; return Number(n||0).toLocaleString('pt-BR',{maximumFractionDigits:maxDec}); }
+function fmtInt(n){ return Math.round(Number(n||0)).toLocaleString('pt-BR'); }
+function fmtPx(n){ n=Number(n||0); let v=(n/1e6).toFixed(1); if(v.endsWith('.0')) v=v.slice(0,-2); return v+'M'; }
+
+/* ---------- construtores genéricos de HTML (mesmo HTML serve tema claro/escuro via wrapper .rpt-print/.rpt-screen) ---------- */
+function kpiRow(items){
+  return `<div class="kpi-row">${items.map(k=>`
+    <div class="kpi-box">
+      <div class="kpi-big">${k.big}</div>
+      <div class="kpi-label">${esc(k.label)}${k.sub?` <span class="kpi-sub">${esc(k.sub)}</span>`:''}</div>
+    </div>`).join('')}</div>`;
+}
+function blockTitle(t){ return `<h3 class="blk-title">${esc(t)}</h3>`; }
+function boxHtml(title,lines){
+  return `<div class="ibox"><h3>${esc(title)}</h3>${lines.map(l=>`<div class="iline">${l}</div>`).join('')}</div>`;
+}
+function tableHtml(headers,rows,rightCols){
+  rightCols=rightCols||[];
+  return `<table class="itable"><thead><tr>${headers.map((h,i)=>`<th${rightCols.includes(i)?' class="right"':''}>${esc(h)}</th>`).join('')}</tr></thead>`+
+    `<tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td${rightCols.includes(i)?' class="right"':''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+function gridHtml(children){ return `<div class="igrid">${children.join('')}</div>`; }
+function noteHtml(text){ return text?`<div class="inote"><b>Observação:</b> ${esc(text)}</div>`:''; }
+
+/* ---------- SOM ---------- */
+function buildSom(d){
+  const kpis=[
+    {big:fmtBR(d.totalKVA,1)+' KVA', label:'POTÊNCIA TOTAL', sub:'('+fmtInt(d.totalWGeral)+' W)'},
+    {big:fmtInt(d.totalKg)+' kg', label:'PESO TOTAL DO PA'},
+    {big:fmtInt(d.totalCircuitosGeral), label:'CIRCUITOS AC'},
+    {big:fmtInt(d.totalCases), label:'CASES TOTAIS'}
+  ];
+
+  const posicoes=(d.gruposResultados||[]).filter(g=>g.caixas>0);
+  let html='';
+  if (posicoes.length){
+    const rows=posicoes.map(g=>{
+      const eq=(g.equipamentos||[]).map(e=>`${e.qty}x ${esc(e.label)}`).join(', ');
+      const pesoSusp=g.suspenso
+        ? fmtInt(g.pesoSuspenso!=null?g.pesoSuspenso:(g.pesoEquipamentos+(g.pesoBumpers||0)))+' kg'+(g.pesoBumpers>0?' (C/ Frame)':'')
+        : '—';
+      return [esc(g.nome), eq, fmtInt(g.watts)+' W', fmtInt(g.pesoEquipamentos)+' kg', pesoSusp];
+    });
+    html+=blockTitle('Sistema de PA por Posição')+tableHtml(['POSIÇÃO','EQUIPAMENTO / CAIXAS','CONSUMO','PESO CAIXAS','PESO SUSPENSO'],rows,[2,3,4]);
+  }
+
+  // rigging — agrupa posições com a mesma configuração de distribuição num só box
+  const rig=(d.riggingResultados||[]).filter(r=>r.usaAncoragem || r.usaTalha || r.caixas>0);
+  const sigOf=r=>[r.qtdPontos,r.capacidadePonto,Math.round((r.pesoPorPonto||0)*10),r.usaTalha,r.qtdTalhas,r.comprimentoTalha,r.sobrecarregado].join('|');
+  const grupos={};
+  rig.forEach(r=>{ const s=sigOf(r); (grupos[s]=grupos[s]||[]).push(r); });
+  const rigBoxes=Object.values(grupos).map(list=>{
+    const r=list[0];
+    const g=(d.gruposResultados||[]).find(x=>x.nome===r.nome)||{};
+    const cap=(r.capacidadePonto||0)*(r.qtdPontos||0);
+    const disp=cap-(r.peso||0);
+    const linhas=[];
+    if (g.pesoBumpers>0) linhas.push(`<b>Frame de Voo:</b> ${fmtInt(g.pesoBumpers)} kg`);
+    if (r.usaTalha) linhas.push(`<b>Talhas:</b> ${fmtInt(r.qtdTalhas)} unidade${r.qtdTalhas===1?'':'s'} (${fmtBR(r.comprimentoTalha)} m)`);
+    linhas.push(`<b>Distribuição:</b> ${fmtInt(r.qtdPontos)} Ponto${r.qtdPontos===1?'':'s'}`);
+    linhas.push(`<b>Carga por Ponto:</b> ${fmtInt(r.pesoPorPonto)} kg/ponto`);
+    if (r.capacidadePonto>0){
+      linhas.push(`<b>Capacidade do Ponto:</b> ${fmtInt(r.capacidadePonto)} kg/ponto`);
+      linhas.push(r.sobrecarregado
+        ? `<b>Capacidade Disponível:</b> <span class="warn">⚠ excedida em ${fmtInt(Math.abs(disp))} kg</span>`
+        : `<b>Capacidade Disponível:</b> ${fmtInt(disp)} kg livre`);
+    }
+    const title=list.length>1?'Distribuição e Rigging (Por Ponto)':`Distribuição e Rigging — ${r.nome}`;
+    return boxHtml(title,linhas);
+  });
+
+  const acLinhas=(d.circuitosPorGrupo||[]).filter(r=>r.watts>0)
+    .map(r=>`<b>${esc(r.nome)}:</b> ${fmtInt(r.watts)} W / ${fmtBR(r.amps,1)} A (${r.circuitos} Circuito${r.circuitos===1?'':'s'})`);
+  acLinhas.push(`<b>Mesa de Som:</b> ${fmtInt(d.consumoMesa)} W (1 Circuito)`);
+  const energiaBoxFull=boxHtml('Energia e Circuitos (AC)',[...acLinhas,`<b>Total Estimado:</b> ${fmtInt(d.totalWGeral)} W`]);
+
+  html+=gridHtml([...rigBoxes, energiaBoxFull]);
+
+  const note='Canais, buses, I/O de mesa e consumo elétrico de caixas são referências de mercado (specs de fabricante quando disponíveis) e servem apenas como balizadores para pré-produção.';
+  return {kpis, html, note};
+}
+
+/* ---------- LUZ ---------- */
+function buildLuz(d){
+  const kpis=[
+    {big:fmtBR(d.totalKVA,1)+' KVA', label:'POTÊNCIA TOTAL'},
+    {big:fmtInt(d.totalKg)+' kg', label:'PESO SUSPENSO TOTAL'},
+    {big:fmtInt(d.totalCircuitos), label:'CIRCUITOS AC'},
+    {big:fmtInt(d.totalCases), label:'CASES TOTAIS'}
+  ];
+
+  const mesaBox=boxHtml(`Mesa de Luz (${esc(d.consoleLabel||'')})`,[
+    `<b>Parâmetros da Mesa:</b> ${fmtInt(d.parametrosMesa)}`,
+    `<b>Parâmetros Utilizados:</b> ${fmtInt(d.parametrosUtilizados)}`,
+    `<b>Parâmetros Restantes:</b> ${fmtInt(d.parametrosRestantes)}`
+  ]);
+
+  const infra=d.infraDmx||{};
+  let configAdicional='Distribuição direta (sem Splitter ou Art-Net)';
+  const partesConfig=[];
+  if (infra.usaSplitter) partesConfig.push(`Splitter DMX (${fmtInt(d.saidasSplitter)} saídas)`);
+  if (infra.usaArtnet) partesConfig.push(`Art-Net (${fmtInt(d.saidasArtnet)} saídas)`);
+  if (partesConfig.length) configAdicional=partesConfig.join(' + ');
+  const dmxBox=boxHtml('Distribuição de Sinal (DMX)',[
+    `<b>Saídas Físicas Necessárias:</b> ${fmtInt(d.saidasNecessarias)}`,
+    `<b>Saídas Físicas da Mesa:</b> ${fmtInt(d.saidasFisicasMesa)}`,
+    `<b>Configuração Adicional:</b> ${esc(configAdicional)}`,
+    `<b>Saídas Físicas Restantes:</b> ${fmtInt(d.saidasRestantes)}`
+  ]);
+
+  let html=gridHtml([mesaBox,dmxBox]);
+
+  const varas=(d.gruposResultados||[]).filter(g=>g.aparelhos>0);
+  if (varas.length){
+    const rows=varas.map(g=>{
+      const eq=(g.equipamentos||[]).map(e=>`${e.qty}x ${esc(e.label)}`).join('<br>');
+      const energia=`${fmtInt(g.watts)} W (${fmtBR(g.amps,1)} A)<br>${g.circuitos} Circuito${g.circuitos===1?'':'s'} AC`;
+      const sinal=`${fmtInt(g.dmx)} Parâmetros<br>${g.saidasDmx} Universo${g.saidasDmx===1?'':'s'}`;
+      return [esc(g.nome), eq, energia, sinal];
+    });
+    html+=blockTitle(`Equipamentos e Estrutura por Vara${varas.length>1?` (${varas.length} Varas)`:''}`)+
+      tableHtml(['ESTRUTURA','EQUIPAMENTOS (POR VARA)','ENERGIA','SINAL (DMX)'],rows);
+  }
+
+  const rig=(d.riggingResultados||varas).filter(g=>g.suspenso!==false);
+  const sigOf=g=>[g.trussLabel,g.comprimentoTruss,g.comprimentoCabos,g.pesoEquipamentos,g.pesoBumpers,g.usaTalha,g.qtdTalhas,g.qtdPontos,g.capacidadePonto,Math.round((g.pesoPorPonto||0)*10)].join('|');
+  const grupos={};
+  varas.forEach(g=>{ if(!g.suspenso) return; const s=sigOf(g); (grupos[s]=grupos[s]||[]).push(g); });
+  const rigBoxes=Object.values(grupos).map(list=>{
+    const g=list[0];
+    const linhas=[];
+    if (g.isBoxtruss && g.comprimentoTruss>0) linhas.push(`<b>Treliça Utilizada:</b> ${esc(g.trussLabel)} (${fmtBR(g.comprimentoTruss)} m) — ${fmtInt(g.pesoTruss)} kg`);
+    if (g.comprimentoCabos>0) linhas.push(`<b>Cabeamento:</b> ${fmtBR(g.comprimentoCabos)} m — ${fmtInt(g.pesoCabeamento)} kg`);
+    linhas.push(`<b>Peso Equipamentos:</b> ${fmtInt(g.pesoEquipamentos)} kg`);
+    if (g.pesoBumpers>0) linhas.push(`<b>Bumper (Suspenso):</b> ${fmtInt(g.pesoBumpers)} kg`);
+    if (g.usaTalha) linhas.push(`<b>Talhas:</b> ${fmtInt(g.qtdTalhas)} unidade${g.qtdTalhas===1?'':'s'} (${fmtBR(g.comprimentoTalha)} m) — ${fmtInt(g.pesoTalhas)} kg`);
+    linhas.push(`<b>Peso Suspenso Total:</b> ${fmtInt(g.pesoSuspenso)} kg / vara`);
+    if (g.usaAncoragem){
+      linhas.push(`<b>Distribuição:</b> ${fmtInt(g.qtdPontos)} ponto${g.qtdPontos===1?'':'s'}`);
+      linhas.push(`<b>Carga por Ponto:</b> ${fmtInt(g.pesoPorPonto)} kg/ponto`);
+      if (g.capacidadePonto>0){
+        linhas.push(`<b>Capacidade do Ponto:</b> ${fmtInt(g.capacidadePonto)} kg/ponto`);
+        linhas.push(g.sobrecarregado
+          ? `<b>Capacidade Disponível:</b> <span class="warn">⚠ excedida em ${fmtInt(Math.abs(g.pesoDisponivel))} kg</span>`
+          : `<b>Capacidade Disponível:</b> ${fmtInt(g.pesoDisponivel)} kg livre`);
+      }
+    }
+    const title=list.length>1?'Especificações de Rigging (Detalhes de cada Vara)':`Especificações de Rigging — ${esc(g.nome)}`;
+    return boxHtml(title,linhas);
+  });
+  html+=rigBoxes.join('');
+
+  const note='Os pesos, potências, capacidades de DMX, distribuição por ponto e demais parâmetros são calculados com os valores cadastrados na calculadora e servem como referência de pré-produção.';
+  return {kpis, html, note};
+}
+
+/* ---------- VÍDEO ---------- */
+function buildVideo(d){
+  const totalPaineisGeral=d.totalPaineisGeral||d.totalPaineis||0;
+  const alturaFinal=d.topoAtivo && d.topoTotalPaineis>0 ? d.alturaRealTotal : d.alturaM;
+  const areaM2=totalPaineisGeral*(d.panelSize==='100'?0.5:0.25);
+  const kpis=[
+    {big:fmtBR(d.larguraM,1)+'x'+fmtBR(alturaFinal,1)+' m', label:'DIMENSÃO TOTAL', sub:'('+fmtInt(areaM2)+' M²)'},
+    {big:fmtInt(totalPaineisGeral), label:'PLACAS', sub:'('+(d.panelSize==='100'?'50X100':'50X50')+' CM, P'+esc(d.pixelPitchKey)+')'},
+    {big:fmtInt(d.pesoTotal)+' kg', label:'PESO DO SISTEMA'},
+    {big:fmtInt(d.casesTotal), label:'CASES', sub:'(+ BACKUP)'}
+  ];
+
+  const estrutLinhas=[];
+  if (d.mode==='ground' || d.mode==='groundSuspenso'){
+    estrutLinhas.push(`<b>Modo de Instalação:</b> ${d.mode==='groundSuspenso'?'Barra de Elevação':'Estaqueado (Ground)'}`);
+    estrutLinhas.push(`<b>Mão Francesa (Frente):</b> ${fmtInt(d.mfFrente)} un. de ${fmtBR(d.compFrente)} m`);
+    if (d.temTraseira) estrutLinhas.push(`<b>Mão Francesa (Trás):</b> ${fmtInt(d.mfTras)} un. de ${fmtBR(d.compTras)} m`);
+    estrutLinhas.push(`<b>Contrapesos:</b> ${fmtInt(d.contrapesos)} un. de ${fmtBR(d.pesoContrapesoUnit)} kg cada`);
+    estrutLinhas.push(`<b>Chapas Base:</b> ${fmtInt(d.chapas)} un.`);
+    if (d.mode==='groundSuspenso' && d.totalBarras>0){
+      if (d.barras2m>0) estrutLinhas.push(`<b>Barras de Elevação (2m):</b> ${fmtInt(d.barras2m)} un.`);
+      if (d.barras1m>0) estrutLinhas.push(`<b>Barras de Elevação (1m):</b> ${fmtInt(d.barras1m)} un.`);
+      estrutLinhas.push(`<b>Altura da Elevação:</b> ${fmtBR(d.alturaBarra)} m`);
+    }
+  } else {
+    estrutLinhas.push(`<b>Modo de Instalação:</b> Suspenso por Talha`);
+    estrutLinhas.push(`<b>Bumpers:</b> ${fmtInt(d.bumpers)} un.`);
+    estrutLinhas.push(`<b>Talhas:</b> ${fmtInt(d.talhas)} un. (máx. 500 kg/ponto)`);
+  }
+  const estruturaBox=boxHtml('Estrutura e Montagem',estrutLinhas);
+
+  const jumpEnergiaTotal=totalPaineisGeral>0?Math.ceil(totalPaineisGeral/10)+1:0;
+  const jumpSinalTotal=totalPaineisGeral>0?Math.ceil(totalPaineisGeral/10)+1:0;
+  const correnteTotal=(d.potenciaTotalKVA*1000)/220;
+  const energiaBox=boxHtml(`Energia (${esc(d.perfilEletricoLabel||'')})`,[
+    `<b>Potência por Placa:</b> ${fmtBR(d.potenciaPainelUnit)} W`,
+    `<b>Potência Total:</b> ${fmtBR(d.potenciaTotalKVA,1)} KVA (${fmtInt(d.potenciaTotalW)} W)`,
+    `<b>Corrente Total (220V):</b> ${fmtInt(correnteTotal)} A`,
+    `<b>Cabeamento de Energia:</b> ${fmtInt(d.cabosEnergia)} un. (até ${fmtInt(d.paineisPorCaboEnergia)} placas/cabo)`,
+    `<b>Jumps de Energia:</b> ${jumpEnergiaTotal} packs (incl. 1 backup)`
+  ]);
+
+  let html=blockTitle('Estrutura e Energia')+gridHtml([estruturaBox,energiaBox]);
+
+  const sinalLeft=boxHtml('Cabeamento de Sinal (RJ45)',[
+    `<div class="kpi-big" style="font-size:16px;">${fmtInt(d.rjTotal)} Portas Necessárias</div>`,
+    `<span class="kpi-sub">(${fmtInt(d.rjPrincipais)} Principais + ${fmtInt(d.rjRedundancia)} Redundância)</span>`
+  ]);
+  const sinalRight=boxHtml('Especificações de Porta e Jumps',[
+    `<b>Capacidade considerada por porta:</b> 655.360 pixels.`,
+    `<b>Jumps de Sinal RJ45:</b> ${jumpSinalTotal} packs (incluindo 1 backup).`,
+    `<b>Pixagem calculada</b> com base no total de ${fmtInt(totalPaineisGeral)} placas no conjunto.`
+  ]);
+  html+=blockTitle('Sinal e Processamento')+gridHtml([sinalLeft,sinalRight]);
+
+  const candidatas=d.candidatas||[];
+  const procLinhas=candidatas.map(p=>{
+    const qtd=p.outputPorts?Math.ceil(d.rjTotal/p.outputPorts):1;
+    return `<b>${esc(p.nome)}:</b> ${qtd} un. (${fmtPx(p.maxPixels)} px / ${p.maxInputW}x${p.maxInputH} in)`;
+  });
+  const procBox=boxHtml('Processadoras Novastar (Sugestões Calculadas)',[
+    `<b>Configuração exigida:</b> ${esc(d.sugestaoProcessadoras||'')}`,
+    ...procLinhas
+  ]);
+  html+=procBox;
+
+  const note='Os pesos, potências, pixagem, cabos, cases e capacidades de processadoras são calculados com os parâmetros cadastrados no sistema e servem como referência de pré-produção.';
+  return {kpis, html, note};
+}
+
+const builders={som:buildSom, luz:buildLuz, video:buildVideo};
+
+function sectionInnerHtml(key,d){
+  const b=builders[key](d);
+  return kpiRow(b.kpis)+b.html+noteHtml(b.note);
+}
+
+/* ---------- fallback (texto antigo, sem dados estruturados) ---------- */
 function cleanLine(l){return l.replace(/^\s*[-•]\s*/,'').trim();}
-function qtyMatch(l){return l.match(/^(\d+(?:[.,]\d+)?)x\s+(.+?)\s+—\s+(.+)$/i)}
-function lineHtml(l){
+function legacyLineHtml(l){
   let x=cleanLine(l);
-  x=x.replace(/^(Caixas|Equipamentos|Consumo|Cabeamento|Peso caixas|Peso dos equipamentos|Peso das caixas|Peso total do sistema|Peso suspenso considerado|Peso do conjunto|Suspensão|Suspenso|Voado\/suspenso|Rigging|Distribuição|Talhas|Chapas|Contrapesos|Potência|Corrente estimada|Parâmetros|Saídas físicas|Entradas físicas|Buses|Mesa de som|Mesa de luz|Total de circuitos AC|Potência total considerada|Peso total considerado|Sugestão calculada|Cabos de energia|Cabos de sinal RJ45|Total de portas RJ45|Área total|Pixel pitch|Configuração|Modo|Estrutura|JUMPS|CASES)\s*:/i,(m)=>`<b>${esc(m.slice(0,-1))}:</b>`);
-  return x;
+  x=x.replace(/^([A-Za-zÀ-ú][^:]{2,40}):\s*/,(m,p1)=>`<b>${esc(p1)}:</b> `);
+  return esc(x).replace(/&lt;b&gt;/g,'<b>').replace(/&lt;\/b&gt;/g,'</b>');
 }
-function parseBlocks(text){
-  const lines=text.split(/\r?\n/).map(x=>x.trimEnd());
-  const blocks=[]; let current=null;
-  for(const raw of lines){
-    const l=raw.trim();
-    if(!l) continue;
-    if(/^DESCRITIVO\s*[—-]/i.test(l)) continue;
-    const isHeading=/^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ0-9\s&\/+().–—-]{5,}$/.test(l) && !/^\d+(?:[.,]\d+)?\s*(?:W|KG|M|A|KVA)/i.test(l);
-    if(isHeading){current={title:l.replace(/^\d+\.\s*/,''),lines:[]};blocks.push(current)}
-    else if(current) current.lines.push(l);
+function legacyRender(text){
+  const lines=text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).filter(l=>!/^DESCRITIVO\s*[—-]/i.test(l));
+  const isHeading=l=>/^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ0-9\s&\/+().–—-]{5,}$/.test(l) && !/^\d+(?:[.,]\d+)?\s*(?:W|KG|M|A|KVA)/i.test(l);
+  let html='',current=null;
+  for(const l of lines){
+    if(isHeading(l)){ if(current) html+=boxHtml(current.title,current.lines); current={title:l,lines:[]}; }
+    else if(current) current.lines.push(legacyLineHtml(l));
   }
-  return blocks;
+  if(current) html+=boxHtml(current.title,current.lines);
+  return `<div class="legacy-note">${html}</div>`;
 }
-function inventoryTable(lines){
-  const rows=lines.map(cleanLine).map(qtyMatch).filter(Boolean);
-  if(rows.length<2) return '';
-  return `<table class="print-table"><thead><tr><th>MODELO / EQUIPAMENTO</th><th>ESPECIFICAÇÃO</th><th class="qty">QTD</th><th>TRANSPORTE</th></tr></thead><tbody>`+
-    rows.map(m=>`<tr><td>${esc(m[2].split(' — ')[0])}</td><td>${esc(m[3])}</td><td class="qty">${esc(m[1])}x</td><td>${esc(m[3].match(/(?:\d+\s*cases?|\d+\s*case|sem case|\(.*?\/case\))/i)?.[0]||'—')}</td></tr>`).join('')+
-    `</tbody></table>`;
-}
-function renderSection(key,text,index){
-  const blocks=parseBlocks(text); let html=`<section class="print-section ${index>0?'print-page-break':''}"><h2 class="print-section-title"><span class="num">${String(index+1).padStart(2,'0')}</span>${esc(titles[key])}</h2>`;
-  if(!blocks.length){return html+`<div class="print-note">Nenhum descritivo foi gerado nesta área.</div></section>`}
-  for(const b of blocks){
-    const title=b.title.replace(/^\d+\.\s*/, '').trim();
-    const inv=inventoryTable(b.lines);
-    if(inv){html+=`<h3 style="font-size:11px;margin:6px 0 4px;text-transform:uppercase">${esc(title)}</h3>${inv}`;continue}
-    const groupLike=b.lines.some(x=>/^\s*(Caixas|Equipamentos):/i.test(x)) && b.lines.length>=3;
-    if(groupLike){
-      html+=`<div class="print-group"><h3>${esc(title)}</h3><ul class="print-bullets">${b.lines.map(x=>`<li>${lineHtml(x)}</li>`).join('')}</ul></div>`;
-      continue;
-    }
-    const isSummary=/RESUMO|ENERGIA|CIRCUITOS|DELAY|MESA|PROCESSADORAS|SINAL|PIXEL|ESTRUTURA|MONTAGEM|PAINEL|CASES|JUMPS/i.test(title);
-    if(isSummary){
-      html+=`<div class="print-box ${/RESUMO/i.test(title)?'dark':''}"><h3>${esc(title)}</h3>`+
-        b.lines.map(x=>`<div class="print-line">${lineHtml(x)}</div>`).join('')+`</div>`;
-    }else{
-      html+=`<div class="print-box"><h3>${esc(title)}</h3>`+b.lines.map(x=>`<div class="print-line">${lineHtml(x)}</div>`).join('')+`</div>`;
-    }
+
+/* ---------- montagem da tela e do relatório de impressão ---------- */
+function sectionContent(key){
+  const jsonRaw=localStorage.getItem('descritivo_dados_'+key);
+  const textRaw=localStorage.getItem('descritivo_'+key);
+  if(jsonRaw){
+    try{
+      const d=JSON.parse(jsonRaw);
+      return {available:true, inner:sectionInnerHtml(key,d)};
+    }catch(e){ /* cai no fallback abaixo */ }
   }
-  return html+'</section>';
+  if(textRaw){
+    return {available:true, inner:legacyRender(textRaw), legacy:true};
+  }
+  return {available:false};
 }
+
 function buildPrint(){
   const report=document.getElementById('printReport');
-  let available=0; let body='';
-  keys.forEach((k,i)=>{const v=localStorage.getItem('descritivo_'+k); if(v){available++;body+=renderSection(k,v,i)}});
-  report.innerHTML=`<div class="print-page"><div class="print-cover"><h1>DESCRITIVO TÉCNICO — EVENTO</h1><p>Especificações de pré-produção, infraestrutura, equipamentos, energia e montagem</p></div>${body||'<div class="print-note">Nenhum descritivo disponível. Gere o descritivo em Som, Luz e Vídeo antes de exportar o PDF.</div>'}<div class="print-footer"><span>Descritivo Técnico · Maurinho Rigging</span><span>${available} de 3 áreas</span></div></div>`;
+  let available=0; const sections=[];
+  keys.forEach(k=>{ const c=sectionContent(k); if(c.available){ available++; sections.push({key:k,content:c}); } });
+
+  const dataFmt=new Date().toLocaleDateString('pt-BR');
+  const body=sections.map((s,i)=>`
+    <div class="print-section rpt-print${i>0?' print-page-break':''}">
+      <h2 class="print-section-title"><span class="num">${String(i+1).padStart(2,'0')}</span>${esc(titles[s.key])}</h2>
+      ${s.content.legacy?`<div class="print-note" style="margin-bottom:10px;">Este descritivo foi gerado antes da atualização do layout. Gere o descritivo novamente na calculadora de ${esc(titles[s.key].toLowerCase())} para ver o relatório completo.</div>`:''}
+      ${s.content.inner}
+      <div class="print-footer-page"><span>Maurinho Rigging · Descritivo Técnico</span><span>Página ${i+1} de ${sections.length||3}</span></div>
+    </div>`).join('');
+
+  report.innerHTML=`<div class="print-page">
+    <div class="print-cover">
+      <p class="kicker">Maurinho Rigging</p>
+      <h1>Descritivo Técnico de Evento</h1>
+      <p>Data: ${dataFmt} · Pré-produção &amp; Infraestrutura</p>
+    </div>
+    ${body || '<div class="print-note">Nenhum descritivo disponível. Gere o descritivo em Som, Luz e Vídeo antes de exportar o PDF.</div>'}
+  </div>`;
 }
+
 function carregar(){
   let count=0;
-  for(const key of keys){const el=document.getElementById(key),v=localStorage.getItem('descritivo_'+key);if(v){el.textContent=v;count++}else el.innerHTML='<span class="empty">Nenhum descritivo foi gerado nesta área ainda.</span>'}
+  for(const key of keys){
+    const el=document.getElementById(key);
+    const c=sectionContent(key);
+    if(c.available){
+      count++;
+      el.innerHTML=(c.legacy?`<p class="legacy-hint">Descritivo gerado antes da atualização do layout — gere novamente na calculadora para ver o relatório completo.</p>`:'')+
+        `<div class="rpt rpt-screen">${c.inner}</div>`;
+    } else {
+      el.innerHTML='<span class="empty">Nenhum descritivo foi gerado nesta área ainda.</span>';
+    }
+  }
   document.getElementById('status').textContent=count+' de 3 descritivos disponíveis. Gere o descritivo em cada calculadora para atualizar este documento.';
   buildPrint();
 }

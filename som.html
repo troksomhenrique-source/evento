@@ -1775,7 +1775,8 @@
   $('btnDescritivo').addEventListener('click', () => {
     const descritivo = gerarDescritivo();
     $('descritivoText').value = descritivo;
-    try { localStorage.setItem('descritivo_som', descritivo); } catch (e) { alert('Não foi possível salvar os dados. Abra as páginas pelo mesmo servidor local (ex.: Live Server).'); }
+    localStorage.setItem('descritivo_som', descritivo);
+    try { localStorage.setItem('descritivo_dados_som', JSON.stringify(ultimoCalculo)); } catch (e) {}
     $('descritivoWrap').classList.add('show');
     $('descritivoWrap').scrollIntoView({ behavior:'smooth', block:'start' });
   });
