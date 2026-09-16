@@ -138,10 +138,23 @@ function buildSom(d){
   let html='';
 
   if (d.consoleLabel){
-    html+=boxHtml(`Mesa de Som (${esc(d.consoleLabel)})`,[
+    const mesaBox=boxHtml(`Mesa de Som (${esc(d.consoleLabel)})`,[
       `<b>Canais de Entrada Utilizados:</b> ${fmtInt(d.totalCanaisEntrada)} de ${fmtInt(d.maxCh)} mixáveis`,
       `<b>Buses (Aux + Matriz):</b> ${fmtInt(d.busesNecessarios)} necessários de ${fmtInt(d.busesTotal)} disponíveis`
     ]);
+
+    const partesConfig=[];
+    if (d.usaExp) partesConfig.push(`Expansão ${esc(d.expLabel||'')} (${fmtInt(d.qtdExp)}x, +${fmtInt(d.saidasExpansao||0)} saídas)`);
+    if (d.usaProc) partesConfig.push(`Processador${d.nomeProcessador?' '+esc(d.nomeProcessador):''} (+${fmtInt(d.saidasProcessador)} saídas)`);
+    const configAdicional=partesConfig.length?partesConfig.join(' + '):'Nenhuma (saídas diretas da mesa)';
+    const saidasBox=boxHtml('Distribuição de Saídas (Mesa)',[
+      `<b>Saídas Físicas Necessárias:</b> ${fmtInt(d.saidasFisicasNecessarias)}`,
+      `<b>Saídas Físicas da Mesa:</b> ${fmtInt(d.saidasFisicasMesa)}`,
+      `<b>Configuração Adicional:</b> ${configAdicional}`,
+      `<b>Saídas Físicas Restantes:</b> ${fmtInt((d.saidasFisicasTotais||0)-(d.saidasFisicasNecessarias||0))}`
+    ]);
+
+    html+=gridHtml([mesaBox,saidasBox]);
   }
 
   if (posicoes.length){

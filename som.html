@@ -1685,6 +1685,7 @@
     ultimoCalculo = {
       totalCanaisEntrada, consoleLabel: console_.label, maxCh: console_.maxCh, busesTotal: console_.busesTotal,
       busesNecessarios, entradasFisicasTotais, saidasFisicasTotais, saidasFisicasNecessarias,
+      saidasFisicasMesa: console_.outputsLocal, saidasExpansao: usaExp ? qtdExp * exp.out : 0,
       usaExp, qtdExp, expLabel: exp.label, usaProc, saidasProcessador, nomeProcessador,
       totalCaixas, totalW, consumoMesa, totalWGeral, totalKVA, totalKg, totalCircuitosGeral,
       gruposResultados, circuitosPorGrupo, riggingResultados, totalCases, totaisPorTipo,
@@ -1748,7 +1749,12 @@
       `Canais de entrada utilizados: ${fmtNum(d.totalCanaisEntrada)}.`,
       `Buses (aux+matriz) disponíveis: ${fmtNum(d.busesTotal)} · necessários: ${fmtNum(d.busesNecessarios)} (${fmtNum(d.auxNecessarios)} retornos + ${fmtNum(d.matrizNecessarios)} matrizes/zonas).`,
       `Entradas físicas disponíveis: ${fmtNum(d.entradasFisicasTotais)}${d.usaExp ? ` (com ${fmtNum(d.qtdExp)}x ${d.expLabel})` : ''}.`,
-      `Saídas físicas disponíveis: ${fmtNum(d.saidasFisicasTotais)} · necessárias: ${fmtNum(d.saidasFisicasNecessarias)}${d.usaProc ? ` (inclui processador${d.nomeProcessador ? ' ' + d.nomeProcessador : ''} com ${fmtNum(d.saidasProcessador)} saídas)` : ''}.`,
+      `Saídas físicas da mesa: ${fmtNum(d.saidasFisicasMesa)}.`,
+      `Saídas físicas necessárias: ${fmtNum(d.saidasFisicasNecessarias)}.`,
+      d.usaProc
+        ? `Processador utilizado: ${d.nomeProcessador ? d.nomeProcessador : 'sim'} · ${fmtNum(d.saidasProcessador)} saídas adicionais.`
+        : 'Processador: não utilizado.',
+      `Saídas físicas totais disponíveis (mesa${d.usaExp ? ' + expansão' : ''}${d.usaProc ? ' + processador' : ''}): ${fmtNum(d.saidasFisicasTotais)}.`,
       '',
       `${d.totalCaixas} caixas de PA no total:`,
       ...linhasCaixas.map(l => `- ${l}`),
