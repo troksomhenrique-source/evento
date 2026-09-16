@@ -3,528 +3,134 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Descritivo Geral — Maurin Mauricio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<title>Descritivo Geral — Maurinho Rigging</title>
 <style>
-  /* ==========================================================================
-     TEMA DA TELA (DARK MODE - IDENTIDADE VISUAL DO PROJETO)
-     ========================================================================== */
-  :root{
-    --bg: #0a0a0b;
-    --panel: #131315;
-    --panel-2: #1a1a1d;
-    --line: #29292d;
-    --text: #f3f1ec;
-    --muted: #8c8c91;
-    
-    --som: #d6473c;
-    --luz: #d1a24a;
-    --video: #3b82c9;
-    --accent: #f3f1ec;
-  }
-  
-  *{box-sizing:border-box;}
-  
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Inter', sans-serif;
-    line-height:1.5;
-  }
-  
-  h1,h2,h3,.disp{
-    font-family:'Space Grotesk', sans-serif;
-    font-weight:600;
-    letter-spacing:-0.01em;
-  }
-  
-  .mono{font-family:'IBM Plex Mono', monospace;}
+:root{--bg:#0b0d10;--panel:#11151a;--panel-2:#0e1216;--line:#252b32;--text:#e7eaee;--muted:#8e98a5;--accent:#d8ff3e;--accent-ink:#101400}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
+header{border-bottom:1px solid var(--line);padding:34px 20px 30px}.header-inner,main,.export-bar{max-width:1100px;margin:0 auto}.back-link{color:var(--muted);text-decoration:none;font-size:13px}.back-link:hover{color:var(--accent)}
+.tag{margin:22px 0 8px;color:var(--accent);font-size:12px;text-transform:uppercase;letter-spacing:.12em}h1{margin:0;font-size:32px;letter-spacing:-.03em}header p:last-child{max-width:780px;color:var(--muted);line-height:1.6;margin:10px 0 0}
+.export-bar{padding:16px 20px 0;display:flex;justify-content:flex-end;gap:10px}.btn{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--accent);color:var(--text);padding:10px 18px;border-radius:3px;font-weight:600;font-size:13px;cursor:pointer}.btn:hover{border-color:var(--accent)}
+main{padding:20px}.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:18px;padding:22px}.section-title{margin:0 0 14px;font-weight:700;font-size:15px}.section-title span{color:var(--accent);margin-right:8px}.empty{color:var(--muted);font-size:13px}.text{white-space:pre-wrap;font-family:'IBM Plex Mono',Consolas,monospace;font-size:13px;line-height:1.7;color:var(--text)}
+.status{color:var(--muted);font-size:12px;margin:0 0 18px}.actions{display:flex;gap:10px}
+@media print{
+  @page{size:A4;margin:13mm 14mm 15mm 14mm}
+  body{background:#fff;color:#172033;font-family:Arial,Helvetica,sans-serif}
+  header,.export-bar,main{display:none!important}
+  #printReport{display:block!important}
+}
+#printReport{display:none}
+.print-page{width:100%;color:#172033;font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;line-height:1.35}
+.print-cover{background:#111a2d;color:#fff;border-radius:6px;padding:18px 20px 17px;margin-bottom:15px}
+.print-cover h1{font-size:22px;line-height:1.15;margin:0 0 5px;font-weight:800;letter-spacing:.01em}
+.print-cover p{margin:0;color:#aeb8ca;font-size:10.5px}
+.print-section{margin:0 0 13px;break-inside:auto}
+.print-section-title{font-size:13.5px;font-weight:800;margin:0 0 7px;padding:0 0 5px;border-bottom:3px solid #172033;text-transform:uppercase;letter-spacing:.02em}
+.print-section-title .num{margin-right:6px}
+.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}
+.print-box{background:#f4f7fa;border:1px solid #d9e0e8;border-left:3px solid #172033;border-radius:3px;padding:8px 10px;break-inside:avoid}
+.print-box.dark{background:#111a2d;color:#fff;border-left-color:#19b9ff}
+.print-box h3{font-size:10.5pt;margin:0 0 5px;font-weight:800}
+.print-box.dark h3{color:#19b9ff}
+.print-line{margin:2px 0}
+.print-line b{font-weight:800}
+.print-muted{color:#536176}
+.print-box.dark .print-muted{color:#c2ccda}
+.print-table{width:100%;border-collapse:collapse;margin:3px 0 9px;font-size:9.8pt;break-inside:auto}
+.print-table th{background:#edf2f7;text-align:left;padding:6px 7px;font-size:9pt;text-transform:uppercase;font-weight:800;border-bottom:1px solid #cfd7e1}
+.print-table td{padding:6px 7px;border-bottom:1px solid #d9e0e8;vertical-align:top}
+.print-table tr{break-inside:avoid}
+.print-table .qty,.print-table .right{text-align:right;white-space:nowrap}
+.print-note{background:#f4f7fa;border:1px dashed #c5cfdb;border-radius:3px;padding:7px 9px;color:#536176;font-size:9pt;break-inside:avoid}
+.print-note b{color:#172033}
+.print-group{background:#f4f7fa;border:1px solid #d9e0e8;border-left:3px solid #172033;border-radius:3px;padding:8px 10px;margin-bottom:7px;break-inside:avoid}
+.print-group h3{font-size:10.5pt;margin:0 0 4px;font-weight:800}
+.print-bullets{margin:0;padding-left:17px}.print-bullets li{margin:2px 0}
+.print-summary{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.print-footer{margin-top:10px;border-top:1px solid #d7dee7;padding-top:5px;color:#68778b;font-size:8.5pt;display:flex;justify-content:space-between}
+.print-page-break{break-before:page}
+@media print{.print-page-break{break-before:page}}
 
-  header{
-    border-bottom:1px solid var(--line);
-    background: radial-gradient(ellipse 900px 300px at 15% 0%, rgba(243, 241, 236, 0.08), transparent 70%);
-  }
-  
-  header .header-inner{
-    max-width:1100px;
-    margin:0 auto;
-    padding:44px 20px 32px;
-  }
-  
-  .back-link{
-    display:inline-block;
-    color:var(--muted);
-    text-decoration:none;
-    font-size:13px;
-    font-weight:500;
-    margin-bottom:18px;
-    transition: color 0.2s;
-  }
-  .back-link:hover{ color:var(--accent); }
-  
-  header .tag{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    color:var(--accent);
-    font-size:12px;
-    font-weight:600;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    margin:0 0 14px;
-  }
-  header .tag::before{
-    content:'';
-    width:6px; height:6px;
-    background:var(--accent);
-    border-radius:1px;
-    display:inline-block;
-  }
-  
-  header h1{
-    font-size:32px;
-    margin:0 0 10px;
-    line-height:1.12;
-    max-width:26ch;
-  }
-  
-  header p.sub{
-    color:var(--muted);
-    margin:0;
-    font-size:14.5px;
-    max-width:64ch;
-  }
-
-  .export-bar{
-    max-width:1100px;
-    margin:0 auto;
-    padding:20px 20px 0;
-    display:flex;
-    justify-content:flex-end;
-    gap: 12px;
-  }
-  
-  .btn-export{
-    background:var(--panel);
-    border:1px solid var(--line);
-    color:var(--text);
-    padding:10px 18px;
-    border-radius:3px;
-    font-family:'Space Grotesk', sans-serif;
-    font-weight:600;
-    font-size:13px;
-    letter-spacing:0.03em;
-    cursor:pointer;
-    transition: all 0.2s;
-  }
-  .btn-export:hover{ border-color:var(--accent); color:var(--accent); }
-  .btn-export.primary{ border-top:2px solid var(--accent); }
-  
-  main{
-    max-width:1100px;
-    margin:0 auto;
-    padding:20px 20px 80px;
-  }
-
-  .status {
-    color: var(--muted);
-    font-size: 13.5px;
-    margin: 0 0 24px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--panel-2);
-    padding: 10px 14px;
-    border: 1px solid var(--line);
-    border-radius: 3px;
-  }
-  .status::before {
-    content: ""; display: inline-block; width: 8px; height: 8px;
-    background: var(--accent); border-radius: 50%;
-  }
-
-  .card{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:3px;
-    padding:22px;
-    margin-bottom:24px;
-  }
-  
-  .card.som { border-top: 2px solid var(--som); }
-  .card.luz { border-top: 2px solid var(--luz); }
-  .card.video { border-top: 2px solid var(--video); }
-
-  .section-title{
-    font-family:'Space Grotesk', sans-serif;
-    font-size:14px;
-    font-weight:600;
-    letter-spacing:0.06em;
-    text-transform:uppercase;
-    margin:0 0 16px;
-    padding-bottom:12px;
-    border-bottom:1px solid var(--line);
-    display:flex;
-    align-items:baseline;
-    gap:10px;
-  }
-  .section-title span{
-    font-family:'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  
-  .card.som .section-title{ color: var(--som); }
-  .card.luz .section-title{ color: var(--luz); }
-  .card.video .section-title{ color: var(--video); }
-
-  .text {
-    white-space: pre-wrap;
-    font-family: 'IBM Plex Mono', Consolas, monospace;
-    font-size: 13px;
-    line-height: 1.6;
-    color: var(--text);
-  }
-  
-  .empty { color: var(--muted); font-style: italic; font-size: 13px; }
-
-  footer{
-    max-width:1100px;
-    margin:0 auto;
-    padding:24px 20px 40px;
-    color:var(--muted);
-    font-size:12px;
-    border-top:1px solid var(--line);
-  }
-
-  /* ==========================================================================
-     ESTILO DE IMPRESSÃO / PDF (CLARO / LIMPO)
-     ========================================================================== */
-  #printReport { display: none; }
-
-  @media print {
-    @page { size: A4; margin: 15mm 15mm 20mm 15mm; }
-    
-    body {
-      background: #ffffff;
-      color: #0f172a;
-      font-family: 'Inter', Helvetica, Arial, sans-serif;
-    }
-    
-    header, .export-bar, main, footer { display: none !important; }
-    #printReport { display: block !important; }
-    
-    .print-page { width: 100%; font-size: 9.5pt; line-height: 1.4; }
-
-    .print-cover {
-      border-bottom: 2px solid #0f172a;
-      padding: 0 0 16px;
-      margin-bottom: 24px;
-    }
-    .print-cover-tag {
-      font-size: 8pt; font-weight: 700; color: #64748b;
-      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;
-    }
-    .print-cover h1 {
-      font-size: 24pt; line-height: 1.1; margin: 0 0 6px; font-weight: 800;
-      letter-spacing: -0.02em; color: #0f172a; font-family:'Space Grotesk', sans-serif;
-    }
-    .print-cover p { margin: 0; color: #475569; font-size: 11pt; }
-
-    .print-section { margin: 0 0 24px; break-inside: auto; }
-    
-    .print-section-title {
-      font-family:'Space Grotesk', sans-serif;
-      font-size: 14pt; font-weight: 800; margin: 0 0 16px; padding: 0 0 8px;
-      border-bottom: 1px solid #cbd5e1; color: #0f172a; display: flex; align-items: center;
-    }
-    .print-section-title .num {
-      background: #0f172a; color: #fff; padding: 2px 6px; border-radius: 3px;
-      font-size: 10pt; margin-right: 10px; font-family:'IBM Plex Mono', monospace;
-    }
-
-    .print-box {
-      background: #fff; border: 1px solid #e2e8f0; border-left: 3px solid #cbd5e1;
-      border-radius: 6px; padding: 12px 14px; margin-bottom: 12px; break-inside: avoid;
-    }
-    
-    .print-box h3, .print-group h3 {
-      font-family:'Space Grotesk', sans-serif; font-size: 10pt; margin: 0 0 8px;
-      font-weight: 700; text-transform: uppercase; color: #334155; letter-spacing: 0.03em;
-    }
-
-    .print-box.dark {
-      background: #0f172a; color: #f8fafc; border: none; border-left: 3px solid #64748b;
-    }
-    .print-box.dark h3 { color: #94a3b8; }
-    .print-box.dark .print-line b { color: #fff; }
-
-    .print-line { margin: 4px 0; display: flex; flex-wrap: wrap; gap: 4px; }
-    .print-line b { font-weight: 600; color: #0f172a; }
-
-    .print-group {
-      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
-      padding: 12px 14px; margin-bottom: 12px; break-inside: avoid;
-    }
-    
-    .print-bullets { margin: 0; padding-left: 20px; }
-    .print-bullets li { margin: 4px 0; padding-left: 4px; }
-    .print-bullets li::marker { color: #94a3b8; }
-
-    .print-table {
-      width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 9pt; break-inside: auto;
-    }
-    .print-table th {
-      text-align: left; padding: 8px 10px; font-size: 8pt; text-transform: uppercase;
-      font-weight: 700; color: #475569; border-bottom: 1px solid #cbd5e1;
-    }
-    .print-table td {
-      padding: 8px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: top;
-    }
-    .print-table tr:nth-child(even) td { background: #f8fafc; }
-    .print-table tr { break-inside: avoid; }
-    .print-table .qty { text-align: right; white-space: nowrap; font-weight: 600; }
-
-    .print-note {
-      background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px;
-      padding: 12px; color: #64748b; font-size: 9pt; break-inside: avoid; text-align: center;
-    }
-
-    .print-footer {
-      margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 10px;
-      color: #94a3b8; font-size: 8pt; display: flex; justify-content: space-between; font-weight: 500;
-    }
-
-    .print-page-break { break-before: page; }
-  }
 </style>
 </head>
 <body>
-
-<header>
-  <div class="header-inner">
-    <a class="back-link" href="index.html">← Voltar para áreas</a>
-    <p class="tag">Pré Produção</p>
-    <h1>Descritivo Geral</h1>
-    <p class="sub">Reúne as especificações geradas nas calculadoras (Som, Luz e Vídeo). <br><b>Atenção:</b> Você precisa clicar em "Gerar Descritivo" em cada calculadora para que os dados apareçam aqui.</p>
-  </div>
-</header>
-
-<div class="export-bar">
-  <button class="btn-export" id="btnAtualizar">Atualizar Dados</button>
-  <button class="btn-export primary" id="btnPDF">Exportar PDF</button>
-</div>
-
+<header><div class="header-inner"><a class="back-link" href="index.html">← Voltar para áreas</a><p class="tag">Maurinho Rigging · Tecnologia para eventos</p><h1>Descritivo Geral</h1><p>Reúne os descritivos gerados nas calculadoras de som, luz e vídeo em um único documento para conferência e exportação em PDF.</p></div></header>
+<div class="export-bar"><button class="btn" id="btnAtualizar">Atualizar descritivos</button><button class="btn" id="btnPDF">Exportar PDF</button></div>
 <main>
-  <p class="status" id="status"></p>
-  
-  <section class="card som">
-    <p class="section-title"><span>01</span> ÁUDIO / PA</p>
-    <div class="text" id="som"></div>
-  </section>
-  
-  <section class="card luz">
-    <p class="section-title"><span>02</span> ILUMINAÇÃO</p>
-    <div class="text" id="luz"></div>
-  </section>
-  
-  <section class="card video">
-    <p class="section-title"><span>03</span> VÍDEO / PAINEL DE LED</p>
-    <div class="text" id="video"></div>
-  </section>
+<p class="status" id="status"></p>
+<section class="card"><p class="section-title"><span>01</span> SOM</p><div class="text" id="som"></div></section>
+<section class="card"><p class="section-title"><span>02</span> LUZ</p><div class="text" id="luz"></div></section>
+<section class="card"><p class="section-title"><span>03</span> VÍDEO / PAINEL DE LED</p><div class="text" id="video"></div></section>
 </main>
-
 <div id="printReport"></div>
 
 <script>
-const keys = ['som', 'luz', 'video'];
+const keys=['som','luz','video'];
+const titles={som:'SISTEMA DE ÁUDIO',luz:'SISTEMA DE ILUMINAÇÃO',video:'VÍDEO / PAINEL DE LED'};
 
-function readDescritivo(key) {
-  try {
-    return (window.localStorage && readDescritivo(key)) || '';
-  } catch (e) {
-    return '';
-  }
-}
-const titles = {
-  som: 'Sistema de Áudio',
-  luz: 'Sistema de Iluminação',
-  video: 'Vídeo / Painel de LED'
-};
-
-function esc(v) {
-  return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function cleanLine(l) {
-  return l.replace(/^\s*[-•]\s*/, '').trim();
-}
-
-function qtyMatch(l) {
-  return l.match(/^(\d+(?:[.,]\d+)?)x\s+(.+?)\s+—\s+(.+)$/i);
-}
-
-function lineHtml(l) {
-  let x = cleanLine(l);
-  x = x.replace(/^(Caixas|Equipamentos|Consumo|Cabeamento|Peso caixas|Peso dos equipamentos|Peso das caixas|Peso total do sistema|Peso suspenso considerado|Peso do conjunto|Suspensão|Suspenso|Voado\/suspenso|Rigging|Distribuição|Talhas|Chapas|Contrapesos|Potência|Corrente estimada|Parâmetros|Saídas físicas|Entradas físicas|Buses|Mesa de som|Mesa de luz|Total de circuitos AC|Potência total considerada|Peso total considerado|Sugestão calculada|Cabos de energia|Cabos de sinal RJ45|Total de portas RJ45|Área total|Pixel pitch|Configuração|Modo|Estrutura|JUMPS|CASES|Dimensão informada)\s*:/i, (m) => `<b>${esc(m.slice(0, -1))}:</b>`);
+function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function cleanLine(l){return l.replace(/^\s*[-•]\s*/,'').trim();}
+function qtyMatch(l){return l.match(/^(\d+(?:[.,]\d+)?)x\s+(.+?)\s+—\s+(.+)$/i)}
+function lineHtml(l){
+  let x=cleanLine(l);
+  x=x.replace(/^(Caixas|Equipamentos|Consumo|Cabeamento|Peso caixas|Peso dos equipamentos|Peso das caixas|Peso total do sistema|Peso suspenso considerado|Peso do conjunto|Suspensão|Suspenso|Voado\/suspenso|Rigging|Distribuição|Talhas|Chapas|Contrapesos|Potência|Corrente estimada|Parâmetros|Saídas físicas|Entradas físicas|Buses|Mesa de som|Mesa de luz|Total de circuitos AC|Potência total considerada|Peso total considerado|Sugestão calculada|Cabos de energia|Cabos de sinal RJ45|Total de portas RJ45|Área total|Pixel pitch|Configuração|Modo|Estrutura|JUMPS|CASES)\s*:/i,(m)=>`<b>${esc(m.slice(0,-1))}:</b>`);
   return x;
 }
-
-function parseBlocks(text) {
-  const lines = text.split(/\r?\n/).map(x => x.trimEnd());
-  const blocks = [];
-  let current = null;
-  
-  for (const raw of lines) {
-    const l = raw.trim();
-    if (!l) continue;
-    if (/^DESCRITIVO\s*[—-]/i.test(l)) continue;
-    
-    const isHeading = /^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ0-9\s&\/+().–—-]{5,}$/.test(l) && !/^\d+(?:[.,]\d+)?\s*(?:W|KG|M|A|KVA|px)/i.test(l);
-    
-    if (isHeading) {
-      current = { title: l.replace(/^\d+\.\s*/, ''), lines: [] };
-      blocks.push(current);
-    } else if (current) {
-      current.lines.push(l);
-    }
+function parseBlocks(text){
+  const lines=text.split(/\r?\n/).map(x=>x.trimEnd());
+  const blocks=[]; let current=null;
+  for(const raw of lines){
+    const l=raw.trim();
+    if(!l) continue;
+    if(/^DESCRITIVO\s*[—-]/i.test(l)) continue;
+    const isHeading=/^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ0-9\s&\/+().–—-]{5,}$/.test(l) && !/^\d+(?:[.,]\d+)?\s*(?:W|KG|M|A|KVA)/i.test(l);
+    if(isHeading){current={title:l.replace(/^\d+\.\s*/,''),lines:[]};blocks.push(current)}
+    else if(current) current.lines.push(l);
   }
   return blocks;
 }
-
-function inventoryTable(lines) {
-  const rows = lines.map(cleanLine).map(qtyMatch).filter(Boolean);
-  if (rows.length < 2) return '';
-  
-  return `<table class="print-table">
-            <thead>
-              <tr>
-                <th>Modelo / Equipamento</th>
-                <th>Especificação</th>
-                <th class="qty">Qtd</th>
-                <th>Transporte</th>
-              </tr>
-            </thead>
-            <tbody>` +
-    rows.map(m => `<tr>
-                     <td>${esc(m[2].split(' — ')[0])}</td>
-                     <td>${esc(m[3])}</td>
-                     <td class="qty">${esc(m[1])}x</td>
-                     <td>${esc(m[3].match(/(?:\d+\s*cases?|\d+\s*case|sem case|\(.*?\/case\))/i)?.[0] || '—'}</td>
-                   </tr>`).join('') +
+function inventoryTable(lines){
+  const rows=lines.map(cleanLine).map(qtyMatch).filter(Boolean);
+  if(rows.length<2) return '';
+  return `<table class="print-table"><thead><tr><th>MODELO / EQUIPAMENTO</th><th>ESPECIFICAÇÃO</th><th class="qty">QTD</th><th>TRANSPORTE</th></tr></thead><tbody>`+
+    rows.map(m=>`<tr><td>${esc(m[2].split(' — ')[0])}</td><td>${esc(m[3])}</td><td class="qty">${esc(m[1])}x</td><td>${esc(m[3].match(/(?:\d+\s*cases?|\d+\s*case|sem case|\(.*?\/case\))/i)?.[0]||'—')}</td></tr>`).join('')+
     `</tbody></table>`;
 }
-
-function renderSection(key, text, index) {
-  const blocks = parseBlocks(text); 
-  let html = `<section class="print-section ${index > 0 ? 'print-page-break' : ''}">
-                <h2 class="print-section-title">
-                  <span class="num">${String(index + 1).padStart(2, '0')}</span> ${esc(titles[key])}
-                </h2>`;
-                
-  if (!blocks.length) {
-    return html + `<div class="print-note">Nenhum descritivo preenchido nesta área.</div></section>`;
-  }
-  
-  for (const b of blocks) {
-    const title = b.title.replace(/^\d+\.\s*/, '').trim();
-    const inv = inventoryTable(b.lines);
-    
-    if (inv) {
-      html += `<h3 style="font-size:10pt; font-family:'Space Grotesk', sans-serif; font-weight:700; margin:14px 0 6px; color:#334155; text-transform:uppercase;">${esc(title)}</h3>${inv}`;
+function renderSection(key,text,index){
+  const blocks=parseBlocks(text); let html=`<section class="print-section ${index>0?'print-page-break':''}"><h2 class="print-section-title"><span class="num">${String(index+1).padStart(2,'0')}</span>${esc(titles[key])}</h2>`;
+  if(!blocks.length){return html+`<div class="print-note">Nenhum descritivo foi gerado nesta área.</div></section>`}
+  for(const b of blocks){
+    const title=b.title.replace(/^\d+\.\s*/, '').trim();
+    const inv=inventoryTable(b.lines);
+    if(inv){html+=`<h3 style="font-size:11px;margin:6px 0 4px;text-transform:uppercase">${esc(title)}</h3>${inv}`;continue}
+    const groupLike=b.lines.some(x=>/^\s*(Caixas|Equipamentos):/i.test(x)) && b.lines.length>=3;
+    if(groupLike){
+      html+=`<div class="print-group"><h3>${esc(title)}</h3><ul class="print-bullets">${b.lines.map(x=>`<li>${lineHtml(x)}</li>`).join('')}</ul></div>`;
       continue;
     }
-    
-    const groupLike = b.lines.some(x => /^\s*(Caixas|Equipamentos):/i.test(x)) && b.lines.length >= 3;
-    
-    if (groupLike) {
-      html += `<div class="print-group">
-                 <h3>${esc(title)}</h3>
-                 <ul class="print-bullets">
-                   ${b.lines.map(x => `<li>${lineHtml(x)}</li>`).join('')}
-                 </ul>
-               </div>`;
-      continue;
-    }
-    
-    const isSummary = /RESUMO|ENERGIA|CIRCUITOS|DELAY|MESA|PROCESSADORAS|SINAL|PIXEL|ESTRUTURA|MONTAGEM|PAINEL|CASES|JUMPS/i.test(title);
-    
-    if (isSummary) {
-      const isDark = /RESUMO/i.test(title) ? 'dark' : '';
-      html += `<div class="print-box ${isDark}">
-                 <h3>${esc(title)}</h3>
-                 ${b.lines.map(x => `<div class="print-line">${lineHtml(x)}</div>`).join('')}
-               </div>`;
-    } else {
-      html += `<div class="print-box">
-                 <h3>${esc(title)}</h3>
-                 ${b.lines.map(x => `<div class="print-line">${lineHtml(x)}</div>`).join('')}
-               </div>`;
+    const isSummary=/RESUMO|ENERGIA|CIRCUITOS|DELAY|MESA|PROCESSADORAS|SINAL|PIXEL|ESTRUTURA|MONTAGEM|PAINEL|CASES|JUMPS/i.test(title);
+    if(isSummary){
+      html+=`<div class="print-box ${/RESUMO/i.test(title)?'dark':''}"><h3>${esc(title)}</h3>`+
+        b.lines.map(x=>`<div class="print-line">${lineHtml(x)}</div>`).join('')+`</div>`;
+    }else{
+      html+=`<div class="print-box"><h3>${esc(title)}</h3>`+b.lines.map(x=>`<div class="print-line">${lineHtml(x)}</div>`).join('')+`</div>`;
     }
   }
-  return html + '</section>';
+  return html+'</section>';
 }
-
-function buildPrint() {
-  const report = document.getElementById('printReport');
-  let available = 0; 
-  let body = '';
-  
-  keys.forEach((k, i) => {
-    const v = readDescritivo(k); 
-    if (v) {
-      available++;
-      body += renderSection(k, v, i);
-    }
-  });
-  
-  report.innerHTML = `
-    <div class="print-page">
-      <div class="print-cover">
-        <div class="print-cover-tag">Maurin Mauricio</div>
-        <h1>Descritivo Técnico</h1>
-        <p>Especificações consolidadas de infraestrutura, equipamentos, energia e montagem.</p>
-      </div>
-      ${body || '<div class="print-note">Nenhum descritivo disponível. Acesse as calculadoras, preencha as informações e clique em "Gerar Descritivo" para consolidar o relatório.</div>'}
-      <div class="print-footer">
-        <span>Documento gerado pelo sistema integrado Maurin Mauricio</span>
-        <span>Áreas preenchidas: ${available}/3</span>
-      </div>
-    </div>`;
+function buildPrint(){
+  const report=document.getElementById('printReport');
+  let available=0; let body='';
+  keys.forEach((k,i)=>{const v=localStorage.getItem('descritivo_'+k); if(v){available++;body+=renderSection(k,v,i)}});
+  report.innerHTML=`<div class="print-page"><div class="print-cover"><h1>DESCRITIVO TÉCNICO — EVENTO</h1><p>Especificações de pré-produção, infraestrutura, equipamentos, energia e montagem</p></div>${body||'<div class="print-note">Nenhum descritivo disponível. Gere o descritivo em Som, Luz e Vídeo antes de exportar o PDF.</div>'}<div class="print-footer"><span>Descritivo Técnico · Maurinho Rigging</span><span>${available} de 3 áreas</span></div></div>`;
 }
-
-function carregar() {
-  let count = 0;
-  for (const key of keys) {
-    const el = document.getElementById(key);
-    // Tenta resgatar os dados salvos pelos outros arquivos
-    const v = readDescritivo(key);
-    
-    if (v && v.trim() !== '') {
-      el.textContent = v;
-      count++;
-    } else {
-      el.innerHTML = '<span class="empty">Nenhum descritivo encontrado para esta área. Vá até a respectiva calculadora e clique no botão "Gerar descritivo".</span>';
-    }
-  }
-  document.getElementById('status').innerHTML = `<b>${count} de 3</b> descritivos integrados com sucesso.`;
+function carregar(){
+  let count=0;
+  for(const key of keys){const el=document.getElementById(key),v=localStorage.getItem('descritivo_'+key);if(v){el.textContent=v;count++}else el.innerHTML='<span class="empty">Nenhum descritivo foi gerado nesta área ainda.</span>'}
+  document.getElementById('status').textContent=count+' de 3 descritivos disponíveis. Gere o descritivo em cada calculadora para atualizar este documento.';
   buildPrint();
 }
-
-document.getElementById('btnAtualizar').onclick = carregar;
-document.getElementById('btnPDF').onclick = () => {
-  buildPrint();
-  window.print();
-};
-
-window.addEventListener('storage', carregar);
-window.addEventListener('focus', carregar);
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) carregar();
-});
-carregar();
+document.getElementById('btnAtualizar').onclick=carregar;
+document.getElementById('btnPDF').onclick=()=>{buildPrint();window.print()};
+window.addEventListener('storage',carregar);carregar();
 </script>
-</body>
-</html>
+</body></html>
