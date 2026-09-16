@@ -1419,7 +1419,7 @@
     // Salva o descritivo para aparecer automaticamente no Descritivo Geral.
     // Mantém o mesmo padrão usado pelas calculadoras de Som e Luz.
     if (descritivo && !/^Informe as dimensões/i.test(descritivo)) {
-      localStorage.setItem('descritivo_video', descritivo);
+      try { localStorage.setItem('descritivo_video', descritivo); } catch (e) { alert('Não foi possível salvar os dados. Abra as páginas pelo mesmo servidor local (ex.: Live Server).'); }
     }
     $('descritivoWrap').classList.add('show');
     $('descritivoWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });

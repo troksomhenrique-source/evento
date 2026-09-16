@@ -340,6 +340,14 @@
 
 <script>
 const keys = ['som', 'luz', 'video'];
+
+function readDescritivo(key) {
+  try {
+    return (window.localStorage && readDescritivo(key)) || '';
+  } catch (e) {
+    return '';
+  }
+}
 const titles = {
   som: 'Sistema de Áudio',
   luz: 'Sistema de Iluminação',
@@ -465,7 +473,7 @@ function buildPrint() {
   let body = '';
   
   keys.forEach((k, i) => {
-    const v = localStorage.getItem('descritivo_' + k); 
+    const v = readDescritivo(k); 
     if (v) {
       available++;
       body += renderSection(k, v, i);
@@ -492,7 +500,7 @@ function carregar() {
   for (const key of keys) {
     const el = document.getElementById(key);
     // Tenta resgatar os dados salvos pelos outros arquivos
-    const v = localStorage.getItem('descritivo_' + key);
+    const v = readDescritivo(key);
     
     if (v && v.trim() !== '') {
       el.textContent = v;
@@ -512,6 +520,10 @@ document.getElementById('btnPDF').onclick = () => {
 };
 
 window.addEventListener('storage', carregar);
+window.addEventListener('focus', carregar);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) carregar();
+});
 carregar();
 </script>
 </body>

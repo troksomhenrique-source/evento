@@ -1545,7 +1545,7 @@
   $('btnDescritivo').addEventListener('click', () => {
     const descritivo = gerarDescritivo();
     $('descritivoText').value = descritivo;
-    localStorage.setItem('descritivo_luz', descritivo);
+    try { localStorage.setItem('descritivo_luz', descritivo); } catch (e) { alert('Não foi possível salvar os dados. Abra as páginas pelo mesmo servidor local (ex.: Live Server).'); }
     $('descritivoWrap').classList.add('show');
     $('descritivoWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
