@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Descritivo Geral — Maurin Mauricio</title>
+<title>Descritivo Geral — Maurinho Rigging</title>
 <style>
 :root{--bg:#0b0d10;--panel:#11151a;--panel-2:#0e1216;--line:#252b32;--text:#e7eaee;--muted:#8e98a5;--accent:#d8ff3e;--accent-ink:#101400}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
@@ -86,7 +86,7 @@ h3.blk-title{font-size:12.5px;margin:14px 0 8px;text-transform:uppercase;letter-
 </style>
 </head>
 <body>
-<header><div class="header-inner"><a class="back-link" href="index.html">← Voltar para áreas</a><p class="tag">Maurin Mauricio</p><h1>Descritivo Geral</h1><p>Reúne os descritivos gerados nas calculadoras de som, luz e vídeo em um único documento para conferência e exportação em PDF.</p></div></header>
+<header><div class="header-inner"><a class="back-link" href="index.html">← Voltar para áreas</a><p class="tag">Maurinho Rigging · Tecnologia para eventos</p><h1>Descritivo Geral</h1><p>Reúne os descritivos gerados nas calculadoras de som, luz e vídeo em um único documento para conferência e exportação em PDF.</p></div></header>
 <div class="export-bar"><button class="btn" id="btnAtualizar">Atualizar descritivos</button><button class="btn" id="btnPDF">Exportar PDF</button></div>
 <main>
 <p class="status" id="status"></p>
@@ -313,14 +313,17 @@ function buildVideo(d){
   html+=blockTitle('Sinal e Processamento')+gridHtml([sinalLeft,sinalRight]);
 
   const candidatas=d.candidatas||[];
-  const procLinhas=candidatas.map(p=>{
-    const qtd=p.outputPorts?Math.ceil(d.rjTotal/p.outputPorts):1;
-    return `<b>${esc(p.nome)}:</b> ${qtd} un. (${fmtPx(p.maxPixels)} px / ${p.maxInputW}x${p.maxInputH} in)`;
-  });
-  const procBox=boxHtml('Processadoras Novastar (Sugestões Calculadas)',[
-    `<b>Configuração exigida:</b> ${esc(d.sugestaoProcessadoras||'')}`,
-    ...procLinhas
-  ]);
+  const procQtd=d.qtdSelecionada || (d.processadoraSelecionada && candidatas.length ? 1 : 0);
+  const procOk = d.processadoraOkSaida!=null ? (d.processadoraOkSaida && d.processadoraOkEntrada) : null;
+  const procLinhas = d.processadoraSelecionada
+    ? [
+        `<div class="kpi-big" style="font-size:16px;">${procQtd}x ${esc(d.processadoraSelecionada)}</div>`,
+        procOk===true ? `<span class="kpi-sub" style="color:#2e7d32;">✓ atende à carga, portas e resolução informadas</span>`
+          : procOk===false ? `<span class="warn">⚠ não atende completamente ao painel (verificar capacidade/portas/resolução)</span>`
+          : ''
+      ]
+    : [`Nenhuma processadora selecionada.`];
+  const procBox=boxHtml('Processadora Selecionada',procLinhas);
   html+=procBox;
 
   const note='Os pesos, potências, pixagem, cabos, cases e capacidades de processadoras são calculados com os parâmetros cadastrados no sistema e servem como referência de pré-produção.';
@@ -380,12 +383,12 @@ function buildPrint(){
       <h2 class="print-section-title"><span class="num">${String(i+1).padStart(2,'0')}</span>${esc(titles[s.key])}</h2>
       ${s.content.legacy?`<div class="print-note" style="margin-bottom:10px;">Este descritivo foi gerado antes da atualização do layout. Gere o descritivo novamente na calculadora de ${esc(titles[s.key].toLowerCase())} para ver o relatório completo.</div>`:''}
       ${s.content.inner}
-      <div class="print-footer-page"><span>Maurin Mauricio · Descritivo Técnico</span><span>Página ${i+1} de ${sections.length||3}</span></div>
+      <div class="print-footer-page"><span>Maurinho Rigging · Descritivo Técnico</span><span>Página ${i+1} de ${sections.length||3}</span></div>
     </div>`).join('');
 
   report.innerHTML=`<div class="print-page">
     <div class="print-cover">
-      <p class="kicker">Maurin Mauricio</p>
+      <p class="kicker">Maurinho Rigging</p>
       <h1>Descritivo Técnico de Evento</h1>
       <p>Data: ${dataFmt} · Pré-produção &amp; Infraestrutura</p>
     </div>
