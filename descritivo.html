@@ -3,407 +3,353 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Descritivo Técnico — Maurinho Rigging</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Descritivo Geral — Maurin Mauricio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
-/* ==========================================================================
-   TEMA DA TELA (DARK MODE)
-   ========================================================================== */
-:root {
-  --bg: #09090b;
-  --panel: #18181b;
-  --panel-hover: #27272a;
-  --line: #27272a;
-  --text: #f4f4f5;
-  --muted: #a1a1aa;
-  --accent: #3b82f6;
-  --accent-hover: #60a5fa;
-  --radius: 8px;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-header {
-  border-bottom: 1px solid var(--line);
-  padding: 40px 20px 30px;
-  background: var(--panel);
-}
-
-.header-inner, main, .export-bar {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: color 0.2s;
-}
-
-.back-link:hover { color: var(--accent); }
-
-.tag {
-  margin: 24px 0 8px;
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-h1 {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-header p:last-child {
-  color: var(--muted);
-  line-height: 1.6;
-  margin: 12px 0 0;
-  font-size: 15px;
-}
-
-.export-bar {
-  padding: 24px 20px 0;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.btn {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  color: var(--text);
-  padding: 10px 20px;
-  border-radius: var(--radius);
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-.btn:hover {
-  background: var(--panel-hover);
-  border-color: var(--muted);
-}
-
-.btn.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
-.btn.primary:hover {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
-}
-
-main { padding: 24px 20px 60px; }
-
-.status {
-  color: var(--muted);
-  font-size: 14px;
-  margin: 0 0 24px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.status::before {
-  content: "";
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  background: var(--accent);
-  border-radius: 50%;
-}
-
-.card {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  margin-bottom: 24px;
-  padding: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.section-title {
-  margin: 0 0 16px;
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: -0.01em;
-  display: flex;
-  align-items: center;
-}
-
-.section-title span {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--accent);
-  padding: 2px 8px;
-  border-radius: 4px;
-  margin-right: 12px;
-  font-size: 12px;
-}
-
-.empty {
-  color: var(--muted);
-  font-size: 14px;
-  font-style: italic;
-}
-
-.text {
-  white-space: pre-wrap;
-  font-family: 'JetBrains Mono', Consolas, monospace;
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--text);
-}
-
-/* ==========================================================================
-   ESTILO DE IMPRESSÃO / PDF (CLEAN & PROFESSIONAL)
-   ========================================================================== */
-#printReport { display: none; }
-
-@media print {
-  @page { size: A4; margin: 15mm 15mm 20mm 15mm; }
-  
-  body {
-    background: #ffffff;
-    color: #0f172a;
-    font-family: 'Inter', Helvetica, Arial, sans-serif;
+  /* ==========================================================================
+     TEMA DA TELA (DARK MODE - IDENTIDADE VISUAL DO PROJETO)
+     ========================================================================== */
+  :root{
+    --bg: #0a0a0b;
+    --panel: #131315;
+    --panel-2: #1a1a1d;
+    --line: #29292d;
+    --text: #f3f1ec;
+    --muted: #8c8c91;
+    --power: #3b82c9;
+    --signal: #7fa8c9;
+    --weight: #b3564a;
+    --ok: #7cae83;
+    
+    --som: #d6473c;
+    --luz: #d1a24a;
+    --video: #3b82c9;
+    --accent: #f3f1ec;
   }
   
-  header, .export-bar, main { display: none !important; }
-  #printReport { display: block !important; }
+  *{box-sizing:border-box;}
   
-  .print-page {
-    width: 100%;
-    font-size: 9.5pt;
-    line-height: 1.4;
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+  }
+  
+  h1,h2,h3,.disp{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  
+  .mono{font-family:'IBM Plex Mono', monospace;}
+
+  header{
+    border-bottom:1px solid var(--line);
+    background: radial-gradient(ellipse 900px 300px at 15% 0%, rgba(243, 241, 236, 0.08), transparent 70%);
+  }
+  
+  header .header-inner{
+    max-width:1100px;
+    margin:0 auto;
+    padding:44px 20px 32px;
+  }
+  
+  .back-link{
+    display:inline-block;
+    color:var(--muted);
+    text-decoration:none;
+    font-size:13px;
+    font-weight:500;
+    margin-bottom:18px;
+  }
+  .back-link:hover{ color:var(--accent); }
+  
+  header .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:var(--accent);
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    margin:0 0 14px;
+  }
+  header .tag::before{
+    content:'';
+    width:6px; height:6px;
+    background:var(--accent);
+    border-radius:1px;
+    display:inline-block;
+  }
+  
+  header h1{
+    font-size:32px;
+    margin:0 0 10px;
+    line-height:1.12;
+    max-width:26ch;
+  }
+  
+  header p.sub{
+    color:var(--muted);
+    margin:0;
+    font-size:14.5px;
+    max-width:64ch;
   }
 
-  /* Capa super clean */
-  .print-cover {
-    border-bottom: 2px solid #0f172a;
-    padding: 0 0 16px;
-    margin-bottom: 24px;
+  .export-bar{
+    max-width:1100px;
+    margin:0 auto;
+    padding:20px 20px 0;
+    display:flex;
+    justify-content:flex-end;
+    gap: 12px;
   }
   
-  .print-cover-tag {
-    font-size: 8pt;
-    font-weight: 700;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 8px;
+  .btn-export{
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:var(--text);
+    padding:10px 18px;
+    border-radius:3px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:0.03em;
+    cursor:pointer;
+    transition: all 0.2s;
   }
+  .btn-export:hover{ border-color:var(--accent); color:var(--accent); }
+  .btn-export.primary{ border-top:2px solid var(--accent); }
   
-  .print-cover h1 {
-    font-size: 24pt;
-    line-height: 1.1;
-    margin: 0 0 6px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: #0f172a;
-  }
-  
-  .print-cover p {
-    margin: 0;
-    color: #475569;
-    font-size: 11pt;
+  main{
+    max-width:1100px;
+    margin:0 auto;
+    padding:20px 20px 80px;
   }
 
-  .print-section {
+  .status {
+    color: var(--muted);
+    font-size: 13.5px;
     margin: 0 0 24px;
-    break-inside: auto;
-  }
-  
-  .print-section-title {
-    font-size: 14pt;
-    font-weight: 800;
-    margin: 0 0 16px;
-    padding: 0 0 8px;
-    border-bottom: 1px solid #cbd5e1;
-    color: #0f172a;
     display: flex;
     align-items: center;
-  }
-  
-  .print-section-title .num {
-    background: #0f172a;
-    color: #fff;
-    padding: 2px 6px;
+    gap: 8px;
+    background: var(--panel-2);
+    padding: 10px 14px;
+    border: 1px solid var(--line);
     border-radius: 3px;
-    font-size: 10pt;
-    margin-right: 10px;
+  }
+  .status::before {
+    content: ""; display: inline-block; width: 8px; height: 8px;
+    background: var(--ok); border-radius: 50%;
   }
 
-  /* Caixas de conteúdo e grupos */
-  .print-box {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-left: 3px solid #cbd5e1;
-    border-radius: 6px;
-    padding: 12px 14px;
-    margin-bottom: 12px;
-    break-inside: avoid;
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:22px;
+    margin-bottom:24px;
   }
   
-  .print-box h3, .print-group h3 {
-    font-size: 10pt;
-    margin: 0 0 8px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: #334155;
-    letter-spacing: 0.03em;
+  /* Cores dinâmicas para cada área */
+  .card.som { border-top: 2px solid var(--som); }
+  .card.luz { border-top: 2px solid var(--luz); }
+  .card.video { border-top: 2px solid var(--video); }
+
+  .section-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--text);
+    margin:0 0 16px;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  .section-title span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  
+  .card.som .section-title{ color: var(--som); }
+  .card.luz .section-title{ color: var(--luz); }
+  .card.video .section-title{ color: var(--video); }
+
+  .text {
+    white-space: pre-wrap;
+    font-family: 'IBM Plex Mono', Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  
+  .empty { color: var(--muted); font-style: italic; font-size: 13px; }
+
+  footer{
+    max-width:1100px;
+    margin:0 auto;
+    padding:24px 20px 40px;
+    color:var(--muted);
+    font-size:12px;
+    border-top:1px solid var(--line);
   }
 
-  /* Painel Escuro para Resumos Especiais */
-  .print-box.dark {
-    background: #0f172a;
-    color: #f8fafc;
-    border: none;
-    border-left: 3px solid #3b82f6;
-  }
-  
-  .print-box.dark h3 {
-    color: #94a3b8;
-  }
-  
-  .print-box.dark .print-line b {
-    color: #fff;
-  }
+  /* ==========================================================================
+     ESTILO DE IMPRESSÃO / PDF (CLEAN & PROFESSIONAL)
+     ========================================================================== */
+  #printReport { display: none; }
 
-  .print-line {
-    margin: 4px 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-  
-  .print-line b {
-    font-weight: 600;
-    color: #0f172a;
-  }
+  @media print {
+    @page { size: A4; margin: 15mm 15mm 20mm 15mm; }
+    
+    body {
+      background: #ffffff;
+      color: #0f172a;
+      font-family: 'Inter', Helvetica, Arial, sans-serif;
+    }
+    
+    header, .export-bar, main, footer { display: none !important; }
+    #printReport { display: block !important; }
+    
+    .print-page { width: 100%; font-size: 9.5pt; line-height: 1.4; }
 
-  .print-group {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    padding: 12px 14px;
-    margin-bottom: 12px;
-    break-inside: avoid;
-  }
-  
-  .print-bullets { margin: 0; padding-left: 20px; }
-  .print-bullets li { margin: 4px 0; padding-left: 4px; }
-  .print-bullets li::marker { color: #94a3b8; }
+    /* Capa super clean */
+    .print-cover {
+      border-bottom: 2px solid #0f172a;
+      padding: 0 0 16px;
+      margin-bottom: 24px;
+    }
+    .print-cover-tag {
+      font-size: 8pt; font-weight: 700; color: #64748b;
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;
+    }
+    .print-cover h1 {
+      font-size: 24pt; line-height: 1.1; margin: 0 0 6px; font-weight: 800;
+      letter-spacing: -0.02em; color: #0f172a; font-family:'Space Grotesk', sans-serif;
+    }
+    .print-cover p { margin: 0; color: #475569; font-size: 11pt; }
 
-  /* Tabelas Clean */
-  .print-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 8px 0 16px;
-    font-size: 9pt;
-    break-inside: auto;
-  }
-  
-  .print-table th {
-    text-align: left;
-    padding: 8px 10px;
-    font-size: 8pt;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: #475569;
-    border-bottom: 1px solid #cbd5e1;
-  }
-  
-  .print-table td {
-    padding: 8px 10px;
-    border-bottom: 1px solid #f1f5f9;
-    vertical-align: top;
-  }
-  
-  .print-table tr:nth-child(even) td { background: #f8fafc; }
-  .print-table tr { break-inside: avoid; }
-  .print-table .qty { text-align: right; white-space: nowrap; font-weight: 600; }
+    .print-section { margin: 0 0 24px; break-inside: auto; }
+    
+    .print-section-title {
+      font-family:'Space Grotesk', sans-serif;
+      font-size: 14pt; font-weight: 800; margin: 0 0 16px; padding: 0 0 8px;
+      border-bottom: 1px solid #cbd5e1; color: #0f172a; display: flex; align-items: center;
+    }
+    .print-section-title .num {
+      background: #0f172a; color: #fff; padding: 2px 6px; border-radius: 3px;
+      font-size: 10pt; margin-right: 10px; font-family:'IBM Plex Mono', monospace;
+    }
 
-  .print-note {
-    background: #f8fafc;
-    border: 1px dashed #cbd5e1;
-    border-radius: 6px;
-    padding: 12px;
-    color: #64748b;
-    font-size: 9pt;
-    break-inside: avoid;
-    text-align: center;
-  }
+    /* Caixas de conteúdo e grupos */
+    .print-box {
+      background: #fff; border: 1px solid #e2e8f0; border-left: 3px solid #cbd5e1;
+      border-radius: 6px; padding: 12px 14px; margin-bottom: 12px; break-inside: avoid;
+    }
+    
+    .print-box h3, .print-group h3 {
+      font-family:'Space Grotesk', sans-serif; font-size: 10pt; margin: 0 0 8px;
+      font-weight: 700; text-transform: uppercase; color: #334155; letter-spacing: 0.03em;
+    }
 
-  .print-footer {
-    margin-top: 30px;
-    border-top: 1px solid #e2e8f0;
-    padding-top: 10px;
-    color: #94a3b8;
-    font-size: 8pt;
-    display: flex;
-    justify-content: space-between;
-    font-weight: 500;
-  }
+    /* Painel Escuro para Resumos Especiais */
+    .print-box.dark {
+      background: #0f172a; color: #f8fafc; border: none; border-left: 3px solid #3b82f6;
+    }
+    .print-box.dark h3 { color: #94a3b8; }
+    .print-box.dark .print-line b { color: #fff; }
 
-  .print-page-break { break-before: page; }
-}
+    .print-line { margin: 4px 0; display: flex; flex-wrap: wrap; gap: 4px; }
+    .print-line b { font-weight: 600; color: #0f172a; }
+
+    .print-group {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
+      padding: 12px 14px; margin-bottom: 12px; break-inside: avoid;
+    }
+    
+    .print-bullets { margin: 0; padding-left: 20px; }
+    .print-bullets li { margin: 4px 0; padding-left: 4px; }
+    .print-bullets li::marker { color: #94a3b8; }
+
+    /* Tabelas Clean */
+    .print-table {
+      width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 9pt; break-inside: auto;
+    }
+    .print-table th {
+      text-align: left; padding: 8px 10px; font-size: 8pt; text-transform: uppercase;
+      font-weight: 700; color: #475569; border-bottom: 1px solid #cbd5e1;
+    }
+    .print-table td {
+      padding: 8px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: top;
+    }
+    .print-table tr:nth-child(even) td { background: #f8fafc; }
+    .print-table tr { break-inside: avoid; }
+    .print-table .qty { text-align: right; white-space: nowrap; font-weight: 600; }
+
+    .print-note {
+      background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px;
+      padding: 12px; color: #64748b; font-size: 9pt; break-inside: avoid; text-align: center;
+    }
+
+    .print-footer {
+      margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 10px;
+      color: #94a3b8; font-size: 8pt; display: flex; justify-content: space-between; font-weight: 500;
+    }
+
+    .print-page-break { break-before: page; }
+  }
 </style>
 </head>
 <body>
 
 <header>
   <div class="header-inner">
-    <a class="back-link" href="index.html">← Voltar para painel inicial</a>
-    <p class="tag">Maurinho Rigging</p>
-    <h1>Descritivo Técnico</h1>
-    <p>Reúne as especificações de pré-produção de som, luz e vídeo geradas nas calculadoras para conferência rápida e exportação em documento PDF.</p>
+    <a class="back-link" href="index.html">← Voltar para áreas</a>
+    <p class="tag">Pré Produção</p>
+    <h1>Descritivo Geral</h1>
+    <p class="sub">Reúne as especificações de pré-produção de som, luz e vídeo geradas nas calculadoras para conferência rápida e exportação em documento PDF.</p>
   </div>
 </header>
 
 <div class="export-bar">
-  <button class="btn" id="btnAtualizar">Atualizar Dados</button>
-  <button class="btn primary" id="btnPDF">Exportar PDF</button>
+  <button class="btn-export" id="btnAtualizar">Atualizar Dados</button>
+  <button class="btn-export primary" id="btnPDF">Exportar PDF</button>
 </div>
 
 <main>
   <p class="status" id="status"></p>
   
-  <section class="card">
+  <section class="card som">
     <p class="section-title"><span>01</span> ÁUDIO / PA</p>
     <div class="text" id="som"></div>
   </section>
   
-  <section class="card">
+  <section class="card luz">
     <p class="section-title"><span>02</span> ILUMINAÇÃO</p>
     <div class="text" id="luz"></div>
   </section>
   
-  <section class="card">
+  <section class="card video">
     <p class="section-title"><span>03</span> VÍDEO / PAINEL DE LED</p>
     <div class="text" id="video"></div>
   </section>
 </main>
 
+<footer>
+  Descritivo Geral gerado a partir dos dados do navegador local (localStorage). 
+</footer>
+
+<!-- A parte do PDF gerada dinamicamente via JS fica escondida até ser impressa -->
 <div id="printReport"></div>
 
 <script>
@@ -426,12 +372,14 @@ function qtyMatch(l) {
   return l.match(/^(\d+(?:[.,]\d+)?)x\s+(.+?)\s+—\s+(.+)$/i);
 }
 
+// Aplica negrito aos rótulos para impressão em PDF
 function lineHtml(l) {
   let x = cleanLine(l);
   x = x.replace(/^(Caixas|Equipamentos|Consumo|Cabeamento|Peso caixas|Peso dos equipamentos|Peso das caixas|Peso total do sistema|Peso suspenso considerado|Peso do conjunto|Suspensão|Suspenso|Voado\/suspenso|Rigging|Distribuição|Talhas|Chapas|Contrapesos|Potência|Corrente estimada|Parâmetros|Saídas físicas|Entradas físicas|Buses|Mesa de som|Mesa de luz|Total de circuitos AC|Potência total considerada|Peso total considerado|Sugestão calculada|Cabos de energia|Cabos de sinal RJ45|Total de portas RJ45|Área total|Pixel pitch|Configuração|Modo|Estrutura|JUMPS|CASES|Dimensão informada)\s*:/i, (m) => `<b>${esc(m.slice(0, -1))}:</b>`);
   return x;
 }
 
+// Lógica para quebrar os textos gerados pelas outras páginas em blocos no PDF
 function parseBlocks(text) {
   const lines = text.split(/\r?\n/).map(x => x.trimEnd());
   const blocks = [];
@@ -442,7 +390,8 @@ function parseBlocks(text) {
     if (!l) continue;
     if (/^DESCRITIVO\s*[—-]/i.test(l)) continue;
     
-    const isHeading = /^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ0-9\s&\/+().–—-]{5,}$/.test(l) && !/^\d+(?:[.,]\d+)?\s*(?:W|KG|M|A|KVA)/i.test(l);
+    // Identifica títulos das seções pelas letras maiúsculas
+    const isHeading = /^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ0-9\s&\/+().–—-]{5,}$/.test(l) && !/^\d+(?:[.,]\d+)?\s*(?:W|KG|M|A|KVA|px)/i.test(l);
     
     if (isHeading) {
       current = { title: l.replace(/^\d+\.\s*/, ''), lines: [] };
@@ -454,6 +403,7 @@ function parseBlocks(text) {
   return blocks;
 }
 
+// Constrói a tabela de itens
 function inventoryTable(lines) {
   const rows = lines.map(cleanLine).map(qtyMatch).filter(Boolean);
   if (rows.length < 2) return '';
@@ -477,6 +427,7 @@ function inventoryTable(lines) {
     `</tbody></table>`;
 }
 
+// Renderiza a seção inteira para PDF
 function renderSection(key, text, index) {
   const blocks = parseBlocks(text); 
   let html = `<section class="print-section ${index > 0 ? 'print-page-break' : ''}">
@@ -485,7 +436,7 @@ function renderSection(key, text, index) {
                 </h2>`;
                 
   if (!blocks.length) {
-    return html + `<div class="print-note">Nenhum descritivo preenchido nesta área.</div></section>`;
+    return html + `<div class="print-note">Nenhum descritivo estruturado retornado, revise os dados na calculadora.</div></section>`;
   }
   
   for (const b of blocks) {
@@ -493,7 +444,7 @@ function renderSection(key, text, index) {
     const inv = inventoryTable(b.lines);
     
     if (inv) {
-      html += `<h3 style="font-size:10pt; font-weight:700; margin:14px 0 6px; color:#334155; text-transform:uppercase;">${esc(title)}</h3>${inv}`;
+      html += `<h3 style="font-size:10pt; font-family:'Space Grotesk', sans-serif; font-weight:700; margin:14px 0 6px; color:#334155; text-transform:uppercase;">${esc(title)}</h3>${inv}`;
       continue;
     }
     
@@ -527,6 +478,7 @@ function renderSection(key, text, index) {
   return html + '</section>';
 }
 
+// Monta o DOM de impressão
 function buildPrint() {
   const report = document.getElementById('printReport');
   let available = 0; 
@@ -543,18 +495,19 @@ function buildPrint() {
   report.innerHTML = `
     <div class="print-page">
       <div class="print-cover">
-        <div class="print-cover-tag">Maurinho Rigging</div>
+        <div class="print-cover-tag">Maurin Mauricio</div>
         <h1>Descritivo Técnico</h1>
         <p>Especificações consolidadas de infraestrutura, equipamentos, energia e montagem.</p>
       </div>
-      ${body || '<div class="print-note">Nenhum descritivo disponível. Utilize as calculadoras para gerar os dados antes de exportar o PDF.</div>'}
+      ${body || '<div class="print-note">Nenhum descritivo disponível. Acesse as abas de Som, Luz ou Vídeo, adicione seus equipamentos e clique em "Gerar Descritivo" lá para povoar este documento.</div>'}
       <div class="print-footer">
-        <span>Documento gerado pelo sistema integrado Maurinho Rigging</span>
+        <span>Documento gerado pelo sistema integrado Maurin Mauricio</span>
         <span>Áreas preenchidas: ${available}/3</span>
       </div>
     </div>`;
 }
 
+// Carrega os dados na tela principal
 function carregar() {
   let count = 0;
   for (const key of keys) {
@@ -564,16 +517,17 @@ function carregar() {
       el.textContent = v;
       count++;
     } else {
-      el.innerHTML = '<span class="empty">Nenhum descritivo disponível em cache para esta área.</span>';
+      el.innerHTML = '<span class="empty">Nenhum descritivo gerado. Acesse a calculadora correspondente e gere os dados.</span>';
     }
   }
-  document.getElementById('status').innerHTML = `<b>${count} de 3</b> descritivos integrados. Pronto para visualização ou exportação.`;
+  document.getElementById('status').innerHTML = `<b>${count} de 3</b> áreas possuem descritivos prontos para visualização e exportação.`;
   buildPrint();
 }
 
+// Event Listeners
 document.getElementById('btnAtualizar').onclick = carregar;
 document.getElementById('btnPDF').onclick = () => {
-  buildPrint();
+  buildPrint(); // Garante a versão mais recente
   window.print();
 };
 
