@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maurinho Rigging — Áreas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0a0b;
+    --panel: #131315;
+    --panel-2: #1a1a1d;
+    --line: #29292d;
+    --text: #f3f1ec;
+    --muted: #8c8c91;
+    --power: #3b82c9;
+    --signal: #7fa8c9;
+    --weight: #b3564a;
+    --ok: #7cae83;
+    --som: #b3564a;
+    --luz: #d1a24a;
+    --video: #3b82c9;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    min-height:100vh;
+  }
+  h1,h2,h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+
+  header{
+    border-bottom:1px solid var(--line);
+    background:
+      radial-gradient(ellipse 900px 300px at 15% 0%, rgba(59,130,201,0.10), transparent 70%);
+  }
+  header .header-inner{
+    max-width:1100px;
+    margin:0 auto;
+    padding:44px 20px 32px;
+  }
+  header .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:var(--power);
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    margin:0 0 14px;
+  }
+  header .tag::before{
+    content:'';
+    width:6px; height:6px;
+    background:var(--power);
+    border-radius:1px;
+    display:inline-block;
+  }
+  header h1{
+    font-size:32px;
+    margin:0 0 10px;
+    line-height:1.12;
+    max-width:26ch;
+  }
+  header p.sub{
+    color:var(--muted);
+    margin:0;
+    font-size:14.5px;
+    max-width:60ch;
+  }
+
+  main{
+    max-width:1100px;
+    margin:0 auto;
+    padding:48px 20px 80px;
+  }
+
+  .area-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:20px;
+  }
+  @media (max-width: 860px){
+    .area-grid{grid-template-columns: 1fr;}
+  }
+
+  .area-card{
+    display:block;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-top:2px solid var(--accent);
+    border-radius:3px;
+    padding:32px 24px;
+    text-decoration:none;
+    color:var(--text);
+    transition:transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+    position:relative;
+  }
+  .area-card:hover{
+    transform:translateY(-2px);
+    background:var(--panel-2);
+  }
+  .area-card .icon{
+    width:40px; height:40px;
+    border-radius:3px;
+    background:color-mix(in srgb, var(--accent) 16%, transparent);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:22px;
+    font-size:20px;
+  }
+  .area-card .tag-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--muted);
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    margin:0 0 8px;
+  }
+  .area-card h2{
+    font-size:22px;
+    margin:0 0 10px;
+    color:var(--accent);
+  }
+  .area-card p{
+    color:var(--muted);
+    font-size:13.5px;
+    margin:0 0 22px;
+    min-height:38px;
+  }
+  .area-card .go{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:600;
+    font-family:'Space Grotesk', sans-serif;
+    color:var(--text);
+  }
+  .area-card .go .arrow{
+    transition:transform 0.12s ease;
+  }
+  .area-card:hover .go .arrow{
+    transform:translateX(4px);
+  }
+  .area-card.disabled{
+    opacity:0.5;
+    cursor:default;
+    pointer-events:none;
+  }
+  .area-card.disabled .go{ color:var(--muted); }
+  .badge-em-breve{
+    position:absolute;
+    top:20px; right:20px;
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:3px 7px;
+  }
+
+  footer{
+    max-width:1100px;
+    margin:0 auto;
+    padding:24px 20px 40px;
+    color:var(--muted);
+    font-size:12px;
+    border-top:1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <p class="tag">Maurinho Rigging · Tecnologia para eventos</p>
+    <h1>Escolha a área</h1>
+    <p class="sub">Selecione o módulo de calculadora que você quer usar para o seu evento.</p>
+  </div>
+</header>
+
+<main>
+  <div class="area-grid">
+
+    <a href="som.html" class="area-card" style="--accent: var(--som);">
+      <div class="icon">🔊</div>
+      <p class="tag-num">01 · Áudio</p>
+      <h2>Som</h2>
+      <p>Calculadora de PA, subs, delays e potência de sistema de som.</p>
+      <span class="go">Acessar <span class="arrow">→</span></span>
+    </a>
+
+    <a href="luz.html" class="area-card" style="--accent: var(--luz);">
+      <div class="icon">💡</div>
+      <p class="tag-num">02 · Iluminação</p>
+      <h2>Luz</h2>
+      <p>Calculadora de moving heads, dimmers, circuitos e consumo de energia.</p>
+      <span class="go">Acessar <span class="arrow">→</span></span>
+    </a>
+
+    <a href="video.html" class="area-card" style="--accent: var(--video);">
+      <div class="icon">🎥</div>
+      <p class="tag-num">03 · Painel de LED</p>
+      <h2>Vídeo</h2>
+      <p>Calculadora de mão francesa, cabos, cases, consumo e processadora do painel de LED.</p>
+      <span class="go">Acessar <span class="arrow">→</span></span>
+    </a>
+
+  </div>
+</main>
+
+<footer>
+  Maurinho Rigging — calculadoras de referência para pré-produção de eventos.
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Descritivo Geral — Maurinho Rigging</title>
+<style>
+:root{--bg:#0b0d10;--panel:#11151a;--panel-2:#0e1216;--line:#252b32;--text:#e7eaee;--muted:#8e98a5;--accent:#d8ff3e;--accent-ink:#101400}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
+header{border-bottom:1px solid var(--line);padding:34px 20px 30px}.header-inner,main,.export-bar{max-width:1100px;margin:0 auto}.back-link{color:var(--muted);text-decoration:none;font-size:13px}.back-link:hover{color:var(--accent)}
+.tag{margin:22px 0 8px;color:var(--accent);font-size:12px;text-transform:uppercase;letter-spacing:.12em}h1{margin:0;font-size:32px;letter-spacing:-.03em}header p:last-child{max-width:780px;color:var(--muted);line-height:1.6;margin:10px 0 0}
+.export-bar{padding:16px 20px 0;display:flex;justify-content:flex-end;gap:10px}.btn{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--accent);color:var(--text);padding:10px 18px;border-radius:3px;font-weight:600;font-size:13px;cursor:pointer}.btn:hover{border-color:var(--accent)}
+main{padding:20px}.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:18px;padding:22px}.section-title{margin:0 0 14px;font-weight:700;font-size:15px}.section-title span{color:var(--accent);margin-right:8px}.empty{color:var(--muted);font-size:13px}.text{white-space:pre-wrap;font-family:'IBM Plex Mono',Consolas,monospace;font-size:13px;line-height:1.7;color:var(--text)}
+.status{color:var(--muted);font-size:12px;margin:0 0 18px}.actions{display:flex;gap:10px}
+@media print{body{background:#fff;color:#111}header{padding:0 0 18px;border-bottom:2px solid #111}.header-inner,main,.export-bar{max-width:none}.back-link,.export-bar,.status,.actions{display:none}.tag{color:#111;margin-top:0}header p:last-child{color:#444}.card{background:#fff;border:0;border-bottom:1px solid #bbb;border-radius:0;padding:18px 0;margin:0;break-inside:avoid}.text{color:#111;font-size:11pt;line-height:1.55}.section-title span{color:#111}main{padding:0}.empty{color:#555}h1{font-size:26pt}}
+</style>
+</head>
+<body>
+<header><div class="header-inner"><a class="back-link" href="index.html">← Voltar para áreas</a><p class="tag">Maurinho Rigging · Tecnologia para eventos</p><h1>Descritivo Geral</h1><p>Reúne os descritivos gerados nas calculadoras de som, luz e vídeo em um único documento para conferência e exportação em PDF.</p></div></header>
+<div class="export-bar"><button class="btn" id="btnAtualizar">Atualizar descritivos</button><button class="btn" id="btnPDF">Exportar PDF</button></div>
+<main>
+<p class="status" id="status"></p>
+<section class="card"><p class="section-title"><span>01</span> SOM</p><div class="text" id="som"></div></section>
+<section class="card"><p class="section-title"><span>02</span> LUZ</p><div class="text" id="luz"></div></section>
+<section class="card"><p class="section-title"><span>03</span> VÍDEO / PAINEL DE LED</p><div class="text" id="video"></div></section>
+</main>
+<script>
+const labels={som:'Som',luz:'Luz',video:'Vídeo / Painel de LED'};
+function carregar(){let count=0;for(const key of ['som','luz','video']){const el=document.getElementById(key),v=localStorage.getItem('descritivo_'+key);if(v){el.textContent=v;count++}else el.innerHTML='<span class="empty">Nenhum descritivo foi gerado nesta área ainda.</span>'}document.getElementById('status').textContent=count+' de 3 descritivos disponíveis. Gere o descritivo em cada calculadora para atualizar este documento.'}
+document.getElementById('btnAtualizar').onclick=carregar;document.getElementById('btnPDF').onclick=()=>window.print();window.addEventListener('storage',carregar);carregar();
+</script>
+</body></html>
