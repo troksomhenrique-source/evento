@@ -692,6 +692,9 @@ async function gerarArtSolo(){
   if (!xml.includes('<mergeCell ref="B3:C3"/>')) {
     xml = xml.replace(/<mergeCells([^>]*)>/, '<mergeCells$1><mergeCell ref="B3:C3"/><mergeCell ref="B4:C4"/>');
   }
+  // Mantém a coluna C normalmente nas tabelas, mas no cabeçalho aplica
+  // a borda da célula final da área Evento para fechar a linha visualmente.
+  xml = xml.replace('<c r="C4" s="2"/>', '<c r="C4" s="9"/>');
   const cab = cabSave();
   xml = artSetString(xml, 'B4', cab.evento);
   xml = artSetString(xml, 'D4', cab.local);
