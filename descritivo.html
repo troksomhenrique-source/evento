@@ -613,18 +613,46 @@ function buildAereoEstruturas(){
   }
   return estruturas;
 }
+// Junta linhas de equipamento repetidas (mesmo nome) somando a quantidade,
+// para não desperdiçar linhas do slot quando várias posições em solo usam
+// o mesmo modelo de caixa/aparelho.
+function mergeRowsPorNome(rows){
+  const map = new Map();
+  const ordem = [];
+  rows.forEach(r=>{
+    if (map.has(r.nome)){
+      map.get(r.nome).qty += r.qty;
+    } else {
+      map.set(r.nome, { nome: r.nome, qty: r.qty, pesoUnit: r.pesoUnit });
+      ordem.push(r.nome);
+    }
+  });
+  return ordem.map(n=>map.get(n));
+}
+// Junta todas as posições/varas não-suspensas de uma mesma área (Luz ou Som)
+// numa única estrutura, para usar menos slots/planilhas no Memorial de Solo.
+// Som e Luz não calculam m² de ocupação (só o painel de LED calcula, pela
+// própria dimensão); então, sem essa informação, usamos 10 m² como padrão
+// para a distribuição de carga não ficar em branco na planilha.
+const AREA_PADRAO_SOLO_M2 = 10;
+function mergeGruposSolo(grupos, sufixo){
+  if (!grupos.length) return null;
+  const titulo = grupos.map(g=>g.nome).join(' + ')+sufixo;
+  let rows = [];
+  grupos.forEach(g=>{ rows = rows.concat(artEquipRowsGrupo(g)); });
+  rows = mergeRowsPorNome(rows);
+  return { titulo, area: AREA_PADRAO_SOLO_M2, rows };
+}
 function buildSoloEstruturas(){
   const dl = artReadDados('luz'), ds = artReadDados('som'), dv = artReadDados('video');
   const estruturas = [];
   if (dv && (dv.mode==='ground' || dv.mode==='groundSuspenso') && ((dv.totalPaineisGeral||dv.totalPaineis||0)>0)){
     estruturas.push({ titulo: 'Painel de LED ('+(dv.mode==='ground'?'Ground':'Barra de Elevação')+')', area: dv.areaM2||'', rows: artVideoRowsGround(dv) });
   }
-  ((dl && dl.gruposResultados) || []).filter(g => (g.aparelhos>0) && !g.suspenso).forEach(g=>{
-    estruturas.push({ titulo: g.nome+' (Luz)', area: '', rows: artEquipRowsGrupo(g) });
-  });
-  ((ds && ds.gruposResultados) || []).filter(g => (g.caixas>0) && !g.suspenso).forEach(g=>{
-    estruturas.push({ titulo: g.nome+' (Som)', area: '', rows: artEquipRowsGrupo(g) });
-  });
+  const luzSolo = mergeGruposSolo(((dl && dl.gruposResultados) || []).filter(g => (g.aparelhos>0) && !g.suspenso), ' (Luz)');
+  if (luzSolo) estruturas.push(luzSolo);
+  const somSolo = mergeGruposSolo(((ds && ds.gruposResultados) || []).filter(g => (g.caixas>0) && !g.suspenso), ' (Som)');
+  if (somSolo) estruturas.push(somSolo);
   return estruturas;
 }
 

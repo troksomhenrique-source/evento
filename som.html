@@ -6,6 +6,7 @@
 <title>Pré Produção de Som — Maurin Mauricio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="catalogo-dados.js"></script>
 <style>
   :root{
     --bg: #0a0a0b;
@@ -914,7 +915,14 @@
     quantum338: { label:'DiGiCo Quantum338',                    inputsLocal:8,  outputsLocal:8,  maxCh:128, busesTotal:64, consumo:400, expansaoPadrao:'d2rack', expansaoMax:4, desc:'128 canais mixáveis (156 com Pulse) · 8 entradas / 8 saídas locais' },
     s21s31:     { label:'DiGiCo S21 / S31',                     inputsLocal:0,  outputsLocal:0,  maxCh:48,  busesTotal:46, consumo:200, expansaoPadrao:'drack',  expansaoMax:3, desc:'48 canais mixáveis · sem I/O local — requer rack' },
 
+    siexpr1:    { label:'Soundcraft Si Expression 1',           inputsLocal:20, outputsLocal:16, maxCh:66,  busesTotal:20, consumo:150, expansaoPadrao:'vicompact', expansaoMax:2, desc:'66 canais mixáveis · 16 mic + 4 linha / 16 saídas locais · slot 64×64 para stagebox' },
+    siexpr2:    { label:'Soundcraft Si Expression 2',           inputsLocal:28, outputsLocal:16, maxCh:66,  busesTotal:20, consumo:190, expansaoPadrao:'vicompact', expansaoMax:2, desc:'66 canais mixáveis · 24 mic + 4 linha / 16 saídas locais · slot 64×64 para stagebox' },
+    siexpr3:    { label:'Soundcraft Si Expression 3',           inputsLocal:36, outputsLocal:16, maxCh:66,  busesTotal:20, consumo:220, expansaoPadrao:'vicompact', expansaoMax:2, desc:'66 canais mixáveis · 32 mic + 4 linha / 16 saídas locais · slot 64×64 para stagebox' },
+    vi1000:     { label:'Soundcraft Vi1000',                    inputsLocal:16, outputsLocal:16, maxCh:96,  busesTotal:24, consumo:250, expansaoPadrao:'vistage', expansaoMax:2, desc:'96 canais mixáveis · 16 entradas / 16 saídas locais · 2 slots de expansão (Vi Stagebox)' },
+    vi2000:     { label:'Soundcraft Vi2000',                    inputsLocal:32, outputsLocal:24, maxCh:96,  busesTotal:24, consumo:280, expansaoPadrao:'vistage', expansaoMax:2, desc:'96 canais mixáveis · 32 entradas / 24 saídas locais · 2 slots de expansão (Vi Stagebox)' },
     vi3000:     { label:'Soundcraft Vi3000',                    inputsLocal:48, outputsLocal:16, maxCh:96,  busesTotal:24, consumo:300, expansaoPadrao:'vistage',expansaoMax:2, desc:'96 canais mixáveis · 48 entradas / 16 saídas locais (configurável)' },
+    vi5000:     { label:'Soundcraft Vi5000',                    inputsLocal:19, outputsLocal:16, maxCh:128, busesTotal:32, consumo:350, expansaoPadrao:'vistage', expansaoMax:5, desc:'128 canais mixáveis · Local Rack (3 mic + 16 linha / 16 saídas) · expansível com Vi Stagebox (até 5 unidades)' },
+    vi7000:     { label:'Soundcraft Vi7000',                    inputsLocal:19, outputsLocal:16, maxCh:128, busesTotal:32, consumo:380, expansaoPadrao:'vistage', expansaoMax:5, desc:'128 canais mixáveis · Local Rack (3 mic + 16 linha / 16 saídas) · maior superfície (40+4 faders) · expansível com Vi Stagebox (até 5 unidades)' },
     ui24r:      { label:'Soundcraft Ui24R',                     inputsLocal:22, outputsLocal:10, maxCh:24,  busesTotal:8,  consumo:60,  noExpansion:true,        desc:'24 canais · 22 entradas / 10 saídas — sem expansão' },
 
     cl5:        { label:'Yamaha CL5',                           inputsLocal:0,  outputsLocal:0,  maxCh:80,  busesTotal:32, consumo:200, expansaoPadrao:'rio3224',expansaoMax:8, desc:'80 canais mixáveis · 100% via Rio (sem I/O local na mesa)' },
@@ -939,7 +947,7 @@
   const BRANDS = [
     { title:'Behringer / Midas', keys:['x32','x32compact','x32producer','x32rack','wing','wingcompact','wingrack','xr18','pro2','prox'] },
     { title:'DiGiCo',            keys:['sd9','sd8','quantum225','quantum338','s21s31'] },
-    { title:'Soundcraft',        keys:['siexpr1','siexpr2','siexpr3','siexpr4','vi1000','vi2000','vi3000','vi5000','vi7000','ui24r'] },
+    { title:'Soundcraft',        keys:['siexpr1','siexpr2','siexpr3','vi1000','vi2000','vi3000','vi5000','vi7000','ui24r'] },
     { title:'Yamaha',            keys:['cl5','cl3','cl1','ql5','ql1','dm7','dm7compact','dm3','v01v96i'] },
     { title:'Mesas analógicas',  keys:['analog16','analog24','analog32','analog40'] }
   ];
@@ -1821,6 +1829,14 @@
   }
 
   // ===== init =====
+  // Junta os equipamentos cadastrados em catalogo.html (localStorage) aos
+  // catálogos padrão desta calculadora, antes de montar os seletores.
+  if (window.MMCatalogo) {
+    MMCatalogo.mergeCaixas(CAIXAS);
+    MMCatalogo.mergeExpansoes(EXPANSOES);
+    MMCatalogo.mergeConsolesSom(CONSOLES, BRANDS);
+  }
+
   // Restaura o último projeto antes de reconstruir os blocos dinâmicos.
   restaurarEstadoSom();
 

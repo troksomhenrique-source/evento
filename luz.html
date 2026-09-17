@@ -6,6 +6,7 @@
 <title>Pré Produção de Luz — Maurin Mauricio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="catalogo-dados.js"></script>
 <style>
   :root{
     --bg: #0a0a0b;
@@ -1585,6 +1586,13 @@
   }
 
   // ===== init =====
+  // Junta os equipamentos cadastrados em catalogo.html (localStorage) aos
+  // catálogos padrão desta calculadora, antes de montar os seletores.
+  if (window.MMCatalogo) {
+    MMCatalogo.mergeEquipamentosLuz(EQUIPAMENTOS);
+    MMCatalogo.mergeConsolesLuz(CONSOLES);
+  }
+
   // Restaura o último projeto antes de reconstruir os blocos dinâmicos.
   restaurarEstadoLuz();
 

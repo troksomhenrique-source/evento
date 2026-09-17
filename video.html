@@ -6,6 +6,7 @@
 <title>Pré Produção para LED - Maurin Mauricio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="catalogo-dados.js"></script>
 <style>
   :root{
     --bg: #0a0a0b;
@@ -1474,6 +1475,13 @@
       Object.entries(s.campos||{}).forEach(([id,val])=>{const el=$(id);if(!el)return;if(el.type==='checkbox')el.checked=!!val;else el.value=val;});
       return true;
     } catch(e){return false;}
+  }
+
+  // Junta pixel pitches e processadoras cadastrados em catalogo.html
+  // (localStorage) aos catálogos padrão desta calculadora.
+  if (window.MMCatalogo) {
+    MMCatalogo.mergePainelLed(PESO_PAINEL_POR_PITCH, PERFIL_ELETRICO, $('pixelPitch'));
+    MMCatalogo.mergeProcessadoras(PROCESSADORAS_NOVASTAR);
   }
 
   restaurarEstadoVideo();
