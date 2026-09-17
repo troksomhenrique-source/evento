@@ -686,10 +686,12 @@ async function gerarArtSolo(){
   const zip = await JSZip.loadAsync(artB64ToUint8(ART_SOLO_B64));
   const sheetPath = 'xl/worksheets/sheet1.xml';
   let xml = await zip.file(sheetPath).async('string');
-  // Corrige o espaçamento da coluna C no cabeçalho do Memorial Solo.
-  // C é apenas uma coluna de separação; ela fica praticamente sem largura
-  // para que o campo da coluna D (Local) fique encostado ao campo da coluna B (Evento).
-  xml = xml.replace(/<col([^>]*?)max="4"([^>]*?)min="3"([^>]*?)width="17\.55"([^>]*)\/>/, '<col$1max="3"$2min="3"$3width="0.1"$4/><col$1max="4"$2min="4"$3width="17.55"$4/>');
+  // Corrige somente o cabeçalho: une B:C para que Evento fique
+  // visualmente conectado ao campo Local (D), sem alterar as colunas
+  // usadas na tabela de equipamentos, especialmente a coluna Quant. (C).
+  if (!xml.includes('<mergeCell ref="B3:C3"/>')) {
+    xml = xml.replace(/<mergeCells([^>]*)>/, '<mergeCells$1><mergeCell ref="B3:C3"/><mergeCell ref="B4:C4"/>');
+  }
   const cab = cabSave();
   xml = artSetString(xml, 'B4', cab.evento);
   xml = artSetString(xml, 'D4', cab.local);
