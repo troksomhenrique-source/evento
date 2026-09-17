@@ -85,9 +85,98 @@
     max-width:60ch;
   }
 
-  main{
-    max-width:1100px;
+  html{ scroll-behavior:smooth; }
+
+  .layout{
+    display:flex;
+    max-width:1500px;
     margin:0 auto;
+    align-items:flex-start;
+  }
+  .sidebar{
+    width:220px;
+    flex-shrink:0;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+    box-sizing:border-box;
+    padding:24px 14px 20px 20px;
+    border-right:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+  }
+  .sidebar .save-status{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:8px 10px;
+    font-size:11.5px;
+    color:var(--muted);
+    margin-bottom:18px;
+  }
+  .sidebar-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    color:var(--muted);
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    margin:0 0 8px;
+  }
+  .sidebar nav{
+    display:flex;
+    flex-direction:column;
+    gap:1px;
+    flex-grow:1;
+  }
+  .sidebar nav a{
+    display:block;
+    padding:7px 10px;
+    border-radius:3px;
+    font-size:12.5px;
+    color:var(--muted);
+    text-decoration:none;
+    scroll-margin-top:20px;
+  }
+  .sidebar nav a:hover{ color:var(--text); }
+  .sidebar nav a.active{
+    background:rgba(59,130,201,0.10);
+    color:var(--power);
+    font-weight:600;
+  }
+  .sidebar .sidebar-btn{
+    margin-top:16px;
+    width:100%;
+  }
+  @media (max-width: 980px){
+    .layout{ flex-direction:column; }
+    .sidebar{
+      width:100%;
+      height:auto;
+      position:relative;
+      border-right:none;
+      border-bottom:1px solid var(--line);
+      flex-direction:row;
+      align-items:center;
+      overflow-x:auto;
+      padding:14px 20px;
+      gap:12px;
+    }
+    .sidebar .save-status{ margin-bottom:0; white-space:nowrap; }
+    .sidebar-label{ display:none; }
+    .sidebar nav{ flex-direction:row; flex-grow:0; }
+    .sidebar nav a{ white-space:nowrap; }
+    .sidebar .sidebar-btn{ margin-top:0; width:auto; white-space:nowrap; }
+  }
+
+  main{
+    flex-grow:1;
+    min-width:0;
+    max-width:1100px;
+    margin:0;
     padding:32px 20px 80px;
     display:grid;
     grid-template-columns: 380px 1fr;
@@ -98,6 +187,7 @@
   }
 
   .card{
+    scroll-margin-top:20px;
     background:var(--panel);
     border:1px solid var(--line);
     border-top:2px solid var(--power);
@@ -335,15 +425,36 @@
   </div>
 </header>
 
-<div class="export-bar">
-  <button type="button" class="btn-export" id="btnDescritivo">Gerar descritivo</button>
-</div>
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="save-status" id="saveStatus"><span style="display:inline-flex;"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13l3 3v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M8 4v5h8V4"/><rect x="7.5" y="13" width="9" height="6"/></svg></span><span id="saveStatusText">salvando…</span></div>
+  <p class="sidebar-label">Seções</p>
+  <nav id="sideNav">
+    <a href="#sec-modo">Modo de montagem</a>
+    <a href="#sec-painel">Painel de LED</a>
+    <a href="#cardMaoFrancesa">Mão francesa</a>
+    <a href="#cardChapaContrapeso">Chapa e contrapeso</a>
+    <a href="#cardTalha">Talha e bumper</a>
+    <a href="#cardBarraElevacao">Barra de elevação</a>
+    <a href="#sec-consumo">Consumo de energia</a>
+    <a href="#sec-pixels">Pixels e sinal</a>
+    <a href="#sec-cabeamento">Cabeamento</a>
+    <a href="#sec-viz">Visualização</a>
+    <a href="#sec-jump">Cabos de jump</a>
+    <a href="#sec-processadora">Processadora</a>
+    <a href="#sec-cases">Cases de transporte</a>
+    <a href="#cardEstrutura">Estrutura</a>
+    <a href="#sec-peso">Peso total</a>
+  </nav>
+  <button type="button" class="btn-export sidebar-btn" id="btnDescritivo">Gerar descritivo</button>
+</aside>
 
 <main>
   <!-- LEFT: INPUTS -->
   <div class="left-col">
 
-    <div class="card">
+    <div class="card" id="sec-modo">
       <p class="section-title">Modo de montagem</p>
       <div class="pitch-toggle">
         <button type="button" data-mode="ground" id="btnGround" class="active">Estaqueado</button>
@@ -352,7 +463,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-painel">
       <p class="section-title">Painel de LED</p>
 
       <div class="row2">
@@ -443,7 +554,8 @@
         </div>
       </div>
 
-      <p class="note tight">Peso fixo de <strong>4 kg</strong> calculado na mão francesa da frente e na de trás. Contrapesos e chapa só entram na mão francesa que recebe carga: a de trás quando há extensão, a da frente quando não há.</p>
+      <p class="note tight">Peso da mão francesa: <strong>1 kg por metro</strong> de comprimento (frente, trás e lateral). Contrapesos e chapa só entram na mão francesa que recebe carga: a de trás quando há extensão, a da frente quando não há.</p>
+      <p class="note tight">O sistema soma automaticamente <strong>+2 mãos francesas de acabamento lateral</strong> (fecham as laterais do painel), sempre do mesmo comprimento da mão francesa da frente — elas entram no peso total e no descritivo, mas não levam contrapeso, chapa nem par traseiro.</p>
     </div>
 
     <div class="card" id="cardChapaContrapeso">
@@ -501,7 +613,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-consumo">
       <p class="section-title">Consumo de energia</p>
       <table>
         <tbody id="tblConsumo"></tbody>
@@ -514,14 +626,14 @@
       </table>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-pixels">
       <p class="section-title">Pixels e cabo de sinal</p>
       <table>
         <tbody id="tblPixels"></tbody>
       </table>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-cabeamento">
       <p class="section-title">Cabeamento</p>
       <table>
         <thead>
@@ -535,14 +647,14 @@
       </table>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-viz">
       <p class="section-title">Visualização do painel</p>
       <div id="painelVizWrap" style="overflow-x:auto; background:var(--panel-2); border:1px solid var(--line); border-radius:4px; padding:20px; display:flex; justify-content:center;">
         <div id="painelVizSvg"></div>
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-jump">
       <p class="section-title">Cabos de jump</p>
       <table>
         <thead>
@@ -558,7 +670,7 @@
       </table>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-processadora">
       <p class="section-title">Processadora NovaStar <span class="mono" style="font-size:12px;">seleção manual + verificação</span></p>
       <div class="field"><label for="processadoraSelect">Processadora escolhida</label><select id="processadoraSelect"><option value="">Selecione após informar o painel</option></select></div>
       <table>
@@ -579,7 +691,7 @@
       <p class="note" id="notaProcessadora"></p>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-cases">
       <p class="section-title">Cases de transporte</p>
       <table>
         <tbody id="tblCases"></tbody>
@@ -607,7 +719,7 @@
       </table>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-peso">
       <p class="section-title">Peso total</span></p>
       <table>
         <tbody id="tblPeso"></tbody>
@@ -621,6 +733,8 @@
     </div>
   </div>
 </main>
+
+</div><!-- /.layout -->
 
 <div class="descritivo-wrap" id="descritivoWrap">
   <div class="card">
@@ -639,7 +753,7 @@
   let mode = 'ground';   // 'ground' ou 'suspenso'
   let ultimoCalculo = {};
 
-  const PESO_MF = 4;
+  const PESO_MF_POR_METRO = 1; // kg por metro de comprimento da mão francesa (frente, trás e lateral)
   const PESO_CHAPA = 1;
   const PESO_BUMPER = 3;
   // Peso por placa (kg), variando por pixel pitch e por tamanho (100=50x100cm / 50=50x50cm).
@@ -910,28 +1024,39 @@
 
     // --- estrutura ---
     let totalSuporte, pesoEstruturaTotal, estruturaRowsHTML, pesoRowsEstruturaHTML;
-    let mfFrente = 0, mfTras = 0, chapas = 0, contrapesos = 0, bumpers = 0, talhas = 0, barras2m = 0, barras1m = 0, totalBarras = 0;
+    let mfFrente = 0, mfTras = 0, mfLateral = 0, chapas = 0, contrapesos = 0, bumpers = 0, talhas = 0, barras2m = 0, barras1m = 0, totalBarras = 0;
+    let pesoMFFrenteUnit = 0, pesoMFTrasUnit = 0, pesoMFLateralUnit = 0;
 
     if (mode === 'ground' || mode === 'groundSuspenso'){
       const temTraseira = $('temTraseira').checked;
       mfFrente = largura > 0 ? Math.ceil(largura / 2) : 0;
       mfTras = temTraseira ? mfFrente : 0;
-      const totalMF = mfFrente + mfTras;
+      // Acabamento lateral: 2 mãos francesas fixas pra fechar as laterais do painel.
+      // Não entram no cálculo de peso (não levam contrapeso) e não têm par traseiro.
+      mfLateral = largura > 0 ? 2 : 0;
+      const totalMF = mfFrente + mfTras + mfLateral;
       chapas = temTraseira ? mfTras : mfFrente;
       contrapesos = temTraseira ? mfTras * 2 : mfFrente * 2;
 
       const pesoContrapesoUnit = num('pesoContrapeso') || 0;
-      const pesoMFFrenteTotal = mfFrente * PESO_MF;
-      const pesoMFTrasTotal = mfTras * PESO_MF;
+      const compFrente = num('compFrente');
+      const compTras = num('compTras');
+      // Peso da mão francesa: 1 kg por metro de comprimento. A lateral (acabamento)
+      // é sempre do tamanho da mão francesa da frente.
+      pesoMFFrenteUnit = compFrente * PESO_MF_POR_METRO;
+      pesoMFTrasUnit = compTras * PESO_MF_POR_METRO;
+      pesoMFLateralUnit = compFrente * PESO_MF_POR_METRO;
+      const pesoMFFrenteTotal = mfFrente * pesoMFFrenteUnit;
+      const pesoMFTrasTotal = mfTras * pesoMFTrasUnit;
+      const pesoMFLateralTotal = mfLateral * pesoMFLateralUnit;
       const pesoChapasTotal = chapas * PESO_CHAPA;
       const pesoContrapesosTotal = contrapesos * pesoContrapesoUnit;
 
-      const pesoEstruturaMF = pesoMFFrenteTotal + pesoMFTrasTotal + pesoChapasTotal + pesoContrapesosTotal;
+      const pesoEstruturaMF = pesoMFFrenteTotal + pesoMFTrasTotal + pesoMFLateralTotal + pesoChapasTotal + pesoContrapesosTotal;
 
-      const compFrente = num('compFrente');
-      const compTras = num('compTras');
-      const estruturaRowsMF = rowEstrutura(`Mão francesa frente (${compFrente}m)`, mfFrente, PESO_MF)
-        + (temTraseira ? rowEstrutura(`Mão francesa trás (${compTras}m)`, mfTras, PESO_MF) : '')
+      const estruturaRowsMF = rowEstrutura(`Mão francesa frente (${compFrente}m)`, mfFrente, pesoMFFrenteUnit)
+        + (temTraseira ? rowEstrutura(`Mão francesa trás (${compTras}m)`, mfTras, pesoMFTrasUnit) : '')
+        + rowEstrutura(`Mão francesa lateral, acabamento (${compFrente}m)`, mfLateral, pesoMFLateralUnit)
         + rowEstrutura('Chapas', chapas, PESO_CHAPA)
         + rowEstrutura('Contrapesos', contrapesos, pesoContrapesoUnit);
 
@@ -939,6 +1064,7 @@
         + (topoTotalPaineis > 0 ? rowPeso('Placas de LED (topo 50×50)', topoTotalPaineis, pesoPaineisTopo) : '')
         + rowPeso('Mão francesa frente', mfFrente, pesoMFFrenteTotal)
         + (temTraseira ? rowPeso('Mão francesa trás', mfTras, pesoMFTrasTotal) : '')
+        + rowPeso('Mão francesa lateral (acabamento)', mfLateral, pesoMFLateralTotal)
         + rowPeso('Chapas', chapas, pesoChapasTotal)
         + rowPeso('Contrapesos', contrapesos, pesoContrapesosTotal);
 
@@ -1220,7 +1346,7 @@
       totalPaineis, pesoTotal, potenciaTotalW: potenciaTotalWGeral, potenciaTotalKVA: potenciaTotalKVAGeral,
       potenciaPainelUnit, potenciaMaxPainelUnit, potenciaMaxWm2, fatorPotenciaConsiderada: FATOR_POTENCIA_CONSIDERADA, paineisPorCaboEnergia,
       correntePorCaboEnergia, potenciaPorCaboKVA: potenciaPorCaboEnergia / 1000, cabosEnergia: cabosEnergiaGeral, cabosSinal: cabosSinalGeral, rjTotal,
-      mfFrente, mfTras, temTraseira: (mode === 'ground' || mode === 'groundSuspenso') ? $('temTraseira').checked : false,
+      mfFrente, mfTras, mfLateral, temTraseira: (mode === 'ground' || mode === 'groundSuspenso') ? $('temTraseira').checked : false,
       compFrente: num('compFrente'), compTras: num('compTras'),
       contrapesos, chapas, pesoContrapesoUnit: num('pesoContrapeso') || 0,
       bumpers, talhas, barras2m, barras1m, totalBarras, tamanhoBarra: 2, comprimentoBarras: larguraM, alturaBarra: num('alturaBarra') || 4,
@@ -1230,7 +1356,7 @@
       topoAtivo, topoTotalPaineis, topoLarguraPaineis, topoAlturaPaineis, topoAlturaM, alturaRealTotal,
       pesoPaineisTopo, potenciaTotalWTopo, cabosEnergiaTopo, cabosSinalTopo, paineisPorCaboEnergiaTopo,
       totalPaineisGeral,
-      pesoMFUnit: PESO_MF, pesoChapaUnit: PESO_CHAPA, pesoBumperUnit: PESO_BUMPER,
+      pesoMFFrenteUnit, pesoMFTrasUnit, pesoMFLateralUnit, pesoChapaUnit: PESO_CHAPA, pesoBumperUnit: PESO_BUMPER,
       pesoTalhaUnit: PESO_TALHA, pesoBarra2mUnit: PESO_BARRA_2M, pesoBarra1mUnit: PESO_BARRA_1M,
       pesoPainelUnit, pesoPainelUnitTopo,
       areaM2: totalAreaGeral
@@ -1325,6 +1451,10 @@
     if (d.mode === 'ground' || d.mode === 'groundSuspenso'){
       estrutura = `instalado com ${d.mfFrente} mão${d.mfFrente === 1 ? '' : 's'} francesa${d.mfFrente === 1 ? '' : 's'} de ${fmtNum(d.compFrente)} metros`;
       if (d.temTraseira) estrutura += ` + ${d.mfTras} ${d.mfTras === 1 ? 'extensão' : 'extensões'} de ${fmtNum(d.compTras)} metros`;
+      if (d.mfLateral) {
+        const totalMFComLateral = d.mfFrente + (d.temTraseira ? d.mfTras : 0) + d.mfLateral;
+        estrutura += ` + ${d.mfLateral} mão${d.mfLateral === 1 ? '' : 's'} francesa${d.mfLateral === 1 ? '' : 's'} para acabamento lateral (total ${totalMFComLateral} mãos francesas)`;
+      }
       estrutura += ` + ${d.contrapesos} contrapeso${d.contrapesos === 1 ? '' : 's'} de ${fmtNum(d.pesoContrapesoUnit)} kg cada e ${d.chapas} chapa${d.chapas === 1 ? '' : 's'}`;
       if (d.mode === 'groundSuspenso'){
         const quantidadeBarras = Number(d.totalBarras || d.barras2m || d.barras1m || 0);
@@ -1349,6 +1479,7 @@
     if (d.mode === 'ground' || d.mode === 'groundSuspenso'){
       linhasEstrutura.push(`- Mão francesa frente: ${fmtNum(d.mfFrente)} un. de ${fmtNum(d.compFrente)} m.`);
       if (d.temTraseira) linhasEstrutura.push(`- Mão francesa trás: ${fmtNum(d.mfTras)} un. de ${fmtNum(d.compTras)} m.`);
+      if (d.mfLateral) linhasEstrutura.push(`- Mão francesa lateral (acabamento): ${fmtNum(d.mfLateral)} un. de ${fmtNum(d.compFrente)} m — peso: ${fmtNum(d.mfLateral * (d.pesoMFLateralUnit||0))} kg. Sem contrapeso e sem par traseiro.`);
       linhasEstrutura.push(`- Chapas: ${fmtNum(d.chapas)} un.`);
       linhasEstrutura.push(`- Contrapesos: ${fmtNum(d.contrapesos)} un. de ${fmtNum(d.pesoContrapesoUnit)} kg.`);
       if (d.mode === 'groundSuspenso'){
@@ -1432,13 +1563,17 @@
     ].join('\n');
   }
 
-  $('btnDescritivo').addEventListener('click', () => {
+  $('btnDescritivo').addEventListener('click', (evt) => {
+    evt.stopPropagation();
+    clearTimeout(saveTimerVideo);
+    salvarEstadoVideo(); // garante que "editado em" nunca fique depois de "gerado em"
     const descritivo = gerarDescritivo();
     $('descritivoText').value = descritivo;
     // Salva o descritivo para aparecer automaticamente no Descritivo Geral.
     // Mantém o mesmo padrão usado pelas calculadoras de Som e Luz.
     if (descritivo && !/^Informe as dimensões/i.test(descritivo)) {
       localStorage.setItem('descritivo_video', descritivo);
+      localStorage.setItem('descritivo_video_ts', String(Date.now()));
       try { localStorage.setItem('descritivo_dados_video', JSON.stringify(ultimoCalculo)); } catch (e) {}
     }
     $('descritivoWrap').classList.add('show');
@@ -1464,9 +1599,9 @@
       if (el.id === 'descritivoText') return;
       campos[el.id] = el.type === 'checkbox' ? el.checked : el.value;
     });
-    return { campos, panelSize, mode };
+    return { campos, panelSize, mode, ts: Date.now() };
   }
-  function salvarEstadoVideo(){ try { localStorage.setItem(STORAGE_KEY_VIDEO, JSON.stringify(coletarEstadoVideo())); } catch(e) {} }
+  function salvarEstadoVideo(){ try { localStorage.setItem(STORAGE_KEY_VIDEO, JSON.stringify(coletarEstadoVideo())); ultimoSalvamentoTs = Date.now(); atualizarSaveStatus(); } catch(e) {} }
   function agendarSalvarVideo(){ clearTimeout(saveTimerVideo); saveTimerVideo=setTimeout(salvarEstadoVideo,120); }
   function restaurarEstadoVideo(){
     try {
@@ -1476,6 +1611,42 @@
       return true;
     } catch(e){return false;}
   }
+
+  // ===== sidebar: status de salvamento + navegação com scrollspy =====
+  let ultimoSalvamentoTs = Date.now();
+  function fmtRelativo(ts){
+    if (!ts) return '';
+    const diffSeg = Math.round((Date.now() - ts) / 1000);
+    if (diffSeg < 5) return 'agora mesmo';
+    if (diffSeg < 60) return 'há ' + diffSeg + 's';
+    const min = Math.floor(diffSeg / 60);
+    if (min < 60) return 'há ' + min + ' min';
+    const h = Math.floor(min / 60);
+    return 'há ' + h + 'h';
+  }
+  function atualizarSaveStatus(){
+    const el = $('saveStatusText');
+    if (el) el.textContent = 'Salvo automaticamente · ' + fmtRelativo(ultimoSalvamentoTs);
+  }
+  setInterval(atualizarSaveStatus, 5000);
+
+  const navLinks = Array.from(document.querySelectorAll('#sideNav a'));
+  const navSections = navLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function atualizarScrollspy(){
+    let atual = navSections[0];
+    for (const sec of navSections) {
+      if (sec.offsetParent === null) continue; // seção escondida no modo atual (ex.: talha/barra)
+      if (sec.getBoundingClientRect().top - 130 <= 0) atual = sec;
+    }
+    navLinks.forEach((a, i) => a.classList.toggle('active', navSections[i] === atual));
+  }
+  let scrollTicking = false;
+  document.addEventListener('scroll', () => {
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(() => { atualizarScrollspy(); scrollTicking = false; });
+  });
+  atualizarScrollspy();
 
   // Junta pixel pitches e processadoras cadastrados em catalogo.html
   // (localStorage) aos catálogos padrão desta calculadora.
@@ -1488,6 +1659,7 @@
   setMode(mode);
   setPanelSize(panelSize);
   salvarEstadoVideo();
+  atualizarSaveStatus();
   document.addEventListener('input', agendarSalvarVideo);
   document.addEventListener('change', agendarSalvarVideo);
   document.addEventListener('click', agendarSalvarVideo);

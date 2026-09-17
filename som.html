@@ -88,9 +88,98 @@
     max-width:64ch;
   }
 
-  main{
-    max-width:1100px;
+  html{ scroll-behavior:smooth; }
+
+  .layout{
+    display:flex;
+    max-width:1400px;
     margin:0 auto;
+    align-items:flex-start;
+  }
+  .sidebar{
+    width:230px;
+    flex-shrink:0;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+    box-sizing:border-box;
+    padding:24px 16px 20px 20px;
+    border-right:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+  }
+  .sidebar .save-status{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:8px 10px;
+    font-size:11.5px;
+    color:var(--muted);
+    margin-bottom:18px;
+  }
+  .sidebar-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    color:var(--muted);
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    margin:0 0 8px;
+  }
+  .sidebar nav{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    flex-grow:1;
+  }
+  .sidebar nav a{
+    display:block;
+    padding:8px 10px;
+    border-radius:3px;
+    font-size:13px;
+    color:var(--muted);
+    text-decoration:none;
+    scroll-margin-top:20px;
+  }
+  .sidebar nav a:hover{ color:var(--text); }
+  .sidebar nav a.active{
+    background:rgba(214,71,60,0.10);
+    color:var(--accent);
+    font-weight:600;
+  }
+  .sidebar .sidebar-btn{
+    margin-top:16px;
+    width:100%;
+  }
+  @media (max-width: 980px){
+    .layout{ flex-direction:column; }
+    .sidebar{
+      width:100%;
+      height:auto;
+      position:relative;
+      border-right:none;
+      border-bottom:1px solid var(--line);
+      flex-direction:row;
+      align-items:center;
+      overflow-x:auto;
+      padding:14px 20px;
+      gap:12px;
+    }
+    .sidebar .save-status{ margin-bottom:0; white-space:nowrap; }
+    .sidebar-label{ display:none; }
+    .sidebar nav{ flex-direction:row; flex-grow:0; }
+    .sidebar nav a{ white-space:nowrap; }
+    .sidebar .sidebar-btn{ margin-top:0; width:auto; white-space:nowrap; }
+  }
+
+  main{
+    flex-grow:1;
+    min-width:0;
+    max-width:1100px;
+    margin:0;
     padding:32px 20px 80px;
   }
 
@@ -100,6 +189,7 @@
     border-top:2px solid var(--accent);
     border-radius:3px;
     padding:22px;
+    scroll-margin-top:20px;
   }
   .card + .card{margin-top:20px;}
 
@@ -549,13 +639,29 @@
   </div>
 </header>
 
-<div class="export-bar">
-  <button type="button" class="btn-export" id="btnDescritivo">Gerar descritivo</button>
-</div>
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="save-status" id="saveStatus"><span style="display:inline-flex;"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13l3 3v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M8 4v5h8V4"/><rect x="7.5" y="13" width="9" height="6"/></svg></span><span id="saveStatusText">salvando…</span></div>
+  <p class="sidebar-label">Seções</p>
+  <nav id="sideNav">
+    <a href="#sec-mesa">Mesa de som</a>
+    <a href="#sec-energia">Energia (AC)</a>
+    <a href="#sec-canais">Canais de entrada</a>
+    <a href="#sec-saidas">Saídas / monitoração</a>
+    <a href="#sec-expansao">Capacidade e expansão</a>
+    <a href="#sec-pa">Sistema de PA</a>
+    <a href="#sec-resumo">Resumo geral</a>
+    <a href="#sec-circuitos">Circuitos AC</a>
+    <a href="#sec-cases">Cases necessários</a>
+    <a href="#cardRigging">Rigging suspenso</a>
+  </nav>
+  <button type="button" class="btn-export sidebar-btn" id="btnDescritivo">Gerar descritivo</button>
+</aside>
 
 <main>
 
-  <div class="card">
+  <div class="card" id="sec-mesa">
     <p class="section-title">Mesa de som do evento <span class="sub">usada para todo o evento</span></p>
     <div class="brand-tabs" id="brandTabs"></div>
     <div id="modelSelectWrap">
@@ -565,7 +671,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" id="sec-energia">
     <p class="section-title">Circuito de energia (AC) <span class="sub">e peso de cabeamento</span></p>
     <div class="row2">
       <div class="field">
@@ -584,7 +690,7 @@
     <p class="note tight" id="notaCircuito"></p>
   </div>
 
-  <div class="card">
+  <div class="card" id="sec-canais">
     <p class="section-title">Canais de entrada <span class="sub">fontes que serão ligadas na mesa</span></p>
     <div class="add-row">
       <div class="field">
@@ -619,7 +725,7 @@
     <p class="note tight">Canais estimados por tipo: mic, canal de banda e canal auxiliar contam 1 canal de entrada por unidade.</p>
   </div>
 
-  <div class="card">
+  <div class="card" id="sec-saidas">
     <p class="section-title">Saídas / monitoração <span class="sub">retornos (aux) e matrizes/zonas adicionais</span></p>
     <div class="row3">
       <div class="field">
@@ -639,7 +745,7 @@
   </div>
 
 
-  <div class="card">
+  <div class="card" id="sec-expansao">
     <p class="section-title">Capacidade da mesa e expansão <span class="sub" id="statusMesaWrap"></span></p>
 
     <div class="toggle-strip" style="margin-bottom:10px;">
@@ -683,7 +789,7 @@
     <p class="note" id="notaMesa"></p>
   </div>
 
-  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin-bottom:14px; flex-wrap:wrap;">
+  <div id="sec-pa" style="display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin-bottom:14px; flex-wrap:wrap; scroll-margin-top:20px;">
     <div>
       <p class="section-title" style="border-bottom:none; padding-bottom:0; margin-bottom:4px;">Sistema de PA</p>
       <p class="note tight" style="margin-top:0;">Cada grupo é uma posição do sistema — dê o nome que quiser (PA Principal L, PA Principal R, Sub, Monitor 1, Delay...), adicione as caixas e marque as opções que se aplicam.</p>
@@ -694,7 +800,7 @@
 
   <div class="hero-stat" id="heroStat" style="margin-top:20px;"></div>
 
-  <div class="card">
+  <div class="card" id="sec-resumo">
     <p class="section-title">Potência e peso — total geral</p>
     <table>
       <tbody id="tblResumoGeral"></tbody>
@@ -702,7 +808,7 @@
     <p class="note tight">O consumo elétrico usado aqui é o consumo de rede das caixas (referência de mercado), não a potência de amplificação (RMS/peak) informada pelo fabricante — que é a potência de áudio, e não o que puxa do disjuntor.</p>
   </div>
 
-  <div class="card">
+  <div class="card" id="sec-circuitos">
     <p class="section-title">Circuitos de energia (AC) necessários <span class="sub">mesa + caixas, por grupo</span></p>
     <table>
       <thead>
@@ -724,7 +830,7 @@
     <p class="note tight">Cálculo: soma a potência (W) de todos os itens do grupo (mesa entra separada, no total geral), converte pra corrente (A = W ÷ V) e divide pela corrente do circuito/disjuntor.</p>
   </div>
 
-  <div class="card">
+  <div class="card" id="sec-cases">
     <p class="section-title">Cases necessários <span class="sub">total do projeto, por caixa</span></p>
     <table>
       <thead>
@@ -769,6 +875,8 @@
   </div>
 
 </main>
+
+</div><!-- /.layout -->
 
 <div class="descritivo-wrap" id="descritivoWrap">
   <div class="card">
@@ -1786,10 +1894,14 @@
     ].join('\n');
   }
 
-  $('btnDescritivo').addEventListener('click', () => {
+  $('btnDescritivo').addEventListener('click', (evt) => {
+    evt.stopPropagation();
+    clearTimeout(saveTimerSom);
+    salvarEstadoSom(); // garante que "editado em" nunca fique depois de "gerado em"
     const descritivo = gerarDescritivo();
     $('descritivoText').value = descritivo;
     localStorage.setItem('descritivo_som', descritivo);
+    localStorage.setItem('descritivo_som_ts', String(Date.now()));
     try { localStorage.setItem('descritivo_dados_som', JSON.stringify(ultimoCalculo)); } catch (e) {}
     $('descritivoWrap').classList.add('show');
     $('descritivoWrap').scrollIntoView({ behavior:'smooth', block:'start' });
@@ -1812,9 +1924,9 @@
       if (el.id === 'descritivoText') return;
       campos[el.id] = el.type === 'checkbox' ? el.checked : el.value;
     });
-    return { campos, brandAtual, consoleAtual, expansaoState: JSON.parse(JSON.stringify(expansaoState)), processadorState: JSON.parse(JSON.stringify(processadorState)), fontes: JSON.parse(JSON.stringify(fontes)), fonteCounter, grupos: JSON.parse(JSON.stringify(grupos)), grupoCounter };
+    return { campos, brandAtual, consoleAtual, expansaoState: JSON.parse(JSON.stringify(expansaoState)), processadorState: JSON.parse(JSON.stringify(processadorState)), fontes: JSON.parse(JSON.stringify(fontes)), fonteCounter, grupos: JSON.parse(JSON.stringify(grupos)), grupoCounter, ts: Date.now() };
   }
-  function salvarEstadoSom(){ try { localStorage.setItem(STORAGE_KEY_SOM, JSON.stringify(coletarEstadoSom())); } catch(e) {} }
+  function salvarEstadoSom(){ try { localStorage.setItem(STORAGE_KEY_SOM, JSON.stringify(coletarEstadoSom())); ultimoSalvamentoTs = Date.now(); atualizarSaveStatus(); } catch(e) {} }
   function agendarSalvarSom(){ clearTimeout(saveTimerSom); saveTimerSom=setTimeout(salvarEstadoSom,120); }
   function restaurarEstadoSom(){
     try {
@@ -1827,6 +1939,42 @@
       return true;
     } catch(e){return false;}
   }
+
+  // ===== sidebar: status de salvamento + navegação com scrollspy =====
+  let ultimoSalvamentoTs = Date.now();
+  function fmtRelativo(ts){
+    if (!ts) return '';
+    const diffSeg = Math.round((Date.now() - ts) / 1000);
+    if (diffSeg < 5) return 'agora mesmo';
+    if (diffSeg < 60) return 'há ' + diffSeg + 's';
+    const min = Math.floor(diffSeg / 60);
+    if (min < 60) return 'há ' + min + ' min';
+    const h = Math.floor(min / 60);
+    return 'há ' + h + 'h';
+  }
+  function atualizarSaveStatus(){
+    const el = $('saveStatusText');
+    if (el) el.textContent = 'Salvo automaticamente · ' + fmtRelativo(ultimoSalvamentoTs);
+  }
+  setInterval(atualizarSaveStatus, 5000);
+
+  const navLinks = Array.from(document.querySelectorAll('#sideNav a'));
+  const navSections = navLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function atualizarScrollspy(){
+    let atual = navSections[0];
+    for (const sec of navSections) {
+      if (sec.offsetParent === null) continue;
+      if (sec.getBoundingClientRect().top - 130 <= 0) atual = sec;
+    }
+    navLinks.forEach((a, i) => a.classList.toggle('active', navSections[i] === atual));
+  }
+  let scrollTicking = false;
+  document.addEventListener('scroll', () => {
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(() => { atualizarScrollspy(); scrollTicking = false; });
+  });
+  atualizarScrollspy();
 
   // ===== init =====
   // Junta os equipamentos cadastrados em catalogo.html (localStorage) aos
@@ -1858,6 +2006,7 @@
   $('cabeamentoKgM').addEventListener('change', calc);
   calc();
   salvarEstadoSom();
+  atualizarSaveStatus();
   document.addEventListener('input', agendarSalvarSom);
   document.addEventListener('change', agendarSalvarSom);
   document.addEventListener('click', agendarSalvarSom);
