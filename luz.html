@@ -754,15 +754,15 @@
   // (moving heads e BSW: case duplo, 2 por case; par/COB: case de 8; brute e strobo: case duplo, 2 por case;
   // fita de LED não usa case padrão — vem em rolo).
   const EQUIPAMENTOS = {
-    beam9r:  { label: 'Moving Beam 9R (250W)',              watts: 300,  peso: 16,   dmx: 16, casePor: 2    },
-    beam10r: { label: 'Moving Beam 10R (280W)',             watts: 500,  peso: 19,   dmx: 20, casePor: 2    },
-    beam14r: { label: 'Moving Beam 14R (295W)',             watts: 440,  peso: 14.5, dmx: 16, casePor: 2    },
+    beam9r:  { label: 'Moving Beam 9R (250W)',              watts: 300,  peso: 12,   dmx: 16, casePor: 2    },
+    beam10r: { label: 'Moving Beam 10R (280W)',             watts: 500,  peso: 15,   dmx: 20, casePor: 2    },
+    beam14r: { label: 'Moving Beam 14R (295W)',             watts: 440,  peso: 12.5, dmx: 16, casePor: 2    },
     bsw481:  { label: 'BSW 481 CMY',                        watts: 500,  peso: 21,   dmx: 24, casePor: 2    },
-    wash:    { label: 'Moving Wash (LED 19×15W)',           watts: 350,  peso: 9,    dmx: 16, casePor: 4    },
-    parled:  { label: 'Par LED (18×15W RGBWA+UV)',          watts: 290,  peso: 5,    dmx: 8,  casePor: 10   },
+    wash:    { label: 'Moving Wash (LED 19×15W)',           watts: 350,  peso: 7,    dmx: 16, casePor: 4    },
+    parled:  { label: 'Par LED (18×15W RGBWA+UV)',          watts: 290,  peso: 4,    dmx: 8,  casePor: 10   },
     cob:     { label: 'COB (100W RGBW)',                    watts: 120,  peso: 3,    dmx: 6,  casePor: 8    },
-    brute:   { label: 'Brute (4 lâmpadas PAR36/aircraft)',  watts: 2400, peso: 10,   dmx: 1,  casePor: 2    },
-    strobo:  { label: 'Strobo LED + Fita',                  watts: 700,  peso: 9,    dmx: 4,  casePor: 10   },
+    brute:   { label: 'Brute (4 lâmpadas PAR36/aircraft)',  watts: 2400, peso: 5,   dmx: 1,  casePor: 2    },
+    strobo:  { label: 'Strobo LED + Fita',                  watts: 700,  peso: 4,    dmx: 4,  casePor: 10   },
     fita:    { label: 'Fita de LED (rolo de 5m)',           watts: 60,   peso: 0.5,  dmx: 3,  casePor: null }
   };
 
@@ -1675,21 +1675,27 @@
   // ===== persistência automática do projeto =====
   const STORAGE_KEY_LUZ = 'calculadora_luz_estado_v1';
   let saveTimerLuz = null;
+  // ultimaEdicaoTs só muda quando o usuário edita algo de fato (input/change/click
+  // real). Sair da página (beforeunload) ou forçar um salvamento não conta como
+  // edição nova — senão o "editado em" fica sempre na frente do "gerado em" só
+  // por trocar de aba, e o aviso de desatualizado nunca some.
+  let ultimaEdicaoTs = Date.now();
   function coletarEstadoLuz(){
     const campos = {};
     document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
       if (el.id === 'descritivoText') return;
       campos[el.id] = el.type === 'checkbox' ? el.checked : el.value;
     });
-    return { campos, consoleAtual, infraDmx: JSON.parse(JSON.stringify(infraDmx)), grupos: JSON.parse(JSON.stringify(grupos)), grupoCounter, ts: Date.now() };
+    return { campos, consoleAtual, infraDmx: JSON.parse(JSON.stringify(infraDmx)), grupos: JSON.parse(JSON.stringify(grupos)), grupoCounter, ts: ultimaEdicaoTs };
   }
   function salvarEstadoLuz(){ try { localStorage.setItem(STORAGE_KEY_LUZ, JSON.stringify(coletarEstadoLuz())); ultimoSalvamentoTs = Date.now(); atualizarSaveStatus(); } catch(e) {} }
-  function agendarSalvarLuz(){ clearTimeout(saveTimerLuz); saveTimerLuz=setTimeout(salvarEstadoLuz,120); }
+  function agendarSalvarLuz(){ ultimaEdicaoTs = Date.now(); clearTimeout(saveTimerLuz); saveTimerLuz=setTimeout(salvarEstadoLuz,120); }
   function restaurarEstadoLuz(){
     try {
       const s=JSON.parse(localStorage.getItem(STORAGE_KEY_LUZ)||'null'); if(!s) return false;
       if(s.consoleAtual) consoleAtual=s.consoleAtual; if(s.infraDmx) infraDmx=s.infraDmx;
       if(Array.isArray(s.grupos)&&s.grupos.length) grupos=s.grupos; if(Number.isFinite(s.grupoCounter)) grupoCounter=s.grupoCounter;
+      if(Number.isFinite(s.ts)) ultimaEdicaoTs=s.ts;
       Object.entries(s.campos||{}).forEach(([id,val])=>{const el=$(id);if(!el)return;if(el.type==='checkbox')el.checked=!!val;else el.value=val;});
       return true;
     } catch(e){return false;}

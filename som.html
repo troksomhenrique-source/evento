@@ -1918,16 +1918,21 @@
   // ===== persistência automática do projeto =====
   const STORAGE_KEY_SOM = 'calculadora_som_estado_v1';
   let saveTimerSom = null;
+  // ultimaEdicaoTs só muda quando o usuário edita algo de fato (input/change/click
+  // real). Sair da página (beforeunload) ou forçar um salvamento não conta como
+  // edição nova — senão o "editado em" fica sempre na frente do "gerado em" só
+  // por trocar de aba, e o aviso de desatualizado nunca some.
+  let ultimaEdicaoTs = Date.now();
   function coletarEstadoSom(){
     const campos = {};
     document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
       if (el.id === 'descritivoText') return;
       campos[el.id] = el.type === 'checkbox' ? el.checked : el.value;
     });
-    return { campos, brandAtual, consoleAtual, expansaoState: JSON.parse(JSON.stringify(expansaoState)), processadorState: JSON.parse(JSON.stringify(processadorState)), fontes: JSON.parse(JSON.stringify(fontes)), fonteCounter, grupos: JSON.parse(JSON.stringify(grupos)), grupoCounter, ts: Date.now() };
+    return { campos, brandAtual, consoleAtual, expansaoState: JSON.parse(JSON.stringify(expansaoState)), processadorState: JSON.parse(JSON.stringify(processadorState)), fontes: JSON.parse(JSON.stringify(fontes)), fonteCounter, grupos: JSON.parse(JSON.stringify(grupos)), grupoCounter, ts: ultimaEdicaoTs };
   }
   function salvarEstadoSom(){ try { localStorage.setItem(STORAGE_KEY_SOM, JSON.stringify(coletarEstadoSom())); ultimoSalvamentoTs = Date.now(); atualizarSaveStatus(); } catch(e) {} }
-  function agendarSalvarSom(){ clearTimeout(saveTimerSom); saveTimerSom=setTimeout(salvarEstadoSom,120); }
+  function agendarSalvarSom(){ ultimaEdicaoTs = Date.now(); clearTimeout(saveTimerSom); saveTimerSom=setTimeout(salvarEstadoSom,120); }
   function restaurarEstadoSom(){
     try {
       const s=JSON.parse(localStorage.getItem(STORAGE_KEY_SOM)||'null'); if(!s) return false;
@@ -1935,6 +1940,7 @@
       if(s.expansaoState) expansaoState=s.expansaoState; if(s.processadorState) processadorState=s.processadorState;
       if(Array.isArray(s.fontes)) fontes=s.fontes; if(Number.isFinite(s.fonteCounter)) fonteCounter=s.fonteCounter;
       if(Array.isArray(s.grupos)&&s.grupos.length) grupos=s.grupos; if(Number.isFinite(s.grupoCounter)) grupoCounter=s.grupoCounter;
+      if(Number.isFinite(s.ts)) ultimaEdicaoTs=s.ts;
       Object.entries(s.campos||{}).forEach(([id,val])=>{const el=$(id);if(!el)return;if(el.type==='checkbox')el.checked=!!val;else el.value=val;});
       return true;
     } catch(e){return false;}

@@ -1593,20 +1593,26 @@
   // ===== persistência automática do projeto =====
   const STORAGE_KEY_VIDEO = 'calculadora_video_estado_v1';
   let saveTimerVideo = null;
+  // ultimaEdicaoTs só muda quando o usuário edita algo de fato (input/change/click
+  // real). Sair da página (beforeunload) ou forçar um salvamento não conta como
+  // edição nova — senão o "editado em" fica sempre na frente do "gerado em" só
+  // por trocar de aba, e o aviso de desatualizado nunca some.
+  let ultimaEdicaoTs = Date.now();
   function coletarEstadoVideo(){
     const campos = {};
     document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
       if (el.id === 'descritivoText') return;
       campos[el.id] = el.type === 'checkbox' ? el.checked : el.value;
     });
-    return { campos, panelSize, mode, ts: Date.now() };
+    return { campos, panelSize, mode, ts: ultimaEdicaoTs };
   }
   function salvarEstadoVideo(){ try { localStorage.setItem(STORAGE_KEY_VIDEO, JSON.stringify(coletarEstadoVideo())); ultimoSalvamentoTs = Date.now(); atualizarSaveStatus(); } catch(e) {} }
-  function agendarSalvarVideo(){ clearTimeout(saveTimerVideo); saveTimerVideo=setTimeout(salvarEstadoVideo,120); }
+  function agendarSalvarVideo(){ ultimaEdicaoTs = Date.now(); clearTimeout(saveTimerVideo); saveTimerVideo=setTimeout(salvarEstadoVideo,120); }
   function restaurarEstadoVideo(){
     try {
       const s=JSON.parse(localStorage.getItem(STORAGE_KEY_VIDEO)||'null'); if(!s) return false;
       if(s.panelSize) panelSize=s.panelSize; if(s.mode) mode=s.mode;
+      if(Number.isFinite(s.ts)) ultimaEdicaoTs=s.ts;
       Object.entries(s.campos||{}).forEach(([id,val])=>{const el=$(id);if(!el)return;if(el.type==='checkbox')el.checked=!!val;else el.value=val;});
       return true;
     } catch(e){return false;}

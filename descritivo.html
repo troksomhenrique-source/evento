@@ -703,7 +703,7 @@ function artEquipRowsGrupo(g){
   }
   const qtyFix = g.caixas || g.aparelhos || 0;
   if (g.suspenso && g.pesoBumpers>0 && qtyFix>0){
-    rows.push({ nome: 'Frame / Bumper de voo', qty: qtyFix, pesoUnit: g.pesoBumpers/qtyFix });
+    rows.push({ nome: 'Garra / Bumper de voo', qty: qtyFix, pesoUnit: g.pesoBumpers/qtyFix });
   }
   if (g.usaTalha && g.qtdTalhas>0){
     rows.push({ nome: 'Talha ('+fmtBR(g.comprimentoTalha,1)+'m)', qty: g.qtdTalhas, pesoUnit: g.pesoTalhas/g.qtdTalhas });
