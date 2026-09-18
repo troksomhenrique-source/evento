@@ -413,8 +413,12 @@
   }
   .btn-copiar:hover{ color:var(--power); border-color:var(--power); }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="db-config.js"></script>
+<script src="auth.js"></script>
 </head>
 <body>
+<script>(async()=>{ await MMAuth.init({admin:false}); await MMAuth.refreshCatalog(); })();</script>
 
 <header>
   <div class="header-inner">

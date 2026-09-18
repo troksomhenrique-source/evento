@@ -294,8 +294,12 @@
     border-top:1px solid var(--line);
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="db-config.js"></script>
+<script src="auth.js"></script>
 </head>
 <body>
+<script>(async()=>{ await MMAuth.init({admin:false}); await MMAuth.refreshCatalog(); })();</script>
 
 <header>
   <div class="header-inner">
@@ -374,7 +378,7 @@
       <span class="go">Acessar <span class="arrow">→</span></span>
     </a>
 
-    <a href="catalogo.html" class="area-card" style="--accent: var(--catalogo);">
+    <a href="catalogo.html" id="adminCatalogCard" class="area-card" style="display:none; --accent: var(--catalogo);">
       <div class="card-top">
         <div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"/><path d="M10 13h4"/></svg></div>
         <span class="badge" id="badge-catalogo"></span>
@@ -386,7 +390,15 @@
       <span class="go">Acessar <span class="arrow">→</span></span>
     </a>
 
+    <a href="admin.html" id="adminUsersCard" class="area-card" style="display:none; --accent: #9b7bd1;">
+      <div class="card-top"><div class="icon">👤</div><span class="badge">ADMIN</span></div>
+      <p class="tag-num">06 · Administração</p><h2>Usuários e Acessos</h2>
+      <p>Cadastre terceiros, defina perfil USER ou ADMIN e ative ou bloqueie acessos.</p>
+      <p class="meta">Disponível somente para administradores.</p><span class="go">Gerenciar <span class="arrow">→</span></span>
+    </a>
+
   </div>
+  <div style="margin-top:22px;display:flex;justify-content:flex-end;gap:12px;align-items:center"><span id="loggedUser" style="color:var(--muted);font-size:13px"></span><button id="btnLogout" class="btn-new-project" type="button">Sair</button></div>
 </main>
 
 <footer>
@@ -546,5 +558,14 @@
   document.getElementById('btnNovoProjeto').addEventListener('click', novoProjeto);
 </script>
 
-</body>
+<script>
+window.addEventListener('load', async function(){
+  if(await MMAuth.init()){ await MMAuth.refreshCatalog(); const admin=MMAuth.isAdmin();
+    document.getElementById('adminCatalogCard').style.display=admin?'block':'none';
+    document.getElementById('adminUsersCard').style.display=admin?'block':'none';
+    document.getElementById('loggedUser').textContent=(MMAuth.profile.full_name||MMAuth.user.email)+' · '+(admin?'ADMIN':'USER');
+    document.getElementById('btnLogout').onclick=()=>MMAuth.logout();
+  }
+});
+</script></body>
 </html>

@@ -382,8 +382,12 @@
     border-top:1px solid var(--line);
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="db-config.js"></script>
+<script src="auth.js"></script>
 </head>
 <body>
+<script>(async()=>{ await MMAuth.init({admin:true}); })();</script>
 
 <header>
   <div class="header-inner">
@@ -417,7 +421,7 @@
 </main>
 
 <footer>
-  Catálogo de equipamentos — os itens cadastrados aqui complementam (não substituem) os modelos já pré-cadastrados nas calculadoras de Som, Luz e Vídeo.
+  Catálogo global de equipamentos — somente administradores podem cadastrar ou alterar itens. As mudanças são salvas no Supabase e ficam disponíveis para todos os usuários nas calculadoras de Som, Luz e Vídeo.
 </footer>
 
 <script>
@@ -705,7 +709,7 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
   let dados = M ? M.carregar() : { caixas:{}, mesasSom:{}, stagesSom:{}, aparelhosLuz:{}, mesasLuz:{}, pitchesLed:{}, processadoras:{} };
-  function persistir(){ if (M) M.salvar(dados); }
+  function persistir(){ if (M) M.salvar(dados); if(window.MMAuth) MMAuth.saveCatalog(dados).catch(function(e){ console.error(e); alert('Não foi possível salvar no banco online: '+(e.message||e)); }); }
 
   function showMsg(id, texto, isErr){
     const el = $(id);
