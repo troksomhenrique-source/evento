@@ -421,11 +421,15 @@
       const raw = localStorage.getItem('descritivo_' + key + '_ts');
       if (raw) descTs = Number(raw);
     } catch (e) {}
-    const hasDescritivo = !!(localStorage.getItem('descritivo_dados_' + key) || localStorage.getItem('descritivo_' + key));
-    if (!estadoTs && !hasDescritivo) return { state: 'sem-dados', estadoTs, descTs };
-    if (!hasDescritivo) return { state: 'em-andamento', estadoTs, descTs };
-    if (descTs && estadoTs && descTs < estadoTs) return { state: 'desatualizado', estadoTs, descTs };
-    return { state: 'atualizado', estadoTs, descTs };
+    const hasDados = !!localStorage.getItem('descritivo_dados_' + key);
+    const hasDescritivoLegado = !!localStorage.getItem('descritivo_' + key);
+    if (!estadoTs && !hasDados && !hasDescritivoLegado) return { state: 'sem-dados', estadoTs, descTs };
+    if (hasDados) return { state: 'atualizado', estadoTs, descTs };
+    if (hasDescritivoLegado) {
+      if (descTs && estadoTs && descTs < estadoTs) return { state: 'desatualizado', estadoTs, descTs };
+      return { state: 'atualizado', estadoTs, descTs };
+    }
+    return { state: 'em-andamento', estadoTs, descTs };
   }
 
   function badgeHtml(state) {
@@ -446,8 +450,8 @@
       } else {
         const partes = [];
         if (status.estadoTs) partes.push('editado ' + fmtRelativo(status.estadoTs));
-        if (status.descTs) partes.push('descritivo gerado ' + fmtRelativo(status.descTs));
-        else partes.push('descritivo ainda não gerado');
+        if (status.descTs) partes.push('dados atualizados ' + fmtRelativo(status.descTs));
+        else partes.push('dados ainda não salvos');
         metaEl.textContent = partes.join(' · ');
       }
     }

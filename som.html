@@ -656,7 +656,6 @@
     <a href="#sec-cases">Cases necessários</a>
     <a href="#cardRigging">Rigging suspenso</a>
   </nav>
-  <button type="button" class="btn-export sidebar-btn" id="btnDescritivo">Gerar descritivo</button>
 </aside>
 
 <main>
@@ -877,13 +876,6 @@
 </main>
 
 </div><!-- /.layout -->
-
-<div class="descritivo-wrap" id="descritivoWrap">
-  <div class="card">
-    <p class="section-title">Descritivo <span class="sub">para copiar</span></p>
-    <textarea id="descritivoText" readonly></textarea>
-    <button type="button" class="btn-copiar" id="btnCopiarDescritivo">Copiar texto</button>
-  </div>
 </div>
 
 <footer>
@@ -1807,113 +1799,14 @@
       gruposResultados, circuitosPorGrupo, riggingResultados, totalCases, totaisPorTipo,
       auxNecessarios, matrizNecessarios, tensao, ampsCircuitoVal
     };
+    // O Descritivo Geral lê diretamente estes dados estruturados.
+    // Não é mais necessário gerar o descritivo nesta calculadora.
+    try {
+      localStorage.setItem('descritivo_dados_som', JSON.stringify(ultimoCalculo));
+      localStorage.setItem('descritivo_som_ts', String(Date.now()));
+    } catch (e) {}
+
   }
-
-  // ===== descritivo =====
-  function gerarDescritivo(){
-    const d = ultimoCalculo;
-    if (!d || (!d.totalCanaisEntrada && !d.totalCaixas)){
-      return 'Adicione canais de entrada e/ou caixas antes de gerar o descritivo.';
-    }
-    const fmtNum = n => Number(n||0).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
-
-    const linhasCaixas = Object.keys(d.totaisPorTipo).filter(k => d.totaisPorTipo[k] > 0).map(k => {
-      const cx = CAIXAS[k];
-      const qty = d.totaisPorTipo[k];
-      const cases = Math.ceil(qty / cx.casePor);
-      return `${qty}x ${cx.label} — ${cases} case${cases===1?'':'s'} (${cx.casePor}/case)`;
-    });
-
-    const gruposTexto = (d.gruposResultados||[]).filter(g => g.caixas > 0 || g.comprimentoCabos > 0).map(g => {
-      const linhas = [];
-      linhas.push(`${g.nome}:`);
-      if (g.equipamentos.length) linhas.push(`  Caixas: ${g.equipamentos.map(e=>`${e.qty}x ${e.label}`).join(', ')}.`);
-      if (g.useDelay){
-        linhas.push(`  Use delay: sim · distância horizontal: ${fmtNum(g.delayDistancia)} m · diferença de altura: ${fmtNum(g.delayAltura)} m.`);
-        linhas.push(`  Distância acústica calculada: ${fmtNum(g.delayDistanciaAcustica)} m · velocidade do som: ${fmtNum(g.delayTemperatura)}°C / ${fmtNum(velocidadeSom(g.delayTemperatura))} m/s.`);
-        linhas.push(`  Delay calculado: ${fmtNum(g.delayMs)} ms${g.delayMargem > 0 ? ` · com margem: ${fmtNum(g.delayFinal)} ms` : ''}.`);
-      }
-      linhas.push(`  Consumo: ${fmtNum(g.watts)} W.`);
-      if (g.comprimentoCabos > 0) linhas.push(`  Cabeamento: ${fmtNum(g.comprimentoCabos)} m · peso calculado: ${fmtNum(g.pesoCabeamento)} kg.`);
-      if (g.isBoxtruss && g.comprimentoTruss > 0) linhas.push(`  Treliça: ${g.trussLabel} · ${fmtNum(g.comprimentoTruss)} m · peso calculado: ${fmtNum(g.pesoTruss)} kg.`);
-      linhas.push(`  Peso das caixas: ${fmtNum(g.pesoEquipamentos)} kg.`);
-      if (g.suspenso){
-        linhas.push(`  Voado/suspenso: sim · frame de voo: ${fmtNum(g.pesoBumpers)} kg.`);
-        if (g.usaTalha) linhas.push(`  Talhas: ${fmtNum(g.qtdTalhas)} unidade${g.qtdTalhas===1?'':'s'} · ${fmtNum(g.comprimentoTalha)} m por talha · peso calculado: ${fmtNum(g.pesoTalhas)} kg.`);
-        if (g.usaAncoragem){
-          linhas.push(`  Distribuição: ${fmtNum(g.qtdPontos)} ponto${g.qtdPontos===1?'':'s'} · ${fmtNum(g.pesoPorPonto)} kg/ponto` + (g.capacidadePonto>0?` · capacidade: ${fmtNum(g.capacidadePonto)} kg/ponto.`:'.'));
-          if (g.capacidadePonto>0){
-            linhas.push(g.sobrecarregado ? `  ATENÇÃO: capacidade excedida em ${fmtNum(Math.abs(g.pesoDisponivel))} kg.` : `  Capacidade disponível após distribuição: ${fmtNum(g.pesoDisponivel)} kg.`);
-          }
-        } else {
-          linhas.push('  Distribuição: sem ponto de ancoragem fixo definido.');
-        }
-        if (g.pesoSuspenso != null) linhas.push(`  Peso suspenso considerado: ${fmtNum(g.pesoSuspenso)} kg.`);
-      } else {
-        linhas.push(`  Voado/suspenso: não · peso do conjunto calculado: ${fmtNum(g.pesoEquipamentos + g.pesoCabeamento + g.pesoTruss)} kg.`);
-      }
-      return linhas.join('\n');
-    });
-
-    const linhasAC = (d.circuitosPorGrupo||[]).filter(r => r.watts > 0).map(r => `- ${r.nome}: ${fmtNum(r.watts)} W · ${fmtNum(r.amps)} A · ${r.circuitos} circuito${r.circuitos===1?'':'s'} AC`);
-
-    return [
-      'DESCRITIVO — ÁUDIO',
-      '',
-      `Mesa de som: ${d.consoleLabel}.`,
-      `Canais mixáveis da mesa: ${fmtNum(d.maxCh)}.`,
-      `Canais de entrada utilizados: ${fmtNum(d.totalCanaisEntrada)}.`,
-      `Buses (aux+matriz) disponíveis: ${fmtNum(d.busesTotal)} · necessários: ${fmtNum(d.busesNecessarios)} (${fmtNum(d.auxNecessarios)} retornos + ${fmtNum(d.matrizNecessarios)} matrizes/zonas).`,
-      `Entradas físicas disponíveis: ${fmtNum(d.entradasFisicasTotais)}${d.usaExp ? ` (com ${fmtNum(d.qtdExp)}x ${d.expLabel})` : ''}.`,
-      `Saídas físicas da mesa: ${fmtNum(d.saidasFisicasMesa)}.`,
-      `Saídas físicas necessárias: ${fmtNum(d.saidasFisicasNecessarias)}.`,
-      d.usaProc
-        ? `Processador utilizado: ${d.nomeProcessador ? d.nomeProcessador : 'sim'} · ${fmtNum(d.saidasProcessador)} saídas adicionais.`
-        : 'Processador: não utilizado.',
-      `Saídas físicas totais disponíveis (mesa${d.usaExp ? ' + expansão' : ''}${d.usaProc ? ' + processador' : ''}): ${fmtNum(d.saidasFisicasTotais)}.`,
-      '',
-      `${d.totalCaixas} caixas de PA no total:`,
-      ...linhasCaixas.map(l => `- ${l}`),
-      '',
-      'SISTEMA DE PA POR POSIÇÃO',
-      gruposTexto.length ? gruposTexto.join('\n\n') : '- Nenhuma posição com caixas.',
-      '',
-      'ENERGIA / CIRCUITOS AC',
-      ...linhasAC,
-      `- Mesa de som: ${fmtNum(d.consumoMesa)} W.`,
-      `- Total de circuitos AC: ${d.totalCircuitosGeral}.`,
-      '',
-      'CASES',
-      `- Total de cases de áudio: ${d.totalCases}.`,
-      '',
-      'RESUMO GERAL',
-      `- Potência total considerada: ${fmtNum(d.totalKVA)} kVA (${fmtNum(d.totalWGeral)} W).`,
-      `- Peso total do sistema de PA: ${fmtNum(d.totalKg)} kg.`,
-      '',
-      'Observação: canais, buses, I/O de mesa e consumo elétrico de caixas são referências de mercado (specs de fabricante quando disponíveis) e servem como referência de pré-produção.'
-    ].join('\n');
-  }
-
-  $('btnDescritivo').addEventListener('click', (evt) => {
-    evt.stopPropagation();
-    clearTimeout(saveTimerSom);
-    salvarEstadoSom(); // garante que "editado em" nunca fique depois de "gerado em"
-    const descritivo = gerarDescritivo();
-    $('descritivoText').value = descritivo;
-    localStorage.setItem('descritivo_som', descritivo);
-    localStorage.setItem('descritivo_som_ts', String(Date.now()));
-    try { localStorage.setItem('descritivo_dados_som', JSON.stringify(ultimoCalculo)); } catch (e) {}
-    $('descritivoWrap').classList.add('show');
-    $('descritivoWrap').scrollIntoView({ behavior:'smooth', block:'start' });
-  });
-  $('btnCopiarDescritivo').addEventListener('click', () => {
-    navigator.clipboard.writeText($('descritivoText').value).then(() => {
-      const btn = $('btnCopiarDescritivo');
-      const original = btn.textContent;
-      btn.textContent = 'Copiado!';
-      setTimeout(() => { btn.textContent = original; }, 1800);
-    });
-  });
 
   // ===== persistência automática do projeto =====
   const STORAGE_KEY_SOM = 'calculadora_som_estado_v1';

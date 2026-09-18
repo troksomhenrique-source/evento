@@ -447,7 +447,6 @@
     <a href="#cardEstrutura">Estrutura</a>
     <a href="#sec-peso">Peso total</a>
   </nav>
-  <button type="button" class="btn-export sidebar-btn" id="btnDescritivo">Gerar descritivo</button>
 </aside>
 
 <main>
@@ -735,13 +734,6 @@
 </main>
 
 </div><!-- /.layout -->
-
-<div class="descritivo-wrap" id="descritivoWrap">
-  <div class="card">
-    <p class="section-title">Descritivo <span class="mono" style="font-size:12px;">para copiar</span></p>
-    <textarea id="descritivoText" readonly></textarea>
-    <button type="button" class="btn-copiar" id="btnCopiarDescritivo">Copiar texto</button>
-  </div>
 </div>
 
 <footer>
@@ -1361,6 +1353,13 @@
       pesoPainelUnit, pesoPainelUnitTopo,
       areaM2: totalAreaGeral
     };
+
+    // O Descritivo Geral lê diretamente estes dados estruturados.
+    // Não é mais necessário gerar o descritivo nesta calculadora.
+    try {
+      localStorage.setItem('descritivo_dados_video', JSON.stringify(ultimoCalculo));
+      localStorage.setItem('descritivo_video_ts', String(Date.now()));
+    } catch (e) {}
   }
 
   function rowEstrutura(label, qtd, pesoUnit){
@@ -1436,159 +1435,6 @@
       ${cells}
     </svg>${legenda}`;
   }
-
-  function gerarDescritivo(){
-    const d = ultimoCalculo;
-    if (!d || !d.totalPaineis){
-      return 'Informe as dimensões do painel antes de gerar o descritivo.';
-    }
-
-    const fmtNum = n => Number(n || 0).toLocaleString('pt-BR', {maximumFractionDigits: 1});
-    const tamanhoLabel = d.panelSize === '100' ? '50x100cm' : '50x50cm';
-    const alturaFinal = d.topoAtivo && d.topoTotalPaineis > 0 ? d.alturaRealTotal : d.alturaM;
-
-    let estrutura = '';
-    if (d.mode === 'ground' || d.mode === 'groundSuspenso'){
-      estrutura = `instalado com ${d.mfFrente} mão${d.mfFrente === 1 ? '' : 's'} francesa${d.mfFrente === 1 ? '' : 's'} de ${fmtNum(d.compFrente)} metros`;
-      if (d.temTraseira) estrutura += ` + ${d.mfTras} ${d.mfTras === 1 ? 'extensão' : 'extensões'} de ${fmtNum(d.compTras)} metros`;
-      if (d.mfLateral) {
-        const totalMFComLateral = d.mfFrente + (d.temTraseira ? d.mfTras : 0) + d.mfLateral;
-        estrutura += ` + ${d.mfLateral} mão${d.mfLateral === 1 ? '' : 's'} francesa${d.mfLateral === 1 ? '' : 's'} para acabamento lateral (total ${totalMFComLateral} mãos francesas)`;
-      }
-      estrutura += ` + ${d.contrapesos} contrapeso${d.contrapesos === 1 ? '' : 's'} de ${fmtNum(d.pesoContrapesoUnit)} kg cada e ${d.chapas} chapa${d.chapas === 1 ? '' : 's'}`;
-      if (d.mode === 'groundSuspenso'){
-        const quantidadeBarras = Number(d.totalBarras || d.barras2m || d.barras1m || 0);
-        const comprimentoBarras = Number(d.comprimentoBarras || 0);
-        if (quantidadeBarras > 0){
-          const partesBarras = [];
-          if (Number(d.barras2m || 0) > 0) partesBarras.push(`${fmtNum(d.barras2m)} barra${d.barras2m === 1 ? '' : 's'} de 2 m`);
-          if (Number(d.barras1m || 0) > 0) partesBarras.push(`${fmtNum(d.barras1m)} barra${d.barras1m === 1 ? '' : 's'} de 1 m`);
-          estrutura += `, elevado do chão a ${fmtNum(d.alturaBarra)} m por ${partesBarras.join(' + ')} (largura atendida: ${fmtNum(comprimentoBarras)} m)`;
-        }
-      }
-      estrutura += '.';
-    } else if (d.mode === 'suspenso'){
-      estrutura = `suspenso por talha com ${d.bumpers} bumper${d.bumpers === 1 ? '' : 's'} e ${d.talhas} talha${d.talhas === 1 ? '' : 's'} (máx. 500kg por ponto).`;
-    }
-
-    const placasTexto = d.topoAtivo && d.topoTotalPaineis > 0
-      ? `${d.totalPaineis} placas 50x100 e ${d.topoTotalPaineis} placas 50x50`
-      : `${d.totalPaineis} placas ${tamanhoLabel}`;
-
-    const linhasEstrutura = [];
-    if (d.mode === 'ground' || d.mode === 'groundSuspenso'){
-      linhasEstrutura.push(`- Mão francesa frente: ${fmtNum(d.mfFrente)} un. de ${fmtNum(d.compFrente)} m.`);
-      if (d.temTraseira) linhasEstrutura.push(`- Mão francesa trás: ${fmtNum(d.mfTras)} un. de ${fmtNum(d.compTras)} m.`);
-      if (d.mfLateral) linhasEstrutura.push(`- Mão francesa lateral (acabamento): ${fmtNum(d.mfLateral)} un. de ${fmtNum(d.compFrente)} m — peso: ${fmtNum(d.mfLateral * (d.pesoMFLateralUnit||0))} kg. Sem contrapeso e sem par traseiro.`);
-      linhasEstrutura.push(`- Chapas: ${fmtNum(d.chapas)} un.`);
-      linhasEstrutura.push(`- Contrapesos: ${fmtNum(d.contrapesos)} un. de ${fmtNum(d.pesoContrapesoUnit)} kg.`);
-      if (d.mode === 'groundSuspenso'){
-        if (d.totalBarras > 0){
-          if (d.barras2m > 0) linhasEstrutura.push(`- Barras de elevação de 2 m: ${fmtNum(d.barras2m)} un.`);
-          if (d.barras1m > 0) linhasEstrutura.push(`- Barras de elevação de 1 m: ${fmtNum(d.barras1m)} un.`);
-          linhasEstrutura.push(`- Largura atendida pelas barras: ${fmtNum(d.comprimentoBarras)} m.`);
-        }
-        linhasEstrutura.push(`- Altura da elevação: ${fmtNum(d.alturaBarra)} m.`);
-      }
-    } else {
-      linhasEstrutura.push(`- Bumpers: ${fmtNum(d.bumpers)} un. de 3 kg.`);
-      linhasEstrutura.push(`- Talhas: ${fmtNum(d.talhas)} un. · máximo de 500 kg por ponto.`);
-    }
-
-    const statusSelecionada = d.processadoraSelecionada
-      ? (d.processadoraOkSaida && d.processadoraOkEntrada
-          ? 'atende à carga, portas e resolução informadas.'
-          : `selecionada, mas não atende completamente ao painel${!d.processadoraOkSaida ? ' — capacidade/portas de saída insuficientes.' : ''}${!d.processadoraOkEntrada ? ' — resolução máxima de entrada insuficiente.' : ''}`)
-      : null;
-
-    const casosMain = d.panelSize === '100' ? 6 : 8;
-    const casesPrincipais = Math.ceil(d.totalPaineis / casosMain);
-    const casesTopo = d.topoTotalPaineis > 0 ? Math.ceil(d.topoTotalPaineis / 8) : 0;
-
-    return [
-      'DESCRITIVO — VÍDEO / PAINEL DE LED',
-      '',
-      'PAINEL DE LED',
-      `- Dimensão informada: ${fmtNum(d.larguraM)} × ${fmtNum(alturaFinal)} m.`,
-      `- Configuração: ${placasTexto}.`,
-      `- Pixel pitch: ${d.pixelPitchLabel}.`,
-      `- Painéis principais: ${fmtNum(d.totalPaineis)} un. · tamanho ${tamanhoLabel}.`,
-      ...(d.topoAtivo && d.topoTotalPaineis > 0 ? [`- Topo adicional: ${fmtNum(d.topoTotalPaineis)} placas 50x50cm · ${fmtNum(d.topoAlturaM)} m de altura.`] : []),
-      `- Área total: ${fmtNum((d.totalPaineisGeral || d.totalPaineis) * (d.panelSize === '100' ? 0.5 : 0.25))} m².`,
-      `- Peso total do sistema: ${fmtNum(d.pesoTotal)} kg.`,
-      '',
-      'ESTRUTURA / MONTAGEM',
-      `- Modo: ${d.mode === 'ground' ? 'estaqueado' : d.mode === 'groundSuspenso' ? 'barra de elevação' : 'suspenso por talha'}.`,
-      `- Estrutura: ${estrutura}`,
-      ...linhasEstrutura,
-      '',
-      'ENERGIA',
-      `- Perfil elétrico: ${d.perfilEletricoLabel}.`,
-      `- Potência máxima de referência: ${fmtNum(d.potenciaMaxWm2)} W/m².`,
-      `- Potência considerada por placa 50x100: ${fmtNum(d.potenciaPainelUnit)} W.`,
-      ...(d.topoAtivo && d.topoTotalPaineis > 0 ? [`- Potência considerada por placa 50x50 (topo): ${fmtNum(d.potenciaTotalWTopo / d.topoTotalPaineis)} W.`] : []),
-      `- Potência total considerada: ${fmtNum(d.potenciaTotalKVA)} kVA (${fmtNum(d.potenciaTotalW)} W).`,
-      `- Cabos de energia: ${fmtNum(d.cabosEnergia)} un. · até ${fmtNum(d.paineisPorCaboEnergia)} placas por cabo.`,
-      `- Corrente estimada total em 220 V: ${fmtNum((d.potenciaTotalKVA * 1000) / 220)} A.`,
-      '',
-      'SINAL / PIXEL',
-      `- Resolução/pixagem calculada do painel: ${fmtNum(d.totalPaineisGeral)} placas no conjunto.`,
-      `- Cabos de sinal RJ45: ${fmtNum(d.cabosSinal)} principais + ${fmtNum(d.cabosSinal)} de redundância.`,
-      `- Total de portas RJ45: ${fmtNum(d.rjTotal)}.`,
-      `- Capacidade considerada por porta: 655.360 pixels.`,
-      '',
-      'PROCESSADORAS NOVASTAR',
-      d.processadoraSelecionada
-        ? `- Processadora selecionada: ${fmtNum(d.qtdSelecionada || 1)}x ${d.processadoraSelecionada}.`
-        : '- Nenhuma processadora selecionada.',
-      ...(statusSelecionada ? [`- Status: ${statusSelecionada}`] : []),
-      '',
-      'JUMPS',
-      `- Jump de energia: ${fmtNum(Math.ceil((d.totalPaineisGeral || d.totalPaineis) / 10) + 1)} packs (incluindo 1 backup).`,
-      `- Jump de sinal RJ45: ${fmtNum(Math.ceil((d.totalPaineisGeral || d.totalPaineis) / 10) + 1)} packs (incluindo 1 backup).`,
-      '',
-      'CASES',
-      `- Cases do painel principal: ${fmtNum(casesPrincipais)} (${casosMain} placas/case).`,
-      ...(casesTopo > 0 ? [`- Cases do topo 50x50: ${fmtNum(casesTopo)} (8 placas/case).`] : []),
-      `- Total de cases com backup: ${fmtNum(d.casesTotal)}.`,
-      '',
-      'RESUMO GERAL',
-      `- ${placasTexto} no total.`,
-      `- Potência considerada: ${fmtNum(d.potenciaTotalKVA)} kVA.`,
-      `- Peso total: ${fmtNum(d.pesoTotal)} kg.`,
-      `- Cabos de sinal: ${fmtNum(d.cabosSinal)} principais + ${fmtNum(d.cabosSinal)} redundância.`,
-      `- Cases: ${fmtNum(d.casesTotal)} com backup.`,
-      '',
-      'Observação: os pesos, potências, pixagem, cabos, cases e capacidades de processadoras são calculados com os parâmetros cadastrados na calculadora e servem como referência de pré-produção.'
-    ].join('\n');
-  }
-
-  $('btnDescritivo').addEventListener('click', (evt) => {
-    evt.stopPropagation();
-    clearTimeout(saveTimerVideo);
-    salvarEstadoVideo(); // garante que "editado em" nunca fique depois de "gerado em"
-    const descritivo = gerarDescritivo();
-    $('descritivoText').value = descritivo;
-    // Salva o descritivo para aparecer automaticamente no Descritivo Geral.
-    // Mantém o mesmo padrão usado pelas calculadoras de Som e Luz.
-    if (descritivo && !/^Informe as dimensões/i.test(descritivo)) {
-      localStorage.setItem('descritivo_video', descritivo);
-      localStorage.setItem('descritivo_video_ts', String(Date.now()));
-      try { localStorage.setItem('descritivo_dados_video', JSON.stringify(ultimoCalculo)); } catch (e) {}
-    }
-    $('descritivoWrap').classList.add('show');
-    $('descritivoWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-
-  $('btnCopiarDescritivo').addEventListener('click', () => {
-    const texto = $('descritivoText').value;
-    navigator.clipboard.writeText(texto).then(() => {
-      const btn = $('btnCopiarDescritivo');
-      const original = btn.textContent;
-      btn.textContent = 'Copiado!';
-      setTimeout(() => { btn.textContent = original; }, 1800);
-    });
-  });
 
   // ===== persistência automática do projeto =====
   const STORAGE_KEY_VIDEO = 'calculadora_video_estado_v1';

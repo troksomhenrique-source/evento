@@ -583,7 +583,6 @@
     <a href="#sec-dmx">DMX e mesa</a>
     <a href="#cardRigging">Rigging suspenso</a>
   </nav>
-  <button type="button" class="btn-export sidebar-btn" id="btnDescritivo">Gerar descritivo</button>
 </aside>
 
 <main>
@@ -730,13 +729,6 @@
 </main>
 
 </div><!-- /.layout -->
-
-<div class="descritivo-wrap" id="descritivoWrap">
-  <div class="card">
-    <p class="section-title">Descritivo <span class="sub">para copiar</span></p>
-    <textarea id="descritivoText" readonly></textarea>
-    <button type="button" class="btn-copiar" id="btnCopiarDescritivo">Copiar texto</button>
-  </div>
 </div>
 
 <footer>
@@ -1538,139 +1530,14 @@
       infraDmx: { ...infraDmx },
       saidasSplitter, saidasArtnet
     };
+    // O Descritivo Geral lê diretamente estes dados estruturados.
+    // Não é mais necessário gerar o descritivo nesta calculadora.
+    try {
+      localStorage.setItem('descritivo_dados_luz', JSON.stringify(ultimoCalculo));
+      localStorage.setItem('descritivo_luz_ts', String(Date.now()));
+    } catch (e) {}
+
   }
-
-  // ===== descritivo =====
-  function gerarDescritivo(){
-    const d = ultimoCalculo;
-    if (!d || !d.totalAparelhos){
-      return 'Adicione equipamentos antes de gerar o descritivo.';
-    }
-
-    const fmtNum = n => Number(n || 0).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
-    const plural = (n, singular, pluralText) => `${n} ${n === 1 ? singular : pluralText}`;
-
-    const linhasAparelhos = Object.keys(d.totaisPorTipo)
-      .filter(k => d.totaisPorTipo[k] > 0)
-      .map(k => {
-        const eq = EQUIPAMENTOS[k];
-        const qty = d.totaisPorTipo[k];
-        if (!eq.casePor){
-          return `${qty}x ${eq.label} — sem case padrão (vem em rolo)`;
-        }
-        const cases = Math.ceil(qty / eq.casePor);
-        return `${qty}x ${eq.label} — ${cases} case${cases === 1 ? '' : 's'} (${eq.casePor}/case)`;
-      });
-
-    const gruposTexto = (d.gruposResultados || []).filter(g => g.aparelhos > 0).map(g => {
-      const linhas = [];
-      linhas.push(`${g.nome}:`);
-      linhas.push(`  Equipamentos: ${g.equipamentos.map(e => `${e.qty}x ${e.label}`).join(', ')}.`);
-      linhas.push(`  Potência: ${fmtNum(g.watts)} W · Corrente estimada: ${fmtNum(g.amps)} A · ${plural(g.circuitos, 'circuito AC', 'circuitos AC')}.`);
-      linhas.push(`  Parâmetros: ${fmtNum(g.dmx)} · ${plural(g.saidasDmx, 'universo DMX', 'universos DMX')} · ${g.modoDmx === 'separado' ? 'separado por tipo de equipamento' : 'DMX único'}.`);
-      if (g.comprimentoCabos > 0) linhas.push(`  Cabeamento: ${fmtNum(g.comprimentoCabos)} m · peso calculado: ${fmtNum(g.pesoCabeamento)} kg.`);
-      if (g.isBoxtruss && g.comprimentoTruss > 0) linhas.push(`  Treliça: ${g.trussLabel} · ${fmtNum(g.comprimentoTruss)} m · peso calculado: ${fmtNum(g.pesoTruss)} kg.`);
-      linhas.push(`  Peso dos equipamentos: ${fmtNum(g.pesoEquipamentos)} kg.`);
-      if (g.suspenso){
-        linhas.push(`  Suspenso: sim · bumper: ${fmtNum(g.pesoBumpers)} kg.`);
-        if (g.usaTalha){
-          linhas.push(`  Talhas: ${fmtNum(g.qtdTalhas)} unidade${g.qtdTalhas === 1 ? '' : 's'} · ${fmtNum(g.comprimentoTalha)} m por talha · peso calculado: ${fmtNum(g.pesoTalhas)} kg.`);
-        }
-        if (g.usaAncoragem){
-          linhas.push(`  Distribuição: ${fmtNum(g.qtdPontos)} ponto${g.qtdPontos === 1 ? '' : 's'} · ${fmtNum(g.pesoPorPonto)} kg/ponto` + (g.capacidadePonto > 0 ? ` · capacidade: ${fmtNum(g.capacidadePonto)} kg/ponto.` : '.'));
-          if (g.capacidadePonto > 0){
-            linhas.push(g.sobrecarregado
-              ? `  ATENÇÃO: capacidade excedida em ${fmtNum(Math.abs(g.pesoDisponivel))} kg.`
-              : `  Capacidade disponível após distribuição: ${fmtNum(g.pesoDisponivel)} kg.`);
-          }
-        } else {
-          linhas.push('  Distribuição: sem ponto de ancoragem fixo definido.');
-        }
-        if (g.pesoSuspenso != null) linhas.push(`  Peso suspenso considerado: ${fmtNum(g.pesoSuspenso)} kg.`);
-      } else {
-        const pesoConjunto = g.pesoEquipamentos + g.pesoCabeamento + g.pesoTruss;
-        linhas.push(`  Suspenso: não · peso do conjunto calculado: ${fmtNum(pesoConjunto)} kg.`);
-      }
-      return linhas.join('\n');
-    });
-
-    const infraestrutura = [];
-    infraestrutura.push(`Mesa de luz: ${d.consoleLabel}.`);
-    infraestrutura.push(`Parâmetros da mesa: ${fmtNum(d.parametrosMesa)}.`);
-    infraestrutura.push(`Parâmetros utilizados pelos aparelhos: ${fmtNum(d.parametrosUtilizados)}.`);
-    infraestrutura.push(`Parâmetros restantes: ${fmtNum(d.parametrosRestantes)}.`);
-    infraestrutura.push(`Saídas físicas DMX necessárias pelos grupos: ${fmtNum(d.saidasNecessarias)}.`);
-    infraestrutura.push(`Saídas físicas DMX restantes: ${fmtNum(d.saidasRestantes)}.`);
-    if (d.infraDmx?.usaSplitter){
-      infraestrutura.push(`Splitter DMX configurado com ${fmtNum(d.saidasSplitter)} saídas físicas.`);
-    }
-    if (d.infraDmx?.usaArtnet){
-      infraestrutura.push(`Art-Net configurado com ${fmtNum(d.saidasArtnet)} saídas físicas.`);
-    }
-    if (!d.infraDmx?.usaSplitter && !d.infraDmx?.usaArtnet){
-      infraestrutura.push('Distribuição DMX: direta, sem Splitter ou Art-Net configurado.');
-    }
-
-    const linhasAC = (d.circuitosPorGrupo || []).filter(r => r.watts > 0).map(r =>
-      `- ${r.nome}: ${fmtNum(r.watts)} W · ${fmtNum(r.amps)} A · ${r.circuitos} circuito${r.circuitos === 1 ? '' : 's'} AC`
-    );
-
-    const totalCases = d.totalCases || 0;
-    return [
-      'DESCRITIVO — ILUMINAÇÃO',
-      '',
-      `${d.totalAparelhos} aparelhos de iluminação no total:`,
-      ...linhasAparelhos.map(l => `- ${l}`),
-      '',
-      'MESA DE LUZ E DISTRIBUIÇÃO DMX',
-      ...infraestrutura.map(l => `- ${l}`),
-      '',
-      'EQUIPAMENTOS POR GRUPO / VARA',
-      gruposTexto.length ? gruposTexto.join('\n\n') : '- Nenhum grupo com equipamentos.',
-      '',
-      'ENERGIA / CIRCUITOS AC',
-      ...linhasAC,
-      `- Total de circuitos AC: ${d.totalCircuitos}.`,
-      '',
-      'CASES',
-      `- Total de cases de iluminação: ${totalCases}.`,
-      '',
-      'RESUMO GERAL',
-      `- Potência total considerada: ${fmtNum(d.totalKVA)} kVA (${fmtNum(d.totalW)} W).`,
-      `- Peso total considerado: ${fmtNum(d.totalKg)} kg.`,
-      `- Parâmetros da mesa: ${fmtNum(d.parametrosMesa)}.`,
-      `- Parâmetros utilizados: ${fmtNum(d.parametrosUtilizados)}.`,
-      `- Parâmetros restantes: ${fmtNum(d.parametrosRestantes)}.`,
-      `- Saídas físicas DMX necessárias: ${fmtNum(d.saidasNecessarias)}.`,
-      `- Saídas físicas DMX da mesa: ${fmtNum(d.saidasFisicasMesa)}.`,
-      `- Saídas físicas DMX restantes: ${fmtNum(d.saidasRestantes)}.`,
-      '',
-      'Observação: os pesos, potências, capacidades de DMX, distribuição por ponto e demais parâmetros são calculados com os valores cadastrados na calculadora e servem como referência de pré-produção.'
-    ].join('\n');
-  }
-
-  $('btnDescritivo').addEventListener('click', (evt) => {
-    evt.stopPropagation();
-    clearTimeout(saveTimerLuz);
-    salvarEstadoLuz(); // garante que "editado em" nunca fique depois de "gerado em"
-    const descritivo = gerarDescritivo();
-    $('descritivoText').value = descritivo;
-    localStorage.setItem('descritivo_luz', descritivo);
-    localStorage.setItem('descritivo_luz_ts', String(Date.now()));
-    try { localStorage.setItem('descritivo_dados_luz', JSON.stringify(ultimoCalculo)); } catch (e) {}
-    $('descritivoWrap').classList.add('show');
-    $('descritivoWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-
-  $('btnCopiarDescritivo').addEventListener('click', () => {
-    const texto = $('descritivoText').value;
-    navigator.clipboard.writeText(texto).then(() => {
-      const btn = $('btnCopiarDescritivo');
-      const original = btn.textContent;
-      btn.textContent = 'Copiado!';
-      setTimeout(() => { btn.textContent = original; }, 1800);
-    });
-  });
 
   // ===== persistência automática do projeto =====
   const STORAGE_KEY_LUZ = 'calculadora_luz_estado_v1';

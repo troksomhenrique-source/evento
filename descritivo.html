@@ -82,26 +82,26 @@ h3.blk-title{font-size:12.5px;margin:14px 0 8px;text-transform:uppercase;letter-
 .rpt-print .warn{color:#a83f34}
 
 @media print{
-  @page{size:A4;margin:13mm 14mm 15mm 14mm}
+  @page{size:A4 landscape;margin:9mm 10mm 10mm 10mm}
   body{background:#fff;color:#172033;font-family:Arial,Helvetica,sans-serif}
   header,.export-bar,main{display:none!important}
   #printReport{display:block!important}
 }
 #printReport{display:none}
-.print-page{width:100%;color:#172033;font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;line-height:1.35}
-.print-cover{background:#111a2d;color:#fff;border-radius:6px;padding:20px 22px 18px;margin-bottom:16px}
+.print-page{width:100%;max-width:277mm;margin:0 auto;color:#172033;font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;line-height:1.3}
+.print-cover{background:#111a2d;color:#fff;border-radius:6px;padding:13px 18px 12px;margin-bottom:10px}
 .print-cover .kicker{color:#19b9ff;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px}
-.print-cover h1{font-size:23px;line-height:1.18;margin:0 0 6px;font-weight:800;letter-spacing:.01em}
+.print-cover h1{font-size:21px;line-height:1.18;margin:0 0 6px;font-weight:800;letter-spacing:.01em}
 .print-cover p{margin:0;color:#aeb8ca;font-size:10.5px}
-.print-section{margin:0 0 13px;break-inside:auto}
-.print-section-title{font-size:13.5px;font-weight:800;margin:0 0 10px;padding:0 0 5px;border-bottom:3px solid #172033;text-transform:uppercase;letter-spacing:.02em}
+.print-section{margin:0 0 8px;break-inside:auto}
+.print-section-title{font-size:12.5px;font-weight:800;margin:0 0 10px;padding:0 0 5px;border-bottom:3px solid #172033;text-transform:uppercase;letter-spacing:.02em}
 .print-section-title .num{margin-right:6px}
 .print-footer-page{margin-top:12px;border-top:1px solid #d7dee7;padding-top:5px;color:#68778b;font-size:8.5pt;display:flex;justify-content:space-between}
 .print-note{background:#f4f7fa;border:1px dashed #c5cfdb;border-radius:3px;padding:7px 9px;color:#536176;font-size:9pt;break-inside:avoid}
 .print-note b{color:#172033}
-.print-resumo{text-align:center;margin:0 0 16px;padding:16px 18px;border:1px solid #d9e0e8;border-radius:4px;background:#f4f7fa}
+.print-resumo{text-align:center;margin:0 0 10px;padding:11px 14px;border:1px solid #d9e0e8;border-radius:4px;background:#f4f7fa}
 .print-resumo h3{margin:0 0 12px;font-size:13.5pt;color:#172033}
-.print-resumo p{margin:0 0 7px;font-size:10.5pt;line-height:1.5;color:#172033}
+.print-resumo p{margin:0 0 5px;font-size:9.5pt;line-height:1.5;color:#172033}
 .print-resumo .rt-spacer{height:6px}
 .print-page-break{break-before:page}
 @media print{.print-page-break{break-before:page}}
@@ -447,7 +447,7 @@ function buildPrint(){
       <p>Data: ${dataFmt} · Pré-produção &amp; Infraestrutura</p>
     </div>
     ${resumo.texto ? `<div class="print-resumo">${resumo.html}</div>` : ''}
-    ${body || '<div class="print-note">Nenhum descritivo disponível. Gere o descritivo em Som, Luz e Vídeo antes de exportar o PDF.</div>'}
+    ${body || '<div class="print-note">Nenhum descritivo disponível. Preencha os dados nas calculadoras de Som, Luz e Vídeo antes de exportar o PDF.</div>'}
   </div>`;
 }
 
@@ -477,8 +477,10 @@ function getStatus(key){
   }catch(e){}
   const hasDescritivo=!!(localStorage.getItem('descritivo_dados_'+key)||localStorage.getItem('descritivo_'+key));
   if(!hasDescritivo) return {state:'sem-dados', estadoTs, descTs};
-  // Só marca como desatualizado quando dá pra comparar as duas datas de fato
-  // (dados antigos, gerados antes desta versão, não têm "ts" e ficam como "atualizado" por padrão).
+  // O Descritivo Geral é montado diretamente dos dados estruturados salvos
+  // pelas calculadoras. Portanto, quando existe descritivo_dados_* ele já é a
+  // versão corrente do projeto; não depende mais de um botão de geração separado.
+  if(localStorage.getItem('descritivo_dados_'+key)) return {state:'atualizado', estadoTs, descTs};
   if(descTs && estadoTs && descTs < estadoTs) return {state:'desatualizado', estadoTs, descTs};
   return {state:'atualizado', estadoTs, descTs};
 }
@@ -541,6 +543,11 @@ function gerarResumoTecnico(){
       frase+=` instalados com ${fmtInt(dv.mfFrente)} mão${dv.mfFrente===1?'':'s'} francesa${dv.mfFrente===1?'':'s'} de ${fmtBR(dv.compFrente,1)} metros`;
       if(dv.mfLateral) frase+=` + ${fmtInt(dv.mfLateral)} de acabamento lateral (total ${fmtInt(totalMF)} mãos francesas)`;
       frase+=` + ${fmtInt(dv.contrapesos)} contrapeso${dv.contrapesos===1?'':'s'} de ${fmtInt(dv.pesoContrapesoUnit)}kg cada.`;
+      if(dv.mode==='groundSuspenso'){
+        const qtdBarras=(dv.barras2m||0)+(dv.barras1m||0);
+        const barrasDetalhe=[dv.barras2m?`${fmtInt(dv.barras2m)} de 2 m`:null,dv.barras1m?`${fmtInt(dv.barras1m)} de 1 m`:null].filter(Boolean).join(' + ');
+        frase+=` elevado a ${fmtBR(dv.alturaBarra,1)} m por ${fmtInt(qtdBarras)} barra${qtdBarras===1?'':'s'} de elevação${barrasDetalhe?' ('+barrasDetalhe+')':''}.`;
+      }
     } else if(dv.mode==='suspenso'){
       frase+=` suspenso por talha com ${fmtInt(dv.bumpers)} bumpers e ${fmtInt(dv.talhas)} talhas.`;
     } else {
@@ -580,7 +587,7 @@ function gerarResumoTecnico(){
   }
 
   if(!temConteudo){
-    return {html:'<p class="rt-empty">Gere os descritivos de Som, Luz e/ou Vídeo para ver o resumo aqui.</p>', texto:''};
+    return {html:'<p class="rt-empty">Preencha os dados nas calculadoras de Som, Luz e/ou Vídeo para ver o resumo aqui.</p>', texto:''};
   }
   return {html:linhasHtml.join(''), texto:linhasTexto.join('\n')};
 }
@@ -598,7 +605,7 @@ function carregar(){
       el.innerHTML='<span class="empty">Nenhum descritivo foi gerado nesta área ainda.</span>';
     }
   }
-  document.getElementById('status').textContent=count+' de 3 descritivos disponíveis. Gere o descritivo em cada calculadora para atualizar este documento.';
+  document.getElementById('status').textContent=count+' de 3 descritivos disponíveis. Os dados das calculadoras são salvos automaticamente e atualizam este documento.';
   atualizarStatusAreas();
   const resumo=gerarResumoTecnico();
   document.getElementById('resumoTecnicoBody').innerHTML=resumo.html;
@@ -711,7 +718,10 @@ function artEquipRowsGrupo(g){
   return rows;
 }
 function artVideoPanelLabel(d){
-  return 'Placas de LED '+(d.panelSize==='100'?'50x100':'50x50')+(d.pixelPitchKey?(' P'+d.pixelPitchKey):'');
+  const largura = d.larguraM != null ? fmtBR(d.larguraM,1) : '';
+  const altura = d.alturaM != null ? fmtBR(d.alturaM,1) : '';
+  const metragem = largura && altura ? ` ${largura}x${altura}` : '';
+  return 'Placas de LED'+metragem+' '+(d.panelSize==='100'?'50x100':'50x50')+(d.pixelPitchKey?(' P'+d.pixelPitchKey):'');
 }
 function artVideoRowsGround(d){
   const rows = [];
